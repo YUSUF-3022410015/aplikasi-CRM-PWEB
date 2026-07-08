@@ -49,7 +49,7 @@ export default function SettingsPage() {
     for (const s of settingKeys) {
       const val = values[s.key] || "";
       if (existingKeys.has(s.key)) {
-        toUpdate.push(supabase.from("settings").update({ value: val }).eq("key", s.key));
+        toUpdate.push(supabase.from("settings").update({ value: val }).eq("key", s.key).select());
       } else {
         toInsert.push({ key: s.key, value: val });
       }
