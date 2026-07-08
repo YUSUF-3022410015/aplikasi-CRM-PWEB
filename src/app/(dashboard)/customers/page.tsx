@@ -32,7 +32,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Plus, Search, Edit, Trash2, Eye } from "lucide-react";
+import { Plus, Search, Edit, Trash2, Eye, Download, Upload } from "lucide-react";
+import { exportCustomersToExcel } from "@/lib/excel";
+import { ImportCustomersDialog } from "@/components/import-customers-dialog";
 import type { Customer } from "@/types/database";
 
 const statusColors: Record<string, "default" | "secondary" | "success" | "warning" | "destructive"> = {
@@ -51,6 +53,7 @@ export default function CustomersPage() {
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [importOpen, setImportOpen] = useState(false);
   const router = useRouter();
   const supabase = createClient();
   const limit = 10;
@@ -91,6 +94,27 @@ export default function CustomersPage() {
     fetchCustomers();
   };
 
+  const handleExport = async () => {
+    // Fetch all matching customers (not just current page)
+    let query = supabase.from("customers").select("*").order("created_at", { ascending: false });
+    if (search) {
+      query = query.or(`name.ilike.%${search}%,company.ilike.%${search}%,email.ilike.%${search}%`);
+    }
+    if (statusFilter !== "all") {
+      query = query.eq("status", statusFilter);
+    }
+    const { data } = await query;
+    if (!data?.length) return;
+
+    const blob = exportCustomersToExcel(data);
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `customers_${new Date().toISOString().split("T")[0]}.xlsx`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   const totalPages = Math.ceil(total / limit);
 
   return (
@@ -100,12 +124,22 @@ export default function CustomersPage() {
           <h1 className="text-2xl font-bold tracking-tight">Customers</h1>
           <p className="text-muted-foreground">Kelola data pelanggan Anda</p>
         </div>
-        <Link href="/customers/new">
-          <Button>
-            <Plus className="mr-2 h-4 w-4" />
-            Tambah Customer
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={handleExport}>
+            <Download className="mr-2 h-4 w-4" />
+            Export
           </Button>
-        </Link>
+          <Button variant="outline" onClick={() => setImportOpen(true)}>
+            <Upload className="mr-2 h-4 w-4" />
+            Import
+          </Button>
+          <Link href="/customers/new">
+            <Button>
+              <Plus className="mr-2 h-4 w-4" />
+              Tambah
+            </Button>
+          </Link>
+        </div>
       </div>
 
       <div className="flex gap-4">
@@ -256,6 +290,12 @@ export default function CustomersPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <ImportCustomersDialog
+        open={importOpen}
+        onOpenChange={setImportOpen}
+        onSuccess={fetchCustomers}
+      />
     </div>
   );
 }

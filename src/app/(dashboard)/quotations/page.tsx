@@ -29,8 +29,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Eye, Trash2, FileText } from "lucide-react";
+import { Plus, Eye, Trash2, FileText, Printer } from "lucide-react";
 import { formatCurrency, generateQuotationNumber } from "@/lib/utils";
+import { QuotationPrint, printQuotation } from "@/components/quotation-print";
 import type { Quotation, Customer, Product } from "@/types/database";
 
 const statusColors: Record<string, "default" | "secondary" | "success" | "destructive" | "warning"> = {
@@ -119,6 +120,19 @@ export default function QuotationsPage() {
         price: item.price,
       }));
       await supabase.from("quotation_items").insert(qItems);
+
+      // Create notification for new quotation
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const customerName = customers.find((c) => c.id === customerId)?.name || "Customer";
+        await supabase.from("notifications").insert({
+          user_id: user.id,
+          title: "Quotation Baru",
+          message: `Quotation ${qNumber} untuk ${customerName} telah dibuat`,
+          type: "quotation_sent",
+          link: "/quotations",
+        });
+      }
     }
     setDialogOpen(false);
     setCustomerId("");
@@ -318,8 +332,17 @@ export default function QuotationsPage() {
                 <p>Diskon: -{formatCurrency(selectedQuotation.discount)}</p>
                 <p className="text-lg font-bold">Total: {formatCurrency(selectedQuotation.total)}</p>
               </div>
+              {/* Printable version - only shows when printing */}
+              <QuotationPrint quotation={selectedQuotation} />
             </div>
           )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDetailOpen(false)}>Tutup</Button>
+            <Button variant="outline" onClick={printQuotation}>
+              <Printer className="mr-2 h-4 w-4" />
+              Print PDF
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

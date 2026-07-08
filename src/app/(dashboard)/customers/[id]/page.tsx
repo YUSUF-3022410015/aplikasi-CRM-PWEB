@@ -6,11 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { formatDate, formatDateTime } from "@/lib/utils";
-import { Pencil, Phone, Mail, MapPin, Building, Globe, MessageSquare } from "lucide-react";
+import { Pencil, Phone, Mail, MapPin, Building, Globe, MessageSquare, Printer, Download } from "lucide-react";
 import Link from "next/link";
 import { ActivityTimeline } from "@/components/activity-timeline";
 import { AddActivityForm } from "@/components/add-activity-form";
 import { FollowUpList } from "@/components/followup-list";
+import { CustomerPrint, printCustomer } from "@/components/customer-print";
 
 const statusColors: Record<string, "default" | "secondary" | "success" | "warning" | "destructive"> = {
   lead: "secondary",
@@ -57,12 +58,18 @@ export default async function CustomerDetailPage({
           <h1 className="text-2xl font-bold tracking-tight">{customer.name}</h1>
           <p className="text-muted-foreground">{customer.company || "Tanpa perusahaan"}</p>
         </div>
-        <Link href={`/customers/${customer.id}/edit`}>
-          <Button>
-            <Pencil className="mr-2 h-4 w-4" />
-            Edit
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={printCustomer}>
+            <Printer className="mr-2 h-4 w-4" />
+            Print PDF
           </Button>
-        </Link>
+          <Link href={`/customers/${customer.id}/edit`}>
+            <Button>
+              <Pencil className="mr-2 h-4 w-4" />
+              Edit
+            </Button>
+          </Link>
+        </div>
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">
@@ -186,6 +193,15 @@ export default async function CustomerDetailPage({
           <FollowUpList followups={followups || []} customerId={customer.id} />
         </TabsContent>
       </Tabs>
+
+      {/* Printable version - only shows when printing */}
+      <CustomerPrint
+        customer={{
+          ...customer,
+          activities: activities || [],
+          followups: followups || [],
+        }}
+      />
     </div>
   );
 }

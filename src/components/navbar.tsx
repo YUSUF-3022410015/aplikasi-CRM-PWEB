@@ -2,7 +2,8 @@
 
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import { LogOut, User } from "lucide-react";
+import { LogOut, User, Bell } from "lucide-react";
+import { NotificationBell } from "@/components/notification-bell";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -17,6 +18,7 @@ import { getInitials } from "@/lib/utils";
 
 interface NavbarProps {
   user?: {
+    id: string;
     fullname: string;
     email: string;
     role: string;
@@ -34,9 +36,10 @@ export function Navbar({ user }: NavbarProps) {
   };
 
   return (
-    <header className="flex h-14 items-center justify-between border-b bg-card px-6">
+    <header className="no-print flex h-14 items-center justify-between border-b bg-card px-6">
       <div />
       <div className="flex items-center gap-4">
+        {user?.id && <NotificationBell userId={user.id} />}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="relative h-9 w-9 rounded-full">

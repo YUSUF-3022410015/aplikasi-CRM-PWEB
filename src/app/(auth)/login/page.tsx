@@ -107,6 +107,11 @@ export default function LoginPage() {
               "Masuk"
             )}
           </Button>
+          <div className="text-center">
+            <Link href="/forgot-password" className="text-sm text-primary underline hover:text-primary/80">
+              Lupa password?
+            </Link>
+          </div>
         </form>
       </CardContent>
       <div className="px-6 pb-6 text-center text-sm text-muted-foreground">

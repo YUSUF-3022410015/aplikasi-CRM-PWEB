@@ -4,7 +4,9 @@ import { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Users, TrendingUp, TrendingDown, DollarSign, CalendarCheck, Activity, BarChart3 } from "lucide-react";
+import { Users, TrendingUp, TrendingDown, DollarSign, CalendarCheck, Activity, BarChart3, Download, FileText } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { exportReportToExcel, exportReportToPDF } from "@/lib/export-reports";
 import { formatCurrency } from "@/lib/utils";
 import {
   BarChart,
@@ -98,9 +100,21 @@ export default function ReportsPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Reports</h1>
-        <p className="text-muted-foreground">Laporan dan analisis performa bisnis</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Reports</h1>
+          <p className="text-muted-foreground">Laporan dan analisis performa bisnis</p>
+        </div>
+        <div className="flex gap-2 no-print">
+          <Button variant="outline" onClick={() => exportReportToExcel(stats)}>
+            <Download className="mr-2 h-4 w-4" />
+            Export Excel
+          </Button>
+          <Button variant="outline" onClick={exportReportToPDF}>
+            <FileText className="mr-2 h-4 w-4" />
+            Export PDF
+          </Button>
+        </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-4">
