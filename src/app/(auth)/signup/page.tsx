@@ -59,12 +59,16 @@ export default function SignupPage() {
 
     // Insert profile (best effort — don't block signup if this fails)
     if (data.user) {
-      await supabase.from("profiles").upsert({
-        id: data.user.id,
-        fullname,
-        email,
-        role: "sales",
-      }).then(() => {}).catch(() => {});
+      try {
+        await supabase.from("profiles").upsert({
+          id: data.user.id,
+          fullname,
+          email,
+          role: "sales",
+        });
+      } catch {
+        // Profile insert failed, but signup succeeded — continue
+      }
     }
 
     setLoading(false);
