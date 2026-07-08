@@ -65,7 +65,7 @@ export default function QuotationsPage() {
     setLoading(true);
     const [qRes, cRes, pRes] = await Promise.all([
       supabase.from("quotations").select("*, customer:customers(name)").order("created_at", { ascending: false }),
-      supabase.from("customers").select("id, name").order("name"),
+      supabase.from("customers").select("*").order("name"),
       supabase.from("products").select("*").eq("status", "active").order("name"),
     ]);
     setQuotations(qRes.data || []);
