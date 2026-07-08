@@ -24,13 +24,13 @@ interface Activity {
   user?: { fullname: string } | null;
 }
 
-const typeConfig: Record<string, { icon: typeof Phone; label: string; variant: "default" | "secondary" | "success" | "warning" | "destructive" | "info" }> = {
-  call: { icon: Phone, label: "Call", variant: "info" },
+const typeConfig: Record<string, { icon: typeof Phone; label: string; variant: "default" | "secondary" | "success" | "warning" | "destructive" }> = {
+  call: { icon: Phone, label: "Call", variant: "secondary" },
   whatsapp: { icon: MessageSquare, label: "WhatsApp", variant: "success" },
   email: { icon: Mail, label: "Email", variant: "default" },
   meeting: { icon: Monitor, label: "Meeting", variant: "warning" },
   visit: { icon: MapPin, label: "Visit", variant: "secondary" },
-  demo: { icon: Presentation, label: "Demo", variant: "info" },
+  demo: { icon: Presentation, label: "Demo", variant: "default" },
   proposal: { icon: FileText, label: "Proposal", variant: "default" },
   closing: { icon: CheckCircle, label: "Closing", variant: "success" },
 };

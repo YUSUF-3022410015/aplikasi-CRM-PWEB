@@ -17,10 +17,9 @@ import { CalendarCheck } from "lucide-react";
 
 interface FollowUp {
   id: string;
-  title: string;
+  note: string;
   due_date: string;
   status: string;
-  note?: string;
   customer?: { name: string } | null;
   assigned_user?: { fullname: string } | null;
 }
@@ -40,7 +39,7 @@ export default function FollowUpsPage() {
     setLoading(true);
     const { data } = await supabase
       .from("followups")
-      .select("*, customer:customers(name), assigned_user:profiles!followups_assigned_to_fkey(fullname)")
+      .select("*, customer:customers(name)")
       .order("due_date", { ascending: true })
       .limit(100);
     setFollowups(data || []);
@@ -123,10 +122,10 @@ export default function FollowUpsPage() {
                     const cfg = statusConfig[f.status] || statusConfig.pending;
                     return (
                       <TableRow key={f.id}>
-                        <TableCell className="font-medium">{f.title}</TableCell>
+                        <TableCell className="font-medium">{f.note || "-"}</TableCell>
                         <TableCell>{f.customer?.name || "-"}</TableCell>
                         <TableCell>{formatDate(f.due_date)}</TableCell>
-                        <TableCell>{f.assigned_user?.fullname || "-"}</TableCell>
+                        <TableCell>-</TableCell>
                         <TableCell>
                           <Badge variant={cfg.variant}>{cfg.label}</Badge>
                         </TableCell>
