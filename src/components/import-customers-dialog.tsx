@@ -202,9 +202,9 @@ export function ImportCustomersDialog({
               <Button variant="outline" onClick={handleClose}>
                 Batal
               </Button>
-              <Button onClick={handleImport} disabled={preview.success === 0}>
+              <Button onClick={handleImport} disabled={preview?.success === 0}>
                 <Upload className="mr-2 h-4 w-4" />
-                Import {preview.success} Data
+                Import {preview?.success} Data
               </Button>
             </>
           )}
