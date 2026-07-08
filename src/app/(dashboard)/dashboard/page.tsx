@@ -33,6 +33,20 @@ async function getStats(supabase: Awaited<ReturnType<typeof createClient>>) {
     .filter((q) => q.status === "draft" || q.status === "sent")
     .reduce((sum, q) => sum + (q.total || 0), 0);
 
+  // Activities by type
+  const activityTypeMap: Record<string, number> = {};
+  activities.forEach((a) => {
+    activityTypeMap[a.type] = (activityTypeMap[a.type] || 0) + 1;
+  });
+  const activitiesByType = Object.entries(activityTypeMap).map(([name, value]) => ({ name, value }));
+
+  // Customers by status
+  const statusMap: Record<string, number> = {};
+  customers.forEach((c) => {
+    statusMap[c.status] = (statusMap[c.status] || 0) + 1;
+  });
+  const customersByStatus = Object.entries(statusMap).map(([name, value]) => ({ name, value }));
+
   return {
     totalCustomers: customersRes.count || 0,
     newCustomers: newCustomersThisMonth,
@@ -44,6 +58,8 @@ async function getStats(supabase: Awaited<ReturnType<typeof createClient>>) {
     pipelineValue,
     recentActivities: activities.slice(0, 5),
     monthlyData: getMonthlyData(quotations),
+    activitiesByType,
+    customersByStatus,
   };
 }
 
@@ -100,7 +116,11 @@ export default async function DashboardPage() {
           </Card>
         ))}
       </div>
-      <DashboardCharts data={stats.monthlyData} />
+      <DashboardCharts
+        data={stats.monthlyData}
+        activitiesByType={stats.activitiesByType}
+        customersByStatus={stats.customersByStatus}
+      />
     </div>
   );
 }

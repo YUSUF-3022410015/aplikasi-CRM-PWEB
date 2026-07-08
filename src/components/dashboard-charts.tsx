@@ -11,8 +11,12 @@ import {
   LineChart,
   Line,
   Legend,
+  PieChart,
+  Pie,
+  Cell,
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { formatCurrency } from "@/lib/utils";
 
 interface MonthlyData {
   name: string;
@@ -20,10 +24,29 @@ interface MonthlyData {
   deals: number;
 }
 
-export function DashboardCharts({ data }: { data: MonthlyData[] }) {
+interface ActivityByType {
+  name: string;
+  value: number;
+}
+
+interface CustomerByStatus {
+  name: string;
+  value: number;
+}
+
+const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#06b6d4"];
+
+interface DashboardChartsProps {
+  data: MonthlyData[];
+  activitiesByType?: ActivityByType[];
+  customersByStatus?: CustomerByStatus[];
+}
+
+export function DashboardCharts({ data, activitiesByType = [], customersByStatus = [] }: DashboardChartsProps) {
   return (
-    <div className="grid gap-4 md:grid-cols-2">
-      <Card>
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      {/* Revenue Chart */}
+      <Card className="md:col-span-2">
         <CardHeader>
           <CardTitle className="text-sm font-medium">Revenue Bulanan</CardTitle>
         </CardHeader>
@@ -47,6 +70,8 @@ export function DashboardCharts({ data }: { data: MonthlyData[] }) {
           </ResponsiveContainer>
         </CardContent>
       </Card>
+
+      {/* Deals Chart */}
       <Card>
         <CardHeader>
           <CardTitle className="text-sm font-medium">Deals Bulanan</CardTitle>
@@ -70,6 +95,66 @@ export function DashboardCharts({ data }: { data: MonthlyData[] }) {
           </ResponsiveContainer>
         </CardContent>
       </Card>
+
+      {/* Activities by Type */}
+      {activitiesByType.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm font-medium">Aktivitas per Tipe</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={activitiesByType}
+                  dataKey="value"
+                  nameKey="name"
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={100}
+                  label
+                >
+                  {activitiesByType.map((_, i) => (
+                    <Cell key={i} fill={COLORS[i % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Customer by Status */}
+      {customersByStatus.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm font-medium">Customer per Status</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={customersByStatus}
+                  dataKey="value"
+                  nameKey="name"
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={100}
+                  label
+                >
+                  {customersByStatus.map((_, i) => (
+                    <Cell key={i} fill={COLORS[i % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

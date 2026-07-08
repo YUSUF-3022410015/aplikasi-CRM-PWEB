@@ -998,3 +998,86 @@ Sprint dinyatakan selesai jika:
 * `src/components/calendar-view.tsx` - komponen kalender
 * `src/app/(dashboard)/calendar/page.tsx` - halaman kalender
 * Update `src/components/sidebar.tsx` - tambah link Calendar
+
+---
+
+# Sprint 13 - Enhanced Dashboard
+
+**Sprint:** 13
+
+**Tanggal Mulai:** Rabu, 8 Juli 2026
+
+**Durasi:** 2 hari
+
+**Tujuan Sprint**
+
+Meng-enhance Dashboard dengan charts lebih detail dan data tambahan untuk analisis performa bisnis.
+
+---
+
+# Sprint Goal
+
+Pada akhir sprint:
+
+* Dashboard menampilkan 3 charts: Revenue, Deals, Activities.
+* Chart Aktivitas per Tipe (Pie Chart).
+* Chart Customer per Status (Pie Chart).
+* Data real dari database.
+
+---
+
+# Product Backlog yang Masuk Sprint
+
+## Epic - Dashboard Enhancement
+
+### US-024
+
+Sebagai Manager, saya dapat melihat charts lebih detail di dashboard.
+
+Acceptance Criteria:
+
+* Chart Revenue Bulanan (Bar Chart).
+* Chart Deals Bulanan (Line Chart).
+* Chart Aktivitas per Tipe (Pie Chart).
+* Chart Customer per Status (Pie Chart).
+* Semua data real dari database.
+
+Story Point:
+
+3
+
+---
+
+# Task Breakdown
+
+## Components
+
+* Update `src/components/dashboard-charts.tsx`:
+  * Tambah prop `activitiesByType`
+  * Tambah prop `customersByStatus`
+  * Tambah Pie Chart untuk activities
+  * Tambah Pie Chart untuk customers
+
+## Pages
+
+* Update `src/app/(dashboard)/dashboard/page.tsx`:
+  * Hitung activitiesByType
+  * Hitung customersByStatus
+  * Pass data ke DashboardCharts
+
+---
+
+# Definition of Done
+
+Sprint dinyatakan selesai jika:
+
+* 4 charts berfungsi.
+* Data real dari database.
+* Tidak ada error kritis.
+
+---
+
+# Deliverables
+
+* Update `src/components/dashboard-charts.tsx` - tambah charts
+* Update `src/app/(dashboard)/dashboard/page.tsx` - tambah data
