@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS customers (
   source TEXT,
   assigned_to UUID REFERENCES profiles(id),
   status TEXT NOT NULL DEFAULT 'lead' CHECK (status IN ('lead', 'prospect', 'active', 'inactive', 'archived')),
+  pipeline_stage TEXT NOT NULL DEFAULT 'lead' CHECK (pipeline_stage IN ('lead', 'qualified', 'contacted', 'meeting', 'proposal', 'negotiation', 'won', 'lost')),
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -77,6 +78,7 @@ CREATE TABLE IF NOT EXISTS quotations (
   discount NUMERIC DEFAULT 0,
   total NUMERIC DEFAULT 0,
   status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'sent', 'approved', 'rejected', 'expired')),
+  notes TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -143,6 +145,7 @@ CREATE TRIGGER update_customers_updated_at
 -- ============================================
 CREATE INDEX IF NOT EXISTS idx_customers_status ON customers(status);
 CREATE INDEX IF NOT EXISTS idx_customers_assigned ON customers(assigned_to);
+CREATE INDEX IF NOT EXISTS idx_customers_pipeline ON customers(pipeline_stage);
 CREATE INDEX IF NOT EXISTS idx_activities_customer ON activities(customer_id);
 CREATE INDEX IF NOT EXISTS idx_followups_customer ON followups(customer_id);
 CREATE INDEX IF NOT EXISTS idx_followups_due ON followups(due_date);
