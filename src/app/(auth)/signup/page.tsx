@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -14,7 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Loader2, CheckCircle2 } from "lucide-react";
 
 export default function SignupPage() {
   const [fullname, setFullname] = useState("");
@@ -24,15 +23,13 @@ export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-  const router = useRouter();
+  const [success, setSuccess] = useState(false);
   const supabase = createClient();
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
-    setSuccess("");
 
     if (password !== confirmPassword) {
       setError("Password tidak cocok");
@@ -60,24 +57,40 @@ export default function SignupPage() {
       return;
     }
 
+    // Insert profile (best effort — don't block signup if this fails)
     if (data.user) {
       await supabase.from("profiles").upsert({
         id: data.user.id,
         fullname,
         email,
         role: "sales",
-      });
+      }).then(() => {}).catch(() => {});
     }
 
-    if (data.user?.identities?.length === 0) {
-      setError("Email sudah terdaftar");
-      setLoading(false);
-      return;
-    }
-
-    setSuccess("Akun berhasil dibuat! Silakan cek email untuk verifikasi, lalu login.");
     setLoading(false);
+    setSuccess(true);
   };
+
+  if (success) {
+    return (
+      <Card className="w-full max-w-md">
+        <CardHeader className="space-y-1 text-center">
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-500/15">
+            <CheckCircle2 className="h-6 w-6 text-green-600" />
+          </div>
+          <CardTitle className="text-2xl font-bold">Pendaftaran Berhasil!</CardTitle>
+          <CardDescription>
+            Akun berhasil dibuat. Silakan cek email untuk verifikasi, lalu kembali ke halaman login.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Link href="/login">
+            <Button className="w-full">Kembali ke Login</Button>
+          </Link>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="w-full max-w-md">
@@ -92,11 +105,6 @@ export default function SignupPage() {
           {error && (
             <div className="rounded-md bg-destructive/15 p-3 text-sm text-destructive">
               {error}
-            </div>
-          )}
-          {success && (
-            <div className="rounded-md bg-green-500/15 p-3 text-sm text-green-600">
-              {success}
             </div>
           )}
           <div className="space-y-2">
