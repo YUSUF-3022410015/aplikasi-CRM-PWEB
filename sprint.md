@@ -906,3 +906,95 @@ Sprint dinyatakan selesai jika:
 * `src/app/actions/email.ts` - server actions
 * Update `src/app/(dashboard)/quotations/page.tsx` - tombol Send Email
 * Update `.env.local` - Resend API config
+
+---
+
+# Sprint 12 - Calendar View
+
+**Sprint:** 12
+
+**Tanggal Mulai:** Rabu, 8 Juli 2026
+
+**Durasi:** 3 hari
+
+**Tujuan Sprint**
+
+Membangun halaman Kalender sehingga pengguna dapat melihat jadwal follow-up dan meetings dalam tampilan bulanan yang interaktif.
+
+---
+
+# Sprint Goal
+
+Pada akhir sprint:
+
+* Halaman Calendar tersedia di sidebar.
+* Tampilan bulanan dengan semua follow-up.
+* Klik tanggal -> lihat detail follow-up.
+* Indikator follow-up pending (warna orange).
+* Indikator follow-up done (warna hijau).
+* Navigasi bulan sebelumnya/selanjutnya.
+
+---
+
+# Product Backlog yang Masuk Sprint
+
+## Epic - Calendar
+
+### US-023
+
+Sebagai Sales, saya dapat melihat jadwal follow-up di kalender.
+
+Acceptance Criteria:
+
+* Halaman Calendar tersedia di sidebar.
+* Tampilan bulanan dengan hari-hari.
+* Follow-up tampil di tanggal yang sesuai.
+* Klik tanggal -> dialog detail follow-up.
+* Navigasi bulan sebelumnya/selanjutnya.
+
+Story Point:
+
+5
+
+---
+
+# Task Breakdown
+
+## Components
+
+* Buat `src/components/calendar-view.tsx`:
+  * Calendar grid (7 kolom x 5-6 baris)
+  * Header bulan & tahun
+  * Navigasi bulan (prev/next)
+  * Indikator follow-up per tanggal
+  * Dialog detail saat klik tanggal
+
+## Pages
+
+* Buat `src/app/(dashboard)/calendar/page.tsx`:
+  * Fetch follow-ups dari Supabase
+  * Render CalendarView component
+
+## Navigation
+
+* Update sidebar: tambah link Calendar
+
+---
+
+# Definition of Done
+
+Sprint dinyatakan selesai jika:
+
+* Halaman Calendar berfungsi.
+* Follow-up tampil di kalender.
+* Navigasi bulan berfungsi.
+* Dialog detail berfungsi.
+* Tidak ada error kritis.
+
+---
+
+# Deliverables
+
+* `src/components/calendar-view.tsx` - komponen kalender
+* `src/app/(dashboard)/calendar/page.tsx` - halaman kalender
+* Update `src/components/sidebar.tsx` - tambah link Calendar
