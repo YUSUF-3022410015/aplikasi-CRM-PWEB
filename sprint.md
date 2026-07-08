@@ -1174,3 +1174,113 @@ Sprint dinyatakan selesai jika:
 # Deliverables
 
 * Update `src/app/(dashboard)/users/page.tsx` - edit role & hapus user
+
+---
+
+# Sprint 15 - Settings Enhancement
+
+**Sprint:** 15
+
+**Tanggal Mulai:** Rabu, 8 Juli 2026
+
+**Durasi:** 2 hari
+
+**Tujuan Sprint**
+
+Meng-enhance halaman Settings dengan logo upload, pilihan mata uang/timezone, dan email template.
+
+---
+
+# Sprint Goal
+
+Pada akhir sprint:
+
+* Settings menggunakan tab navigation (Company, General, Email).
+* Logo perusahaan dapat diupload (via URL).
+* Pilihan mata uang dengan dropdown.
+* Pilihan timezone dengan dropdown.
+* Email template untuk quotation dan follow-up.
+
+---
+
+# Product Backlog yang Masuk Sprint
+
+## Epic - Settings
+
+### US-027
+
+Sebagai Admin, saya dapat mengatur profil perusahaan.
+
+Acceptance Criteria:
+
+* Tab Company Profile.
+* Input logo URL dengan preview.
+* Input nama, email, telepon, website, alamat, kota, negara.
+
+Story Point:
+
+3
+
+---
+
+### US-028
+
+Sebagai Admin, saya dapat mengatur mata uang dan timezone.
+
+Acceptance Criteria:
+
+* Tab Pengaturan Umum.
+* Dropdown mata uang (IDR, USD, SGD, MYR).
+* Dropdown timezone (Asia/Jakarta, etc).
+
+Story Point:
+
+2
+
+---
+
+### US-029
+
+Sebagai Admin, saya dapat mengatur email template.
+
+Acceptance Criteria:
+
+* Tab Email Template.
+* Input subject dan body untuk quotation.
+* Input subject dan body untuk follow-up.
+* Support variabel: {customer}, {number}, {total}.
+
+Story Point:
+
+3
+
+---
+
+# Task Breakdown
+
+## Pages
+
+* Update `src/app/(dashboard)/settings/page.tsx`:
+  * Tambah Tabs navigation
+  * Tambah logo URL input dengan preview
+  * Tambah dropdown mata uang
+  * Tambah dropdown timezone
+  * Tambah email template settings
+
+---
+
+# Definition of Done
+
+Sprint dinyatakan selesai jika:
+
+* Tab navigation berfungsi.
+* Logo preview berfungsi.
+* Dropdown mata uang & timezone berfungsi.
+* Email template tersimpan.
+* Tidak ada error kritis.
+
+---
+
+# Deliverables
+
+* Update `src/app/(dashboard)/settings/page.tsx` - enhanced settings
