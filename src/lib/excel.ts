@@ -65,7 +65,8 @@ export function exportCustomersToExcel(customers: Customer[]): Blob {
 
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, "Customers");
-  return XLSX.write(wb, { bookType: "xlsx", type: "blob" });
+  const buf = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+  return new Blob([buf], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
 }
 
 // Download template Excel
@@ -96,7 +97,8 @@ export function downloadTemplate(): Blob {
 
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, "Template");
-  return XLSX.write(wb, { bookType: "xlsx", type: "blob" });
+  const buf = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+  return new Blob([buf], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
 }
 
 // Parse & validate imported Excel

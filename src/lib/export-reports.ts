@@ -52,7 +52,8 @@ export function exportReportToExcel(stats: ReportStats): Blob {
   wsAct["!cols"] = [{ wch: 18 }, { wch: 10 }];
   XLSX.utils.book_append_sheet(wb, wsAct, "Aktivitas");
 
-  return XLSX.write(wb, { bookType: "xlsx", type: "blob" });
+  const buf = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+  return new Blob([buf], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
 }
 
 // Trigger browser print dialog for PDF export
