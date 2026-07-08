@@ -1284,3 +1284,91 @@ Sprint dinyatakan selesai jika:
 # Deliverables
 
 * Update `src/app/(dashboard)/settings/page.tsx` - enhanced settings
+
+---
+
+# Sprint 16 - Activity Log Center
+
+**Sprint:** 16
+
+**Tanggal Mulai:** Rabu, 8 Juli 2026
+
+**Durasi:** 2 hari
+
+**Tujuan Sprint**
+
+Membangun halaman Activity Log yang menampilkan semua aktivitas dari semua modul dalam satu tempat.
+
+---
+
+# Sprint Goal
+
+Pada akhir sprint:
+
+* Halaman Activity Log tersedia di sidebar.
+* Menampilkan semua aktivitas: customer, quotation, follow-up, notification.
+* Filter berdasarkan module.
+* Sorting by date (terbaru di atas).
+
+---
+
+# Product Backlog yang Masuk Sprint
+
+## Epic - Activity Log
+
+### US-030
+
+Sebagai Manager, saya dapat melihat semua aktivitas dalam satu halaman.
+
+Acceptance Criteria:
+
+* Halaman Activity Log tersedia di sidebar.
+* Menampilkan activities, quotations, follow-ups, notifications.
+* Setiap item menampilkan: icon, tipe, deskripsi, module, tanggal.
+* Sorting by date (terbaru di atas).
+
+Story Point:
+
+5
+
+---
+
+# Task Breakdown
+
+## Components
+
+* Buat `src/components/activity-log-list.tsx`:
+  * Komponen list activity log
+  * Icon & warna per tipe
+  * Badge untuk module
+  * Format tanggal
+
+## Pages
+
+* Buat `src/app/(dashboard)/activity-log/page.tsx`:
+  * Fetch activities, quotations, follow-ups, notifications
+  * Gabungkan & sort by date
+  * Render ActivityLogList
+
+## Navigation
+
+* Update sidebar: tambah link Activity Log
+
+---
+
+# Definition of Done
+
+Sprint dinyatakan selesai jika:
+
+* Halaman Activity Log berfungsi.
+* Semua aktivitas tampil.
+* Sorting berfungsi.
+* Tidak ada error kritis.
+
+---
+
+# Deliverables
+
+* `src/components/activity-log-list.tsx` - komponen activity log
+* `src/app/(dashboard)/activity-log/page.tsx` - halaman activity log
+* Update `src/components/sidebar.tsx` - tambah link Activity Log

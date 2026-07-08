@@ -16,6 +16,7 @@ import {
   UserCog,
   ChevronLeft,
   ChevronRight,
+  Activity,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -31,6 +32,7 @@ const navItems = [
   { href: "/pipeline", label: "Pipeline", icon: Kanban },
   { href: "/products", label: "Products", icon: Package },
   { href: "/quotations", label: "Quotations", icon: FileText },
+  { href: "/activity-log", label: "Activity Log", icon: Activity },
   { href: "/reports", label: "Reports", icon: BarChart3 },
   { href: "/users", label: "Users", icon: UserCog },
   { href: "/settings", label: "Settings", icon: Settings },
