@@ -29,9 +29,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Eye, Trash2, FileText, Printer } from "lucide-react";
+import { Plus, Eye, Trash2, FileText, Printer, Mail } from "lucide-react";
 import { formatCurrency, generateQuotationNumber } from "@/lib/utils";
 import { QuotationPrint, printQuotation } from "@/components/quotation-print";
+import { sendQuotationEmailAction } from "@/app/actions/email";
 import type { Quotation, Customer, Product } from "@/types/database";
 
 const statusColors: Record<string, "default" | "secondary" | "success" | "destructive" | "warning"> = {
@@ -145,6 +146,15 @@ export default function QuotationsPage() {
     await supabase.from("quotation_items").delete().eq("quotation_id", id);
     await supabase.from("quotations").delete().eq("id", id);
     fetchData();
+  };
+
+  const handleSendEmail = async (quotationId: string) => {
+    const result = await sendQuotationEmailAction(quotationId);
+    if (result.success) {
+      alert("Email berhasil dikirim!");
+    } else {
+      alert(`Gagal mengirim email: ${result.error}`);
+    }
   };
 
   const openDetail = async (q: Quotation) => {
@@ -338,6 +348,12 @@ export default function QuotationsPage() {
           )}
           <DialogFooter>
             <Button variant="outline" onClick={() => setDetailOpen(false)}>Tutup</Button>
+            {selectedQuotation?.id && (
+              <Button variant="outline" onClick={() => handleSendEmail(selectedQuotation.id)}>
+                <Mail className="mr-2 h-4 w-4" />
+                Send Email
+              </Button>
+            )}
             <Button variant="outline" onClick={printQuotation}>
               <Printer className="mr-2 h-4 w-4" />
               Print PDF

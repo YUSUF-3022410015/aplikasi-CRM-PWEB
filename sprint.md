@@ -796,3 +796,113 @@ Sprint dinyatakan selesai jika:
 * `src/lib/whatsapp.ts` - utility WhatsApp
 * `src/components/whatsapp-button.tsx` - komponen WhatsApp
 * Update `src/app/(dashboard)/customers/[id]/page.tsx` - tambah tombol WhatsApp
+
+---
+
+# Sprint 11 - Email Automation
+
+**Sprint:** 11
+
+**Tanggal Mulai:** Rabu, 8 Juli 2026
+
+**Durasi:** 3 hari
+
+**Tujuan Sprint**
+
+Membangun sistem email otomatis sehingga pengguna dapat mengirim email penawaran (quotation) dan pengingat follow-up langsung dari CRM.
+
+---
+
+# Sprint Goal
+
+Pada akhir sprint:
+
+* Tombol "Send Email" tersedia di detail quotation.
+* Klik tombol -> email penawaran terkirim ke customer.
+* Email template profesional untuk quotation.
+* Email template untuk pengingat follow-up.
+* Activity log otomatis setelah email terkirim.
+
+---
+
+# Product Backlog yang Masuk Sprint
+
+## Epic - Email Automation
+
+### US-021
+
+Sebagai Sales, saya dapat mengirim email penawaran dari quotation.
+
+Acceptance Criteria:
+
+* Tombol "Send Email" tersedia di dialog detail quotation.
+* Klik tombol -> email terkirim ke customer.
+* Email berisi: nomor quotation, daftar item, total, catatan.
+* Activity log otomatis dicatat.
+
+Story Point:
+
+5
+
+---
+
+### US-022
+
+Sebagai Manager, saya dapat mengirim email pengingat follow-up.
+
+Acceptance Criteria:
+
+* Fungsi kirim email pengingat tersedia.
+* Email berisi: nama customer, jatuh tempo, catatan.
+* Dapat dikirim manual dari follow-up page.
+
+Story Point:
+
+3
+
+---
+
+# Task Breakdown
+
+## Utility
+
+* Buat `src/lib/email.ts`:
+  * `sendEmail()` - kirim email via Resend API
+  * `emailTemplates` - template quotation, follow-up, welcome
+  * Helper functions untuk setiap jenis email
+
+## Server Actions
+
+* Buat `src/app/actions/email.ts`:
+  * `sendQuotationEmailAction()` - kirim email quotation
+  * `sendFollowUpReminderAction()` - kirim email follow-up
+
+## Integration
+
+* Update halaman Quotations:
+  * Import sendQuotationEmailAction
+  * Tambah tombol "Send Email" di detail dialog
+
+## Configuration
+
+* Update `.env.local` dengan Resend API key
+
+---
+
+# Definition of Done
+
+Sprint dinyatakan selesai jika:
+
+* Tombol Send Email berfungsi.
+* Email template profesional.
+* Activity log tercatat.
+* Tidak ada error kritis.
+
+---
+
+# Deliverables
+
+* `src/lib/email.ts` - utility email
+* `src/app/actions/email.ts` - server actions
+* Update `src/app/(dashboard)/quotations/page.tsx` - tombol Send Email
+* Update `.env.local` - Resend API config
