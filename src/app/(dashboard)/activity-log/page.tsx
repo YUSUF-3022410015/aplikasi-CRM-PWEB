@@ -44,14 +44,18 @@ export default async function ActivityLogPage() {
   // Combine and format all activities
   const allActivities = [
     // Activities
-    ...(activities || []).map((a) => ({
-      id: a.id,
-      type: a.type,
-      description: `${a.note || "Aktivitas"} - ${(a.customer as { name: string })?.name || "Customer"}`,
-      module: "customer",
-      user: (a.user as { fullname: string })?.fullname || "",
-      created_at: a.created_at,
-    })),
+    ...(activities || []).map((a) => {
+      const customer = a.customer as { name: string } | null;
+      const user = a.user as { fullname: string } | null;
+      return {
+        id: a.id,
+        type: a.type,
+        description: `${a.note || "Aktivitas"} - ${customer?.name || "Customer"}`,
+        module: "customer",
+        user: user?.fullname || "",
+        created_at: a.created_at,
+      };
+    }),
     // Quotations
     ...(quotations || []).map((q) => ({
       id: `q-${q.id}`,
