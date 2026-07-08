@@ -45,14 +45,14 @@ export default async function ActivityLogPage() {
   const allActivities = [
     // Activities
     ...(activities || []).map((a) => {
-      const customer = a.customer as { name: string } | null;
-      const user = a.user as { fullname: string } | null;
+      const cust = (a.customer ?? null) as unknown as { name: string } | null;
+      const usr = (a.user ?? null) as unknown as { fullname: string } | null;
       return {
         id: a.id,
         type: a.type,
-        description: `${a.note || "Aktivitas"} - ${customer?.name || "Customer"}`,
+        description: `${a.note || "Aktivitas"} - ${cust?.name || "Customer"}`,
         module: "customer",
-        user: user?.fullname || "",
+        user: usr?.fullname || "",
         created_at: a.created_at,
       };
     }),
@@ -66,14 +66,17 @@ export default async function ActivityLogPage() {
       created_at: q.created_at,
     })),
     // Follow-ups
-    ...(followups || []).map((f) => ({
-      id: `fu-${f.id}`,
-      type: "followup_created",
-      description: `Follow-up ${(f.customer as { name: string })?.name || "Customer"} - ${f.status} - Jatuh tempo: ${new Date(f.due_date).toLocaleDateString("id-ID")}`,
-      module: "followup",
-      user: "",
-      created_at: f.created_at,
-    })),
+    ...(followups || []).map((f) => {
+      const cust = (f.customer ?? null) as unknown as { name: string } | null;
+      return {
+        id: `fu-${f.id}`,
+        type: "followup_created",
+        description: `Follow-up ${cust?.name || "Customer"} - ${f.status} - Jatuh tempo: ${new Date(f.due_date).toLocaleDateString("id-ID")}`,
+        module: "followup",
+        user: "",
+        created_at: f.created_at,
+      };
+    }),
     // Notifications
     ...(notifications || []).map((n) => ({
       id: `n-${n.id}`,
