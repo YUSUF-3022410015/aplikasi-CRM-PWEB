@@ -703,3 +703,96 @@ Sprint dinyatakan selesai jika:
 
 * `src/components/customer-print.tsx` - komponen printable customer
 * Update `src/app/(dashboard)/customers/[id]/page.tsx` - tombol Print PDF
+
+---
+
+# Sprint 10 - WhatsApp API Integration
+
+**Sprint:** 10
+
+**Tanggal Mulai:** Rabu, 8 Juli 2026
+
+**Durasi:** 3 hari
+
+**Tujuan Sprint**
+
+Mengintegrasikan WhatsApp ke dalam CRM sehingga pengguna dapat mengirim pesan WhatsApp langsung dari halaman Customer Detail.
+
+---
+
+# Sprint Goal
+
+Pada akhir sprint:
+
+* Tombol "WhatsApp" tersedia di halaman Customer Detail.
+* Klik tombol -> dialog kirim pesan muncul.
+* Pilih template pesan (sapaan, follow-up, quotation, pengingat).
+* Kirim pesan -> buka WhatsApp Web dengan pesan siap kirim.
+* Pesan otomatis tercatat di Activity Timeline.
+
+---
+
+# Product Backlog yang Masuk Sprint
+
+## Epic - WhatsApp Integration
+
+### US-020
+
+Sebagai Sales, saya dapat mengirim pesan WhatsApp dari Customer Detail.
+
+Acceptance Criteria:
+
+* Tombol "WhatsApp" tersedia di Customer Detail.
+* Dialog menampilkan form pesan dengan template.
+* Template: Sapaan, Follow-up, Quotation, Pengingat.
+* Kirim pesan -> buka WhatsApp Web.
+* Pesan tercatat di Activity Timeline.
+
+Story Point:
+
+8
+
+---
+
+# Task Breakdown
+
+## Utility
+
+* Buat `src/lib/whatsapp.ts`:
+  * `formatPhoneForWhatsApp()` - format nomor HP
+  * `sendWhatsAppMessage()` - buka WhatsApp Web
+  * `sendWhatsAppAPI()` - kirim via API (opsional)
+  * `messageTemplates` - template pesan
+
+## Components
+
+* Buat `src/components/whatsapp-button.tsx`:
+  * Tombol WhatsApp
+  * Dialog kirim pesan
+  * Pilih template
+  * Form input pesan
+
+## Integration
+
+* Update halaman Customer Detail:
+  * Import WhatsAppButton
+  * Tambah tombol WhatsApp
+
+---
+
+# Definition of Done
+
+Sprint dinyatakan selesai jika:
+
+* Tombol WhatsApp berfungsi.
+* Template pesan berfungsi.
+* WhatsApp Web terbuka dengan benar.
+* Tidak ada error kritis.
+
+---
+
+# Deliverables
+
+* `src/lib/whatsapp.ts` - utility WhatsApp
+* `src/components/whatsapp-button.tsx` - komponen WhatsApp
+* Update `src/app/(dashboard)/customers/[id]/page.tsx` - tambah tombol WhatsApp

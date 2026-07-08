@@ -12,6 +12,7 @@ import { ActivityTimeline } from "@/components/activity-timeline";
 import { AddActivityForm } from "@/components/add-activity-form";
 import { FollowUpList } from "@/components/followup-list";
 import { CustomerPrint, printCustomer } from "@/components/customer-print";
+import { WhatsAppButton } from "@/components/whatsapp-button";
 
 const statusColors: Record<string, "default" | "secondary" | "success" | "warning" | "destructive"> = {
   lead: "secondary",
@@ -59,6 +60,10 @@ export default async function CustomerDetailPage({
           <p className="text-muted-foreground">{customer.company || "Tanpa perusahaan"}</p>
         </div>
         <div className="flex gap-2">
+          <WhatsAppButton
+            phone={customer.phone || customer.whatsapp || ""}
+            customerName={customer.name}
+          />
           <Button variant="outline" onClick={printCustomer}>
             <Printer className="mr-2 h-4 w-4" />
             Print PDF
