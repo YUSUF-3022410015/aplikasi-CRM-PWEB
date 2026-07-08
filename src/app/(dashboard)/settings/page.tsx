@@ -43,22 +43,20 @@ export default function SettingsPage() {
     const { data: existing } = await supabase.from("settings").select("key");
     const existingKeys = new Set((existing || []).map((s) => s.key));
 
-    const toInsert: { key: string; value: string }[] = [];
-    const toUpdate: Promise<unknown>[] = [];
-
     for (const s of settingKeys) {
       const val = values[s.key] || "";
       if (existingKeys.has(s.key)) {
-        toUpdate.push(supabase.from("settings").update({ value: val }).eq("key", s.key).select());
-      } else {
-        toInsert.push({ key: s.key, value: val });
+        await supabase.from("settings").update({ value: val }).eq("key", s.key);
       }
     }
+
+    const toInsert = settingKeys
+      .filter((s) => !existingKeys.has(s.key))
+      .map((s) => ({ key: s.key, value: values[s.key] || "" }));
 
     if (toInsert.length > 0) {
       await supabase.from("settings").insert(toInsert);
     }
-    await Promise.all(toUpdate);
     setSaving(false);
   };
 
