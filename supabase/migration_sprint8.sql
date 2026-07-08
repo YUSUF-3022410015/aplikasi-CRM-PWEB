@@ -22,6 +22,11 @@ CREATE INDEX IF NOT EXISTS idx_notifications_read ON notifications(user_id, read
 -- 3. RLS
 ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Notifications: read own" ON notifications;
+DROP POLICY IF EXISTS "Notifications: insert own" ON notifications;
+DROP POLICY IF EXISTS "Notifications: update own" ON notifications;
+DROP POLICY IF EXISTS "Notifications: delete own" ON notifications;
+
 CREATE POLICY "Notifications: read own" ON notifications FOR SELECT USING (auth.uid() = user_id);
 CREATE POLICY "Notifications: insert own" ON notifications FOR INSERT WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "Notifications: update own" ON notifications FOR UPDATE USING (auth.uid() = user_id);
