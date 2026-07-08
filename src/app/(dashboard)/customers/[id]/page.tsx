@@ -46,7 +46,7 @@ export default async function CustomerDetailPage({
 
   const { data: followups } = await supabase
     .from("followups")
-    .select("*, assigned_user:profiles!followups_assigned_to_fkey(fullname)")
+    .select("*")
     .eq("customer_id", id)
     .order("due_date", { ascending: false });
 

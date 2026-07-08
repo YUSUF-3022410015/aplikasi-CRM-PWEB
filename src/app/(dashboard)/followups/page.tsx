@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
 import {
   Table,
   TableBody,
@@ -11,17 +12,35 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { formatDate } from "@/lib/utils";
-import { CalendarCheck } from "lucide-react";
+import { CalendarCheck, Plus, Pencil, Trash2, Loader2 } from "lucide-react";
 
 interface FollowUp {
   id: string;
   note: string;
   due_date: string;
   status: string;
+  customer_id: string;
   customer?: { name: string } | null;
-  assigned_user?: { fullname: string } | null;
 }
 
 const statusConfig: Record<string, { label: string; variant: "default" | "success" | "destructive" | "secondary" }> = {
@@ -32,23 +51,80 @@ const statusConfig: Record<string, { label: string; variant: "default" | "succes
 
 export default function FollowUpsPage() {
   const [followups, setFollowups] = useState<FollowUp[]>([]);
+  const [customers, setCustomers] = useState<{ id: string; name: string }[]>([]);
   const [loading, setLoading] = useState(true);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [editItem, setEditItem] = useState<FollowUp | null>(null);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [form, setForm] = useState({ customer_id: "", note: "", due_date: "", status: "pending" });
+  const [saving, setSaving] = useState(false);
   const supabase = createClient();
+  const router = useRouter();
 
   const fetchData = useCallback(async () => {
     setLoading(true);
-    const { data } = await supabase
-      .from("followups")
-      .select("*, customer:customers(name)")
-      .order("due_date", { ascending: true })
-      .limit(100);
-    setFollowups(data || []);
+    const [fRes, cRes] = await Promise.all([
+      supabase.from("followups").select("*, customer:customers(name)").order("due_date", { ascending: true }),
+      supabase.from("customers").select("id, name").order("name"),
+    ]);
+    setFollowups(fRes.data || []);
+    setCustomers(cRes.data || []);
     setLoading(false);
   }, [supabase]);
 
-  useEffect(() => {
+  useEffect(() => { fetchData(); }, [fetchData]);
+
+  const openCreate = () => {
+    setEditItem(null);
+    setForm({ customer_id: "", note: "", due_date: "", status: "pending" });
+    setDialogOpen(true);
+  };
+
+  const openEdit = (f: FollowUp) => {
+    setEditItem(f);
+    setForm({ customer_id: f.customer_id, note: f.note || "", due_date: f.due_date?.split("T")[0] || "", status: f.status });
+    setDialogOpen(true);
+  };
+
+  const handleSave = async () => {
+    if (!form.customer_id || !form.due_date) return;
+    setSaving(true);
+
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (editItem) {
+      await supabase.from("followups").update({
+        customer_id: form.customer_id,
+        note: form.note,
+        due_date: form.due_date,
+        status: form.status,
+      }).eq("id", editItem.id);
+    } else {
+      await supabase.from("followups").insert({
+        customer_id: form.customer_id,
+        assigned_to: user?.id || "",
+        note: form.note,
+        due_date: form.due_date,
+        status: form.status,
+      });
+    }
+
+    setDialogOpen(false);
+    setSaving(false);
     fetchData();
-  }, [fetchData]);
+  };
+
+  const handleDelete = async () => {
+    if (!deleteId) return;
+    await supabase.from("followups").delete().eq("id", deleteId);
+    setDeleteId(null);
+    fetchData();
+  };
+
+  const handleStatusChange = async (id: string, status: string) => {
+    await supabase.from("followups").update({ status }).eq("id", id);
+    fetchData();
+  };
 
   const today = new Date().toISOString().split("T")[0];
   const pendingCount = followups.filter((f) => f.status === "pending").length;
@@ -57,9 +133,15 @@ export default function FollowUpsPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Follow-ups</h1>
-        <p className="text-muted-foreground">Jadwal follow-up dan pengingat pelanggan</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Follow-ups</h1>
+          <p className="text-muted-foreground">Jadwal follow-up dan pengingat pelanggan</p>
+        </div>
+        <Button onClick={openCreate}>
+          <Plus className="mr-2 h-4 w-4" />
+          Tambah Follow-up
+        </Button>
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
@@ -101,11 +183,11 @@ export default function FollowUpsPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Judul</TableHead>
+                  <TableHead>Catatan</TableHead>
                   <TableHead>Customer</TableHead>
-                  <TableHead>Tanggal</TableHead>
-                  <TableHead>Assigned</TableHead>
+                  <TableHead>Jatuh Tempo</TableHead>
                   <TableHead>Status</TableHead>
+                  <TableHead className="w-[120px]">Aksi</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -120,14 +202,37 @@ export default function FollowUpsPage() {
                 ) : (
                   followups.map((f) => {
                     const cfg = statusConfig[f.status] || statusConfig.pending;
+                    const isOverdue = f.status === "pending" && f.due_date < today;
                     return (
                       <TableRow key={f.id}>
-                        <TableCell className="font-medium">{f.note || "-"}</TableCell>
+                        <TableCell className="font-medium max-w-[250px] truncate">{f.note || "-"}</TableCell>
                         <TableCell>{f.customer?.name || "-"}</TableCell>
-                        <TableCell>{formatDate(f.due_date)}</TableCell>
-                        <TableCell>-</TableCell>
                         <TableCell>
-                          <Badge variant={cfg.variant}>{cfg.label}</Badge>
+                          <span className={isOverdue ? "text-red-600 font-medium" : ""}>
+                            {formatDate(f.due_date)}
+                          </span>
+                        </TableCell>
+                        <TableCell>
+                          <Select value={f.status} onValueChange={(v) => handleStatusChange(f.id, v)}>
+                            <SelectTrigger className="w-[110px] h-8 text-xs">
+                              <Badge variant={cfg.variant} className="text-xs">{cfg.label}</Badge>
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="pending">Pending</SelectItem>
+                              <SelectItem value="done">Done</SelectItem>
+                              <SelectItem value="cancelled">Cancelled</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex gap-1">
+                            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(f)}>
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => setDeleteId(f.id)}>
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
                         </TableCell>
                       </TableRow>
                     );
@@ -138,6 +243,67 @@ export default function FollowUpsPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Dialog Tambah/Edit */}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{editItem ? "Edit Follow-up" : "Tambah Follow-up"}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label>Customer *</Label>
+              <Select value={form.customer_id} onValueChange={(v) => setForm({ ...form, customer_id: v })}>
+                <SelectTrigger><SelectValue placeholder="Pilih customer" /></SelectTrigger>
+                <SelectContent>
+                  {customers.map((c) => (
+                    <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Tanggal Jatuh Tempo *</Label>
+              <Input type="date" value={form.due_date} onChange={(e) => setForm({ ...form, due_date: e.target.value })} />
+            </div>
+            <div className="space-y-2">
+              <Label>Catatan</Label>
+              <Textarea value={form.note} onChange={(e) => setForm({ ...form, note: e.target.value })} placeholder="Catatan follow-up" rows={3} />
+            </div>
+            <div className="space-y-2">
+              <Label>Status</Label>
+              <Select value={form.status} onValueChange={(v) => setForm({ ...form, status: v })}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="done">Done</SelectItem>
+                  <SelectItem value="cancelled">Cancelled</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDialogOpen(false)}>Batal</Button>
+            <Button onClick={handleSave} disabled={saving || !form.customer_id || !form.due_date}>
+              {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Simpan
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog Hapus */}
+      <Dialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Hapus Follow-up?</DialogTitle>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteId(null)}>Batal</Button>
+            <Button variant="destructive" onClick={handleDelete}>Hapus</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

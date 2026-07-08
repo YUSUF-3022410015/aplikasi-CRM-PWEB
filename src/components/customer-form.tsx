@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -31,6 +32,7 @@ const customerSchema = z.object({
   address: z.string().optional(),
   website: z.string().optional(),
   source: z.string().optional(),
+  assigned_to: z.string().optional(),
   status: z.enum(["lead", "prospect", "active", "inactive", "archived"]),
   pipeline_stage: z.enum([
     "lead",
@@ -54,6 +56,13 @@ interface CustomerFormProps {
 export function CustomerForm({ customer, mode }: CustomerFormProps) {
   const router = useRouter();
   const supabase = createClient();
+  const [salesUsers, setSalesUsers] = useState<{ id: string; fullname: string }[]>([]);
+
+  useEffect(() => {
+    supabase.from("profiles").select("id, fullname").order("fullname").then(({ data }) => {
+      setSalesUsers(data || []);
+    });
+  }, [supabase]);
 
   const {
     register,
@@ -74,6 +83,7 @@ export function CustomerForm({ customer, mode }: CustomerFormProps) {
       address: customer?.address || "",
       website: customer?.website || "",
       source: customer?.source || "",
+      assigned_to: customer?.assigned_to || "",
       status: customer?.status || "lead",
       pipeline_stage: customer?.pipeline_stage || "lead",
     },
@@ -173,6 +183,18 @@ export function CustomerForm({ customer, mode }: CustomerFormProps) {
           <div className="space-y-2">
             <Label htmlFor="source">Sumber Lead</Label>
             <Input id="source" {...register("source")} placeholder="Referral, Website, dll" />
+          </div>
+          <div className="space-y-2">
+            <Label>Assigned Sales</Label>
+            <Select value={watch("assigned_to")} onValueChange={(v) => setValue("assigned_to", v)}>
+              <SelectTrigger><SelectValue placeholder="Pilih sales" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">Belum ditentukan</SelectItem>
+                {salesUsers.map((u) => (
+                  <SelectItem key={u.id} value={u.id}>{u.fullname}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div className="space-y-2">
             <Label htmlFor="status">Status</Label>

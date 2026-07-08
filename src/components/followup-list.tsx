@@ -14,16 +14,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Loader2, CalendarCheck } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Card, CardContent } from "@/components/ui/card";
+import { Plus, Loader2, CalendarCheck, Pencil, Trash2 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 
 interface FollowUpItem {
   id: string;
-  title: string;
+  note: string;
   due_date: string;
   status: string;
-  note?: string;
   assigned_user?: { fullname: string } | null;
 }
 
@@ -41,85 +47,80 @@ export function FollowUpList({
   customerId: string;
 }) {
   const [open, setOpen] = useState(false);
-  const [title, setTitle] = useState("");
-  const [dueDate, setDueDate] = useState("");
+  const [editItem, setEditItem] = useState<FollowUpItem | null>(null);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
   const [note, setNote] = useState("");
+  const [dueDate, setDueDate] = useState("");
+  const [status, setStatus] = useState("pending");
   const [loading, setLoading] = useState(false);
   const supabase = createClient();
   const router = useRouter();
 
-  const handleAdd = async (e: React.FormEvent) => {
+  const openCreate = () => {
+    setEditItem(null);
+    setNote("");
+    setDueDate("");
+    setStatus("pending");
+    setOpen(true);
+  };
+
+  const openEdit = (fu: FollowUpItem) => {
+    setEditItem(fu);
+    setNote(fu.note || "");
+    setDueDate(fu.due_date?.split("T")[0] || "");
+    setStatus(fu.status);
+    setOpen(true);
+  };
+
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim() || !dueDate) return;
+    if (!dueDate) return;
     setLoading(true);
 
     const { data: { user } } = await supabase.auth.getUser();
 
-    await supabase.from("followups").insert({
-      customer_id: customerId,
-      assigned_to: user?.id || "",
-      title: title.trim(),
-      due_date: dueDate,
-      note: note.trim() || null,
-      status: "pending",
-    });
+    if (editItem) {
+      await supabase.from("followups").update({
+        note: note.trim(),
+        due_date: dueDate,
+        status,
+      }).eq("id", editItem.id);
+    } else {
+      await supabase.from("followups").insert({
+        customer_id: customerId,
+        assigned_to: user?.id || "",
+        note: note.trim(),
+        due_date: dueDate,
+        status: "pending",
+      });
+    }
 
-    setTitle("");
-    setDueDate("");
     setNote("");
+    setDueDate("");
+    setStatus("pending");
     setOpen(false);
     setLoading(false);
     router.refresh();
   };
 
-  const handleStatusChange = async (id: string, status: string) => {
-    await supabase.from("followups").update({ status }).eq("id", id);
+  const handleStatusChange = async (id: string, newStatus: string) => {
+    await supabase.from("followups").update({ status: newStatus }).eq("id", id);
+    router.refresh();
+  };
+
+  const handleDelete = async () => {
+    if (!deleteId) return;
+    await supabase.from("followups").delete().eq("id", deleteId);
+    setDeleteId(null);
     router.refresh();
   };
 
   return (
     <div className="space-y-4">
-      {!open ? (
-        <Button variant="outline" onClick={() => setOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" />
-          Tambah Follow-up
-        </Button>
-      ) : (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Jadwal Follow-up Baru</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleAdd} className="space-y-4">
-              <Input
-                placeholder="Judul follow-up"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-              />
-              <Input
-                type="date"
-                value={dueDate}
-                onChange={(e) => setDueDate(e.target.value)}
-              />
-              <Textarea
-                placeholder="Catatan (opsional)"
-                value={note}
-                onChange={(e) => setNote(e.target.value)}
-                rows={2}
-              />
-              <div className="flex gap-2">
-                <Button type="submit" disabled={loading || !title.trim() || !dueDate}>
-                  {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                  Simpan
-                </Button>
-                <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-                  Batal
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
-      )}
+      <Button variant="outline" onClick={openCreate}>
+        <Plus className="mr-2 h-4 w-4" />
+        Tambah Follow-up
+      </Button>
 
       {followups.length === 0 ? (
         <p className="text-center py-8 text-muted-foreground">Belum ada follow-up</p>
@@ -134,33 +135,30 @@ export function FollowUpList({
                     <div className="flex items-center gap-3">
                       <CalendarCheck className="h-4 w-4 text-muted-foreground" />
                       <div>
-                        <p className="font-medium text-sm">{fu.title}</p>
+                        <p className="font-medium text-sm">{fu.note || "Follow-up"}</p>
                         <p className="text-xs text-muted-foreground">
                           {formatDate(fu.due_date)}
                           {fu.assigned_user && ` - ${fu.assigned_user.fullname}`}
                         </p>
-                        {fu.note && (
-                          <p className="text-xs text-muted-foreground mt-1">{fu.note}</p>
-                        )}
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Badge variant={cfg.variant}>{cfg.label}</Badge>
-                      {fu.status === "pending" && (
-                        <Select
-                          value={fu.status}
-                          onValueChange={(v) => handleStatusChange(fu.id, v)}
-                        >
-                          <SelectTrigger className="w-[100px] h-8 text-xs">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="pending">Pending</SelectItem>
-                            <SelectItem value="done">Done</SelectItem>
-                            <SelectItem value="cancelled">Cancel</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      )}
+                      <Select value={fu.status} onValueChange={(v) => handleStatusChange(fu.id, v)}>
+                        <SelectTrigger className="w-[100px] h-8 text-xs">
+                          <Badge variant={cfg.variant}>{cfg.label}</Badge>
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="pending">Pending</SelectItem>
+                          <SelectItem value="done">Done</SelectItem>
+                          <SelectItem value="cancelled">Cancel</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(fu)}>
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => setDeleteId(fu.id)}>
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </div>
                   </div>
                 </CardContent>
@@ -169,6 +167,58 @@ export function FollowUpList({
           })}
         </div>
       )}
+
+      {/* Dialog Tambah/Edit */}
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{editItem ? "Edit Follow-up" : "Jadwal Follow-up Baru"}</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleSave} className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Tanggal Jatuh Tempo *</label>
+              <Input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} required />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Catatan</label>
+              <Textarea placeholder="Catatan follow-up" value={note} onChange={(e) => setNote(e.target.value)} rows={2} />
+            </div>
+            {editItem && (
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Status</label>
+                <Select value={status} onValueChange={setStatus}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="pending">Pending</SelectItem>
+                    <SelectItem value="done">Done</SelectItem>
+                    <SelectItem value="cancelled">Cancelled</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setOpen(false)}>Batal</Button>
+              <Button type="submit" disabled={loading || !dueDate}>
+                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Simpan
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog Hapus */}
+      <Dialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Hapus Follow-up?</DialogTitle>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteId(null)}>Batal</Button>
+            <Button variant="destructive" onClick={handleDelete}>Hapus</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
