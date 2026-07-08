@@ -28,7 +28,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, UserCog, Shield } from "lucide-react";
+import { Plus, UserCog, Shield, Pencil, Trash2, Loader2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface UserProfile {
   id: string;
@@ -53,6 +63,11 @@ export default function UsersPage() {
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("sales");
   const [inviteLoading, setInviteLoading] = useState(false);
+  const [editUser, setEditUser] = useState<UserProfile | null>(null);
+  const [editRole, setEditRole] = useState("");
+  const [editLoading, setEditLoading] = useState(false);
+  const [deleteUserId, setDeleteUserId] = useState<string | null>(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const supabase = createClient();
 
   const fetchUsers = useCallback(async () => {
@@ -92,6 +107,33 @@ export default function UsersPage() {
     setPassword("");
     setRole("sales");
     setInviteLoading(false);
+    fetchUsers();
+  };
+
+  const handleEditRole = async () => {
+    if (!editUser || !editRole) return;
+    setEditLoading(true);
+
+    await supabase
+      .from("profiles")
+      .update({ role: editRole })
+      .eq("id", editUser.id);
+
+    setEditUser(null);
+    setEditRole("");
+    setEditLoading(false);
+    fetchUsers();
+  };
+
+  const handleDeleteUser = async () => {
+    if (!deleteUserId) return;
+    setDeleteLoading(true);
+
+    // Delete profile
+    await supabase.from("profiles").delete().eq("id", deleteUserId);
+
+    setDeleteUserId(null);
+    setDeleteLoading(false);
     fetchUsers();
   };
 
@@ -135,7 +177,27 @@ export default function UsersPage() {
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <Button variant="ghost" size="sm" disabled>Edit</Button>
+                    <div className="flex gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() => {
+                          setEditUser(u);
+                          setEditRole(u.role);
+                        }}
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-destructive"
+                        onClick={() => setDeleteUserId(u.id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))
@@ -185,6 +247,65 @@ export default function UsersPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Edit Role Dialog */}
+      <Dialog open={!!editUser} onOpenChange={() => setEditUser(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <UserCog className="h-5 w-5" />
+              Edit Role User
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div>
+              <p className="text-sm text-muted-foreground">User</p>
+              <p className="font-medium">{editUser?.fullname} ({editUser?.email})</p>
+            </div>
+            <div className="space-y-2">
+              <Label>Role</Label>
+              <Select value={editRole} onValueChange={setEditRole}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="admin">Admin</SelectItem>
+                  <SelectItem value="manager">Manager</SelectItem>
+                  <SelectItem value="sales">Sales</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditUser(null)}>Batal</Button>
+            <Button onClick={handleEditRole} disabled={editLoading || !editRole}>
+              {editLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Simpan
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete User Dialog */}
+      <AlertDialog open={!!deleteUserId} onOpenChange={() => setDeleteUserId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Hapus User?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tindakan ini tidak dapat dibatalkan. User akan dihapus permanen dari sistem.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Batal</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteUser}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              disabled={deleteLoading}
+            >
+              {deleteLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Hapus
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

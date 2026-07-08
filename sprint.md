@@ -1081,3 +1081,96 @@ Sprint dinyatakan selesai jika:
 
 * Update `src/components/dashboard-charts.tsx` - tambah charts
 * Update `src/app/(dashboard)/dashboard/page.tsx` - tambah data
+
+---
+
+# Sprint 14 - User Management Pro
+
+**Sprint:** 14
+
+**Tanggal Mulai:** Rabu, 8 Juli 2026
+
+**Durasi:** 2 hari
+
+**Tujuan Sprint**
+
+Meng-enhance halaman User Management sehingga admin dapat mengedit role dan menghapus user.
+
+---
+
+# Sprint Goal
+
+Pada akhir sprint:
+
+* Admin dapat mengedit role user (admin/manager/sales).
+* Admin dapat menghapus user.
+* Dialog konfirmasi untuk hapus user.
+* Loading state untuk setiap aksi.
+
+---
+
+# Product Backlog yang Masuk Sprint
+
+## Epic - User Management
+
+### US-025
+
+Sebagai Admin, saya dapat mengedit role user.
+
+Acceptance Criteria:
+
+* Tombol Edit tersedia di tabel user.
+* Dialog edit role muncul.
+* Pilih role: admin, manager, sales.
+* Role tersimpan ke database.
+
+Story Point:
+
+3
+
+---
+
+### US-026
+
+Sebagai Admin, saya dapat menghapus user.
+
+Acceptance Criteria:
+
+* Tombol Hapus tersedia di tabel user.
+* Dialog konfirmasi muncul.
+* User terhapus dari profiles.
+* Loading state saat menghapus.
+
+Story Point:
+
+3
+
+---
+
+# Task Breakdown
+
+## Pages
+
+* Update `src/app/(dashboard)/users/page.tsx`:
+  * Tambah state edit & delete
+  * Tambah fungsi handleEditRole & handleDeleteUser
+  * Tambah tombol Edit & Hapus di tabel
+  * Tambah Edit Role Dialog
+  * Tambah Delete User AlertDialog
+
+---
+
+# Definition of Done
+
+Sprint dinyatakan selesai jika:
+
+* Edit role berfungsi.
+* Hapus user berfungsi.
+* Dialog konfirmasi berfungsi.
+* Tidak ada error kritis.
+
+---
+
+# Deliverables
+
+* Update `src/app/(dashboard)/users/page.tsx` - edit role & hapus user
