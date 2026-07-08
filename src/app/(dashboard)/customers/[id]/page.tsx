@@ -13,7 +13,7 @@ import { AddActivityForm } from "@/components/add-activity-form";
 import { FollowUpList } from "@/components/followup-list";
 
 const statusColors: Record<string, "default" | "secondary" | "success" | "warning" | "destructive"> = {
-  lead: "info",
+  lead: "secondary",
   prospect: "warning",
   active: "success",
   inactive: "secondary",

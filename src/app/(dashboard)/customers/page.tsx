@@ -36,7 +36,7 @@ import { Plus, Search, Edit, Trash2, Eye } from "lucide-react";
 import type { Customer } from "@/types/database";
 
 const statusColors: Record<string, "default" | "secondary" | "success" | "warning" | "destructive"> = {
-  lead: "info",
+  lead: "secondary",
   prospect: "warning",
   active: "success",
   inactive: "secondary",
