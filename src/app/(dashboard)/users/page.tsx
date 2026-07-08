@@ -38,7 +38,7 @@ interface UserProfile {
   created_at: string;
 }
 
-const roleColors: Record<string, "default" | "secondary" | "success" | "warning"> = {
+const roleColors: Record<string, "default" | "secondary" | "success" | "warning" | "destructive"> = {
   admin: "destructive",
   manager: "warning",
   sales: "default",
