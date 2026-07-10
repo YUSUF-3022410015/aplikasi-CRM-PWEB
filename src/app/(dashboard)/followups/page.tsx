@@ -256,7 +256,7 @@ export default function FollowUpsPage() {
             <div className="space-y-2">
               <Label>Customer *</Label>
               <Select value={form.customer_id} onValueChange={(v) => setForm({ ...form, customer_id: v })}>
-                <SelectTrigger><SelectValue placeholder="Pilih customer" /></SelectTrigger>
+                <SelectTrigger><SelectValue placeholder={t("customers.title")} /></SelectTrigger>
                 <SelectContent>
                   {customers.map((c) => (
                     <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>

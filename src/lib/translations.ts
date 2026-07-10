@@ -196,6 +196,8 @@ export const translations = {
     sales: { id: "Sales (Karyawan)", en: "Sales (Employee)" },
     noAccount: { id: "Belum punya akun?", en: "Don't have an account?" },
     hasAccount: { id: "Sudah punya akun?", en: "Already have an account?" },
+    passwordMismatch: { id: "Password tidak cocok", en: "Passwords do not match" },
+    passwordMinLength: { id: "Password minimal 6 karakter", en: "Password must be at least 6 characters" },
   },
   // Reports
   reports: {

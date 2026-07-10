@@ -71,7 +71,7 @@ export default function ProfilePage() {
 
   const handleChangePassword = async () => {
     if (!newPassword || newPassword.length < 6) {
-      setError("Password minimal 6 karakter");
+      setError(t("auth.passwordMinLength"));
       return;
     }
     setChangingPassword(true);
@@ -169,7 +169,7 @@ export default function ProfilePage() {
               type="password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              placeholder="Masukkan password baru"
+              placeholder={t("auth.password")}
             />
           </div>
           <Button onClick={handleChangePassword} disabled={changingPassword || !newPassword}>

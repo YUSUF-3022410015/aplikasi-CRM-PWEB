@@ -227,7 +227,7 @@ export default function UsersPage() {
             </div>
             <div className="space-y-2">
               <Label>{t("auth.password")}</Label>
-              <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Minimal 6 karakter" />
+              <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder={t("auth.password")} />
             </div>
             <div className="space-y-2">
               <Label>{t("auth.role")}</Label>

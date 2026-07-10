@@ -233,7 +233,7 @@ export default function QuotationsPage() {
             <div className="space-y-2">
               <Label>Customer</Label>
               <Select value={customerId} onValueChange={setCustomerId}>
-                <SelectTrigger><SelectValue placeholder="Pilih customer" /></SelectTrigger>
+                <SelectTrigger><SelectValue placeholder={t("customers.title")} /></SelectTrigger>
                 <SelectContent>
                   {customers.map((c) => (
                     <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>

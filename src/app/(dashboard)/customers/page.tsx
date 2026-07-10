@@ -165,10 +165,10 @@ export default function CustomersPage() {
           }}
         >
           <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Filter Status" />
+            <SelectValue placeholder={t("customers.filterStatus")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Semua Status</SelectItem>
+            <SelectItem value="all">{t("customers.allStatus")}</SelectItem>
             <SelectItem value="lead">Lead</SelectItem>
             <SelectItem value="prospect">Prospect</SelectItem>
             <SelectItem value="active">Active</SelectItem>

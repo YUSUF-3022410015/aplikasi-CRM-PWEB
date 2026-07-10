@@ -42,13 +42,13 @@ export default function SignupPage() {
     setError("");
 
     if (password !== confirmPassword) {
-      setError("Password tidak cocok");
+      setError(t("auth.passwordMismatch"));
       setLoading(false);
       return;
     }
 
     if (password.length < 6) {
-      setError("Password minimal 6 karakter");
+      setError(t("auth.passwordMinLength"));
       setLoading(false);
       return;
     }
