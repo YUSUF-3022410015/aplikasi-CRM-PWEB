@@ -11,6 +11,7 @@ import { Settings, Save, Loader2, Upload, Building, Globe, Mail } from "lucide-r
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useLanguage } from "@/components/language-provider";
 
 const settingKeys = [
   { key: "company_name", label: "Nama Perusahaan", placeholder: "PT. Nama Perusahaan" },
@@ -52,6 +53,7 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const supabase = createClient();
+  const { t } = useLanguage();
 
   const fetchSettings = useCallback(async () => {
     setLoading(true);
@@ -89,19 +91,19 @@ export default function SettingsPage() {
   };
 
   if (loading) {
-    return <div className="flex items-center justify-center h-64"><p className="text-muted-foreground">Memuat pengaturan...</p></div>;
+    return <div className="flex items-center justify-center h-64"><p className="text-muted-foreground">{t("common.loading")}</p></div>;
   }
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Settings</h1>
-          <p className="text-muted-foreground">Pengaturan aplikasi dan profil perusahaan</p>
+          <h1 className="text-2xl font-bold tracking-tight">{t("settings.title")}</h1>
+          <p className="text-muted-foreground">{t("settings.subtitle")}</p>
         </div>
         <Button onClick={handleSave} disabled={saving}>
           {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
-          Simpan
+          {t("common.save")}
         </Button>
       </div>
 
@@ -109,15 +111,15 @@ export default function SettingsPage() {
         <TabsList>
           <TabsTrigger value="company" className="flex items-center gap-2">
             <Building className="h-4 w-4" />
-            Company Profile
+            {t("settings.companyProfile")}
           </TabsTrigger>
           <TabsTrigger value="general" className="flex items-center gap-2">
             <Globe className="h-4 w-4" />
-            Pengaturan Umum
+            {t("settings.general")}
           </TabsTrigger>
           <TabsTrigger value="email" className="flex items-center gap-2">
             <Mail className="h-4 w-4" />
-            Email Template
+            {t("settings.emailTemplate")}
           </TabsTrigger>
         </TabsList>
 
@@ -126,14 +128,14 @@ export default function SettingsPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Building className="h-5 w-5" />
-                Company Profile
+                {t("settings.companyProfile")}
               </CardTitle>
-              <CardDescription>Informasi dasar perusahaan Anda</CardDescription>
+              <CardDescription>{t("settings.companyProfile")}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {/* Logo */}
               <div className="space-y-2">
-                <Label>Logo Perusahaan</Label>
+                <Label>{t("settings.logo")}</Label>
                 <div className="flex items-center gap-4">
                   {values.logo_url && (
                     <img
@@ -145,34 +147,42 @@ export default function SettingsPage() {
                   <Input
                     value={values.logo_url || ""}
                     onChange={(e) => setValues((prev) => ({ ...prev, logo_url: e.target.value }))}
-                    placeholder="URL logo perusahaan"
+                    placeholder="URL logo"
                   />
                 </div>
               </div>
 
               <div className="grid gap-4 md:grid-cols-2">
-                {settingKeys.slice(0, 4).map((s) => (
-                  <div key={s.key} className="space-y-2">
-                    <Label>{s.label}</Label>
-                    <Input
-                      value={values[s.key] || ""}
-                      onChange={(e) => setValues((prev) => ({ ...prev, [s.key]: e.target.value }))}
-                      placeholder={s.placeholder}
-                    />
-                  </div>
-                ))}
+                <div className="space-y-2">
+                  <Label>{t("settings.companyName")}</Label>
+                  <Input value={values.company_name || ""} onChange={(e) => setValues((prev) => ({ ...prev, company_name: e.target.value }))} placeholder="PT. Nama Perusahaan" />
+                </div>
+                <div className="space-y-2">
+                  <Label>{t("settings.companyEmail")}</Label>
+                  <Input value={values.company_email || ""} onChange={(e) => setValues((prev) => ({ ...prev, company_email: e.target.value }))} placeholder="info@perusahaan.com" />
+                </div>
+                <div className="space-y-2">
+                  <Label>{t("settings.companyPhone")}</Label>
+                  <Input value={values.company_phone || ""} onChange={(e) => setValues((prev) => ({ ...prev, company_phone: e.target.value }))} placeholder="021-xxxx" />
+                </div>
+                <div className="space-y-2">
+                  <Label>{t("settings.companyWebsite")}</Label>
+                  <Input value={values.company_website || ""} onChange={(e) => setValues((prev) => ({ ...prev, company_website: e.target.value }))} placeholder="https://perusahaan.com" />
+                </div>
               </div>
               <div className="grid gap-4 md:grid-cols-3">
-                {settingKeys.slice(4, 7).map((s) => (
-                  <div key={s.key} className="space-y-2">
-                    <Label>{s.label}</Label>
-                    <Input
-                      value={values[s.key] || ""}
-                      onChange={(e) => setValues((prev) => ({ ...prev, [s.key]: e.target.value }))}
-                      placeholder={s.placeholder}
-                    />
-                  </div>
-                ))}
+                <div className="space-y-2">
+                  <Label>{t("settings.companyAddress")}</Label>
+                  <Input value={values.company_address || ""} onChange={(e) => setValues((prev) => ({ ...prev, company_address: e.target.value }))} placeholder="Alamat lengkap" />
+                </div>
+                <div className="space-y-2">
+                  <Label>{t("settings.companyCity")}</Label>
+                  <Input value={values.company_city || ""} onChange={(e) => setValues((prev) => ({ ...prev, company_city: e.target.value }))} placeholder="Jakarta" />
+                </div>
+                <div className="space-y-2">
+                  <Label>{t("settings.companyCountry")}</Label>
+                  <Input value={values.company_country || ""} onChange={(e) => setValues((prev) => ({ ...prev, company_country: e.target.value }))} placeholder="Indonesia" />
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -183,20 +193,20 @@ export default function SettingsPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Globe className="h-5 w-5" />
-                Pengaturan Umum
+                {t("settings.general")}
               </CardTitle>
-              <CardDescription>Konfigurasi mata uang dan zona waktu</CardDescription>
+              <CardDescription>{t("settings.currency")} & {t("settings.timezone")}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label>Mata Uang</Label>
+                  <Label>{t("settings.currency")}</Label>
                   <Select
                     value={values.currency || "IDR"}
                     onValueChange={(v) => setValues((prev) => ({ ...prev, currency: v }))}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Pilih mata uang" />
+                      <SelectValue placeholder="IDR" />
                     </SelectTrigger>
                     <SelectContent>
                       {currencies.map((c) => (
@@ -208,13 +218,13 @@ export default function SettingsPage() {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label>Timezone</Label>
+                  <Label>{t("settings.timezone")}</Label>
                   <Select
                     value={values.timezone || "Asia/Jakarta"}
                     onValueChange={(v) => setValues((prev) => ({ ...prev, timezone: v }))}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Pilih timezone" />
+                      <SelectValue placeholder="Asia/Jakarta" />
                     </SelectTrigger>
                     <SelectContent>
                       {timezones.map((tz) => (
@@ -235,9 +245,9 @@ export default function SettingsPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Mail className="h-5 w-5" />
-                Email Template
+                {t("settings.emailTemplate")}
               </CardTitle>
-              <CardDescription>Template email untuk quotation dan follow-up</CardDescription>
+              <CardDescription>{t("settings.emailTemplate")}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {emailTemplateKeys.map((s) => (
@@ -258,7 +268,7 @@ export default function SettingsPage() {
                     />
                   )}
                   <p className="text-xs text-muted-foreground">
-                    Gunakan {"{customer}"}, {"{number}"}, {"{total}"} sebagai variabel
+                    {"{customer}"}, {"{number}"}, {"{total}"}
                   </p>
                 </div>
               ))}
