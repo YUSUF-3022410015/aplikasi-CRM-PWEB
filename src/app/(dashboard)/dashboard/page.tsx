@@ -108,7 +108,7 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Page Header */}
       <div>
         <h1 className="text-2xl font-bold text-foreground md:text-3xl">{t("dashboard.title")}</h1>
