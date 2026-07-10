@@ -155,7 +155,7 @@ export default function SettingsPage() {
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label>{t("settings.companyName")}</Label>
-                  <Input value={values.company_name || ""} onChange={(e) => setValues((prev) => ({ ...prev, company_name: e.target.value }))} placeholder="PT. Nama Perusahaan" />
+                  <Input value={values.company_name || ""} onChange={(e) => setValues((prev) => ({ ...prev, company_name: e.target.value }))} placeholder={t("settings.companyName")} />
                 </div>
                 <div className="space-y-2">
                   <Label>{t("settings.companyEmail")}</Label>
@@ -173,15 +173,15 @@ export default function SettingsPage() {
               <div className="grid gap-4 md:grid-cols-3">
                 <div className="space-y-2">
                   <Label>{t("settings.companyAddress")}</Label>
-                  <Input value={values.company_address || ""} onChange={(e) => setValues((prev) => ({ ...prev, company_address: e.target.value }))} placeholder="Alamat lengkap" />
+                  <Input value={values.company_address || ""} onChange={(e) => setValues((prev) => ({ ...prev, company_address: e.target.value }))} placeholder={t("settings.companyAddress")} />
                 </div>
                 <div className="space-y-2">
                   <Label>{t("settings.companyCity")}</Label>
-                  <Input value={values.company_city || ""} onChange={(e) => setValues((prev) => ({ ...prev, company_city: e.target.value }))} placeholder="Jakarta" />
+                  <Input value={values.company_city || ""} onChange={(e) => setValues((prev) => ({ ...prev, company_city: e.target.value }))} placeholder={t("settings.companyCity")} />
                 </div>
                 <div className="space-y-2">
                   <Label>{t("settings.companyCountry")}</Label>
-                  <Input value={values.company_country || ""} onChange={(e) => setValues((prev) => ({ ...prev, company_country: e.target.value }))} placeholder="Indonesia" />
+                  <Input value={values.company_country || ""} onChange={(e) => setValues((prev) => ({ ...prev, company_country: e.target.value }))} placeholder={t("settings.companyCountry")} />
                 </div>
               </div>
             </CardContent>
