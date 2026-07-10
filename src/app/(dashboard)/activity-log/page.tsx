@@ -59,7 +59,7 @@ export default function ActivityLogPage() {
           return {
             id: a.id,
             type: a.type,
-            description: `${a.note || t("activityLog.title")} - ${cust?.name || "Customer"}`,
+            description: `${a.note || t("activityLog.title")} - ${cust?.name || t("customers.title")}`,
             module: "customer",
             user: usr?.fullname || "",
             created_at: a.created_at,
@@ -80,7 +80,7 @@ export default function ActivityLogPage() {
           return {
             id: `fu-${f.id}`,
             type: "followup_created",
-            description: `Follow-up ${cust?.name || "Customer"} - ${f.status} - Jatuh tempo: ${new Date(f.due_date).toLocaleDateString("id-ID")}`,
+            description: `Follow-up ${cust?.name || t("customers.title")} - ${f.status} - ${new Date(f.due_date).toLocaleDateString("id-ID")}`,
             module: "followup",
             user: "",
             created_at: f.created_at,

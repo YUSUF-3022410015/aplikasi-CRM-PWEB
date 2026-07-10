@@ -159,11 +159,11 @@ export default function ProductsPage() {
             </div>
             <div className="space-y-2">
               <Label>{t("products.name")}</Label>
-              <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Nama produk" />
+              <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder={t("customers.name")} />
             </div>
             <div className="space-y-2">
               <Label>{t("products.category")}</Label>
-              <Input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} placeholder="Kategori" />
+              <Input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} placeholder={t("products.category")} />
             </div>
             <div className="space-y-2">
               <Label>{t("products.price")} (IDR)</Label>
@@ -178,8 +178,8 @@ export default function ProductsPage() {
               <Select value={form.status} onValueChange={(v) => setForm({ ...form, status: v as "active" | "inactive" })}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="inactive">Inactive</SelectItem>
+                  <SelectItem value="active">{t("common.active")}</SelectItem>
+                  <SelectItem value="inactive">{t("common.inactive")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>

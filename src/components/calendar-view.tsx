@@ -28,26 +28,23 @@ interface CalendarViewProps {
   onFollowUpClick?: (followUp: FollowUpItem) => void;
 }
 
-const statusConfig: Record<string, { label: string; color: string }> = {
-  pending: { label: "Pending", color: "bg-orange-100 text-orange-700 border-orange-300" },
-  done: { label: "Done", color: "bg-green-100 text-green-700 border-green-300" },
-  cancelled: { label: "Cancelled", color: "bg-gray-100 text-gray-700 border-gray-300" },
-};
-
-const daysInWeek = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
-const months = [
-  "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-  "Juli", "Agustus", "September", "Oktober", "November", "Desember"
-];
-
 export function CalendarView({ followUps, onDateClick, onFollowUpClick }: CalendarViewProps) {
   const { t } = useLanguage();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [showDetail, setShowDetail] = useState(false);
 
-  const year = currentDate.getFullYear();
-  const month = currentDate.getMonth();
+  const statusConfig: Record<string, { label: string; color: string }> = {
+    pending: { label: t("followups.pending"), color: "bg-orange-100 text-orange-700 border-orange-300" },
+    done: { label: t("followups.done"), color: "bg-green-100 text-green-700 border-green-300" },
+    cancelled: { label: t("followups.cancelled"), color: "bg-gray-100 text-gray-700 border-gray-300" },
+  };
+
+  const daysInWeek = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
+  const months = [
+    "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+    "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+  ];
 
   // Get days in month
   const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -194,7 +191,7 @@ export function CalendarView({ followUps, onDateClick, onFollowUpClick }: Calend
                           handleFollowUpClick(fu);
                         }}
                       >
-                        {fu.customer?.name || "Follow-up"}
+                        {fu.customer?.name || t("common.followUp")}
                       </div>
                     );
                   })}
@@ -248,7 +245,7 @@ export function CalendarView({ followUps, onDateClick, onFollowUpClick }: Calend
                   >
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="font-medium">{fu.customer?.name || "Follow-up"}</p>
+                        <p className="font-medium">{fu.customer?.name || t("common.followUp")}</p>
                         <p className="text-sm text-muted-foreground">{fu.note || t("common.noData")}</p>
                       </div>
                       <Badge variant="outline" className={config.color}>

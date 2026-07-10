@@ -14,22 +14,22 @@ interface Customer {
   pipeline_stage: string;
 }
 
-const stages = [
-  { key: "lead", label: "Lead", color: "bg-slate-100 border-slate-300" },
-  { key: "qualified", label: "Qualified", color: "bg-blue-50 border-blue-300" },
-  { key: "contacted", label: "Contacted", color: "bg-cyan-50 border-cyan-300" },
-  { key: "meeting", label: "Meeting", color: "bg-yellow-50 border-yellow-300" },
-  { key: "proposal", label: "Proposal", color: "bg-orange-50 border-orange-300" },
-  { key: "negotiation", label: "Negotiation", color: "bg-purple-50 border-purple-300" },
-  { key: "won", label: "Won", color: "bg-green-50 border-green-300" },
-  { key: "lost", label: "Lost", color: "bg-red-50 border-red-300" },
-];
-
 export default function PipelinePage() {
   const { t } = useLanguage();
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [loading, setLoading] = useState(true);
   const supabase = createClient();
+
+  const stages = [
+    { key: "lead", label: t("pipeline.lead"), color: "bg-slate-100 border-slate-300" },
+    { key: "qualified", label: t("pipeline.qualified"), color: "bg-blue-50 border-blue-300" },
+    { key: "contacted", label: t("pipeline.contacted"), color: "bg-cyan-50 border-cyan-300" },
+    { key: "meeting", label: t("pipeline.meeting"), color: "bg-yellow-50 border-yellow-300" },
+    { key: "proposal", label: t("pipeline.proposal"), color: "bg-orange-50 border-orange-300" },
+    { key: "negotiation", label: t("pipeline.negotiation"), color: "bg-purple-50 border-purple-300" },
+    { key: "won", label: t("pipeline.won"), color: "bg-green-50 border-green-300" },
+    { key: "lost", label: t("pipeline.lost"), color: "bg-red-50 border-red-300" },
+  ];
 
   const fetchData = useCallback(async () => {
     setLoading(true);

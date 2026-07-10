@@ -15,6 +15,7 @@ import {
 import { Bell, Check, CheckCheck } from "lucide-react";
 import { formatDateTime } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import { useLanguage } from "@/components/language-provider";
 
 interface NotificationItem {
   id: string;
@@ -35,6 +36,7 @@ const typeIcons: Record<string, string> = {
 };
 
 export function NotificationBell({ userId }: { userId: string }) {
+  const { t } = useLanguage();
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [open, setOpen] = useState(false);
@@ -112,7 +114,7 @@ export function NotificationBell({ userId }: { userId: string }) {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-80" align="end">
         <DropdownMenuLabel className="flex items-center justify-between">
-          <span>Notifikasi</span>
+          <span>{t("notification.title")}</span>
           {unreadCount > 0 && (
             <Button
               variant="ghost"
@@ -121,14 +123,14 @@ export function NotificationBell({ userId }: { userId: string }) {
               onClick={markAllAsRead}
             >
               <CheckCheck className="mr-1 h-3 w-3" />
-              Tandai semua dibaca
+              {t("notification.markAllRead")}
             </Button>
           )}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         {notifications.length === 0 ? (
           <div className="py-6 text-center text-sm text-muted-foreground">
-            Tidak ada notifikasi
+            {t("notification.empty")}
           </div>
         ) : (
           notifications.map((notification) => (

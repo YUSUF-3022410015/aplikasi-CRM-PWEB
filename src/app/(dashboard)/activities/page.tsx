@@ -25,22 +25,22 @@ interface Activity {
   user?: { fullname: string } | null;
 }
 
-const typeConfig: Record<string, { icon: typeof Phone; label: string; variant: "default" | "secondary" | "success" | "warning" | "destructive" }> = {
-  call: { icon: Phone, label: "Call", variant: "secondary" },
-  whatsapp: { icon: MessageSquare, label: "WhatsApp", variant: "success" },
-  email: { icon: Mail, label: "Email", variant: "default" },
-  meeting: { icon: Monitor, label: "Meeting", variant: "warning" },
-  visit: { icon: MapPin, label: "Visit", variant: "secondary" },
-  demo: { icon: Presentation, label: "Demo", variant: "default" },
-  proposal: { icon: FileText, label: "Proposal", variant: "default" },
-  closing: { icon: CheckCircle, label: "Closing", variant: "success" },
-};
-
 export default function ActivitiesPage() {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(true);
   const supabase = createClient();
   const { t } = useLanguage();
+
+  const typeConfig: Record<string, { icon: typeof Phone; label: string; variant: "default" | "secondary" | "success" | "warning" | "destructive" }> = {
+    call: { icon: Phone, label: t("activities.call"), variant: "secondary" },
+    whatsapp: { icon: MessageSquare, label: t("activities.whatsapp"), variant: "success" },
+    email: { icon: Mail, label: t("activities.email"), variant: "default" },
+    meeting: { icon: Monitor, label: t("activities.meeting"), variant: "warning" },
+    visit: { icon: MapPin, label: t("activities.visit"), variant: "secondary" },
+    demo: { icon: Presentation, label: t("activities.demo"), variant: "default" },
+    proposal: { icon: FileText, label: t("activities.proposal"), variant: "default" },
+    closing: { icon: CheckCircle, label: t("activities.closing"), variant: "success" },
+  };
 
   const fetchActivities = useCallback(async () => {
     setLoading(true);
@@ -61,7 +61,7 @@ export default function ActivitiesPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">{t("activities.title")}</h1>
-        <p className="text-muted-foreground">Riwayat semua aktivitas komunikasi</p>
+        <p className="text-muted-foreground">{t("activities.history")}</p>
       </div>
 
       <Card>

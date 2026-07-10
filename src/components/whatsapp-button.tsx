@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/select";
 import { MessageSquare, Loader2 } from "lucide-react";
 import { sendWhatsAppMessage, messageTemplates } from "@/lib/whatsapp";
+import { useLanguage } from "@/components/language-provider";
 
 interface WhatsAppButtonProps {
   phone: string;
@@ -29,14 +30,6 @@ interface WhatsAppButtonProps {
   onSend?: (message: string) => void;
 }
 
-const templates = [
-  { value: "custom", label: "Pesan Custom" },
-  { value: "greeting", label: "Sapaan" },
-  { value: "followUp", label: "Follow-up" },
-  { value: "quotation", label: "Quotation" },
-  { value: "reminder", label: "Pengingat" },
-];
-
 export function WhatsAppButton({
   phone,
   customerName,
@@ -44,10 +37,19 @@ export function WhatsAppButton({
   quotationTotal,
   onSend,
 }: WhatsAppButtonProps) {
+  const { t } = useLanguage();
   const [open, setOpen] = useState(false);
   const [template, setTemplate] = useState("custom");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const templates = [
+    { value: "custom", label: t("whatsapp.customMessage") },
+    { value: "greeting", label: t("whatsapp.greeting") },
+    { value: "followUp", label: t("whatsapp.followUp") },
+    { value: "quotation", label: t("whatsapp.quotation") },
+    { value: "reminder", label: t("whatsapp.reminder") },
+  ];
 
   const handleTemplateChange = (value: string) => {
     setTemplate(value);
@@ -56,7 +58,7 @@ export function WhatsAppButton({
         setMessage(messageTemplates.greeting(customerName));
         break;
       case "followUp":
-        setMessage(messageTemplates.followUp(customerName, "Mohon update terkait progres yang sedang berjalan."));
+        setMessage(messageTemplates.followUp(customerName, ""));
         break;
       case "quotation":
         if (quotationNumber && quotationTotal) {
@@ -106,24 +108,24 @@ export function WhatsAppButton({
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <MessageSquare className="h-5 w-5 text-green-600" />
-              Kirim WhatsApp
+              {t("whatsapp.sendWhatsApp")}
             </DialogTitle>
             <DialogDescription>
-              Kirim pesan ke {customerName} ({phone})
+              {t("whatsapp.sendMessageTo")} {customerName} ({phone})
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Template</label>
+              <label className="text-sm font-medium">{t("whatsapp.template")}</label>
               <Select value={template} onValueChange={handleTemplateChange}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Pilih template" />
+                  <SelectValue placeholder={t("whatsapp.selectTemplate")} />
                 </SelectTrigger>
                 <SelectContent>
-                  {templates.map((t) => (
-                    <SelectItem key={t.value} value={t.value}>
-                      {t.label}
+                  {templates.map((tp) => (
+                    <SelectItem key={tp.value} value={tp.value}>
+                      {tp.label}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -131,22 +133,22 @@ export function WhatsAppButton({
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium">Pesan</label>
+              <label className="text-sm font-medium">{t("whatsapp.message")}</label>
               <Textarea
-                placeholder="Tulis pesan Anda..."
+                placeholder={t("whatsapp.writeMessage")}
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 rows={6}
               />
               <p className="text-xs text-muted-foreground">
-                {message.length} karakter
+                {message.length} {t("common.characters")}
               </p>
             </div>
           </div>
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setOpen(false)}>
-              Batal
+              {t("common.cancel")}
             </Button>
             <Button
               onClick={handleSend}
@@ -158,7 +160,7 @@ export function WhatsAppButton({
               ) : (
                 <MessageSquare className="mr-2 h-4 w-4" />
               )}
-              Kirim
+              {t("common.send")}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -127,10 +127,10 @@ export default function QuotationsPage() {
       // Create notification for new quotation
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        const customerName = customers.find((c) => c.id === customerId)?.name || "Customer";
+        const customerName = customers.find((c) => c.id === customerId)?.name || t("customers.title");
         await supabase.from("notifications").insert({
           user_id: user.id,
-          title: "Quotation Baru",
+          title: t("quotations.newQuotationNotif"),
           message: `Quotation ${qNumber} untuk ${customerName} telah dibuat`,
           type: "quotation_sent",
           link: "/quotations",
@@ -153,9 +153,9 @@ export default function QuotationsPage() {
   const handleSendEmail = async (quotationId: string) => {
     const result = await sendQuotationEmailAction(quotationId);
     if (result.success) {
-      alert("Email berhasil dikirim!");
+      alert(t("quotations.emailSent"));
     } else {
-      alert(`Gagal mengirim email: ${result.error}`);
+      alert(`${t("quotations.emailFailed")}: ${result.error}`);
     }
   };
 
@@ -227,11 +227,11 @@ export default function QuotationsPage() {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Buat Quotation Baru</DialogTitle>
+            <DialogTitle>{t("quotations.newQuotation")}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label>Customer</Label>
+              <Label>{t("quotations.customer")}</Label>
               <Select value={customerId} onValueChange={setCustomerId}>
                 <SelectTrigger><SelectValue placeholder={t("customers.title")} /></SelectTrigger>
                 <SelectContent>
@@ -243,16 +243,16 @@ export default function QuotationsPage() {
             </div>
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label>Items</Label>
+                <Label>{t("quotations.items")}</Label>
                 <Button type="button" variant="outline" size="sm" onClick={addItem}>
-                  <Plus className="mr-1 h-3 w-3" /> Tambah Item
+                  <Plus className="mr-1 h-3 w-3" /> {t("quotations.addItem")}
                 </Button>
               </div>
               {items.map((item, i) => (
                 <div key={i} className="flex gap-2 items-end">
                   <div className="flex-1">
                     <Select value={item.product_id} onValueChange={(v) => updateItem(i, "product_id", v)}>
-                      <SelectTrigger><SelectValue placeholder="Produk" /></SelectTrigger>
+                      <SelectTrigger><SelectValue placeholder={t("quotations.product")} /></SelectTrigger>
                       <SelectContent>
                         {products.map((p) => (
                           <SelectItem key={p.id} value={p.id}>{p.name} - {formatCurrency(p.price)}</SelectItem>
@@ -283,22 +283,22 @@ export default function QuotationsPage() {
             </div>
             <div className="grid grid-cols-3 gap-4">
               <div className="space-y-2">
-                <Label>Diskon (IDR)</Label>
+                <Label>{t("quotations.discount")} (IDR)</Label>
                 <Input type="number" value={discount} onChange={(e) => setDiscount(Number(e.target.value))} />
               </div>
               <div className="space-y-2">
-                <Label>Pajak (%)</Label>
+                <Label>{t("quotations.tax")} (%)</Label>
                 <Input type="number" value={taxRate} onChange={(e) => setTaxRate(Number(e.target.value))} />
               </div>
               <div className="space-y-2">
-                <Label>Total</Label>
+                <Label>{t("quotations.total")}</Label>
                 <div className="h-9 flex items-center font-bold text-lg">{formatCurrency(total)}</div>
               </div>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)}>Batal</Button>
-            <Button onClick={handleSave} disabled={!customerId}>Simpan</Button>
+            <Button variant="outline" onClick={() => setDialogOpen(false)}>{t("common.cancel")}</Button>
+            <Button onClick={handleSave} disabled={!customerId}>{t("common.save")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -315,16 +315,16 @@ export default function QuotationsPage() {
           {selectedQuotation && (
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4 text-sm">
-                <div><span className="text-muted-foreground">Customer:</span> {(selectedQuotation.customer as { name: string })?.name}</div>
-                <div><span className="text-muted-foreground">Status:</span> <Badge variant={statusColors[selectedQuotation.status]}>{selectedQuotation.status}</Badge></div>
+                <div><span className="text-muted-foreground">{t("quotations.customer")}:</span> {(selectedQuotation.customer as { name: string })?.name}</div>
+                <div><span className="text-muted-foreground">{t("customers.status")}:</span> <Badge variant={statusColors[selectedQuotation.status]}>{selectedQuotation.status}</Badge></div>
               </div>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Produk</TableHead>
-                    <TableHead>Qty</TableHead>
-                    <TableHead>Harga</TableHead>
-                    <TableHead>Subtotal</TableHead>
+                    <TableHead>{t("quotations.product")}</TableHead>
+                    <TableHead>{t("quotations.qty")}</TableHead>
+                    <TableHead>{t("quotations.price")}</TableHead>
+                    <TableHead>{t("quotations.subtotal")}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -339,10 +339,10 @@ export default function QuotationsPage() {
                 </TableBody>
               </Table>
               <div className="text-right space-y-1 text-sm">
-                <p>Subtotal: {formatCurrency(selectedQuotation.subtotal)}</p>
-                <p>Tax: {formatCurrency(selectedQuotation.tax)}</p>
-                <p>Diskon: -{formatCurrency(selectedQuotation.discount)}</p>
-                <p className="text-lg font-bold">Total: {formatCurrency(selectedQuotation.total)}</p>
+                <p>{t("quotations.subtotal")}: {formatCurrency(selectedQuotation.subtotal)}</p>
+                <p>{t("quotations.tax")}: {formatCurrency(selectedQuotation.tax)}</p>
+                <p>{t("quotations.discount")}: -{formatCurrency(selectedQuotation.discount)}</p>
+                <p className="text-lg font-bold">{t("quotations.total")}: {formatCurrency(selectedQuotation.total)}</p>
               </div>
               {/* Printable version - only shows when printing */}
               <QuotationPrint quotation={selectedQuotation} />

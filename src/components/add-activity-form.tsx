@@ -14,25 +14,27 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus, Loader2 } from "lucide-react";
-
-const activityTypes = [
-  { value: "call", label: "Call" },
-  { value: "whatsapp", label: "WhatsApp" },
-  { value: "email", label: "Email" },
-  { value: "meeting", label: "Meeting" },
-  { value: "visit", label: "Visit" },
-  { value: "demo", label: "Demo" },
-  { value: "proposal", label: "Proposal" },
-  { value: "closing", label: "Closing" },
-];
+import { useLanguage } from "@/components/language-provider";
 
 export function AddActivityForm({ customerId }: { customerId: string }) {
+  const { t } = useLanguage();
   const [type, setType] = useState("call");
   const [note, setNote] = useState("");
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const supabase = createClient();
   const router = useRouter();
+
+  const activityTypes = [
+    { value: "call", label: t("activities.call") },
+    { value: "whatsapp", label: t("activities.whatsapp") },
+    { value: "email", label: t("activities.email") },
+    { value: "meeting", label: t("activities.meeting") },
+    { value: "visit", label: t("activities.visit") },
+    { value: "demo", label: t("activities.demo") },
+    { value: "proposal", label: t("activities.proposal") },
+    { value: "closing", label: t("activities.closing") },
+  ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,7 +61,7 @@ export function AddActivityForm({ customerId }: { customerId: string }) {
     return (
       <Button variant="outline" onClick={() => setOpen(true)}>
         <Plus className="mr-2 h-4 w-4" />
-        Tambah Aktivitas
+        {t("activities.addActivity")}
       </Button>
     );
   }
@@ -67,7 +69,7 @@ export function AddActivityForm({ customerId }: { customerId: string }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Tambah Aktivitas Baru</CardTitle>
+        <CardTitle className="text-base">{t("activities.addNew")}</CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -77,16 +79,16 @@ export function AddActivityForm({ customerId }: { customerId: string }) {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {activityTypes.map((t) => (
-                  <SelectItem key={t.value} value={t.value}>
-                    {t.label}
+                {activityTypes.map((at) => (
+                  <SelectItem key={at.value} value={at.value}>
+                    {at.label}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
           <Textarea
-            placeholder="Catatan aktivitas..."
+            placeholder={t("activities.notePlaceholder")}
             value={note}
             onChange={(e) => setNote(e.target.value)}
             rows={3}
@@ -94,10 +96,10 @@ export function AddActivityForm({ customerId }: { customerId: string }) {
           <div className="flex gap-2">
             <Button type="submit" disabled={loading || !note.trim()}>
               {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-              Simpan
+              {t("common.save")}
             </Button>
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-              Batal
+              {t("common.cancel")}
             </Button>
           </div>
         </form>

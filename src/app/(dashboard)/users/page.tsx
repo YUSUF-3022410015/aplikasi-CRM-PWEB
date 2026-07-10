@@ -219,11 +219,11 @@ export default function UsersPage() {
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label>{t("auth.fullname")}</Label>
-              <Input value={fullname} onChange={(e) => setFullname(e.target.value)} placeholder="Nama lengkap" />
+              <Input value={fullname} onChange={(e) => setFullname(e.target.value)} placeholder={t("profile.fullNamePlaceholder")} />
             </div>
             <div className="space-y-2">
               <Label>{t("auth.email")}</Label>
-              <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="email@perusahaan.com" />
+              <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t("customers.emailPlaceholder")} />
             </div>
             <div className="space-y-2">
               <Label>{t("auth.password")}</Label>

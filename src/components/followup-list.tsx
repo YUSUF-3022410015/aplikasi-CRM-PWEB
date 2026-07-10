@@ -24,6 +24,7 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Plus, Loader2, CalendarCheck, Pencil, Trash2 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
+import { useLanguage } from "@/components/language-provider";
 
 interface FollowUpItem {
   id: string;
@@ -33,12 +34,6 @@ interface FollowUpItem {
   assigned_user?: { fullname: string } | null;
 }
 
-const statusConfig: Record<string, { label: string; variant: "default" | "success" | "destructive" | "secondary" }> = {
-  pending: { label: "Pending", variant: "default" },
-  done: { label: "Done", variant: "success" },
-  cancelled: { label: "Cancelled", variant: "secondary" },
-};
-
 export function FollowUpList({
   followups,
   customerId,
@@ -46,6 +41,7 @@ export function FollowUpList({
   followups: FollowUpItem[];
   customerId: string;
 }) {
+  const { t } = useLanguage();
   const [open, setOpen] = useState(false);
   const [editItem, setEditItem] = useState<FollowUpItem | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
@@ -55,6 +51,12 @@ export function FollowUpList({
   const [loading, setLoading] = useState(false);
   const supabase = createClient();
   const router = useRouter();
+
+  const statusConfig: Record<string, { label: string; variant: "default" | "success" | "destructive" | "secondary" }> = {
+    pending: { label: t("followups.pending"), variant: "default" },
+    done: { label: t("followups.done"), variant: "success" },
+    cancelled: { label: t("followups.cancelled"), variant: "secondary" },
+  };
 
   const openCreate = () => {
     setEditItem(null);
@@ -119,11 +121,11 @@ export function FollowUpList({
     <div className="space-y-4">
       <Button variant="outline" onClick={openCreate}>
         <Plus className="mr-2 h-4 w-4" />
-        Tambah Follow-up
+        {t("followups.addFollowup")}
       </Button>
 
       {followups.length === 0 ? (
-        <p className="text-center py-8 text-muted-foreground">Belum ada follow-up</p>
+        <p className="text-center py-8 text-muted-foreground">{t("common.noFollowups")}</p>
       ) : (
         <div className="space-y-3">
           {followups.map((fu) => {
@@ -135,7 +137,7 @@ export function FollowUpList({
                     <div className="flex items-center gap-3">
                       <CalendarCheck className="h-4 w-4 text-muted-foreground" />
                       <div>
-                        <p className="font-medium text-sm">{fu.note || "Follow-up"}</p>
+                        <p className="font-medium text-sm">{fu.note || t("common.followUp")}</p>
                         <p className="text-xs text-muted-foreground">
                           {formatDate(fu.due_date)}
                           {fu.assigned_user && ` - ${fu.assigned_user.fullname}`}
@@ -148,9 +150,9 @@ export function FollowUpList({
                           <Badge variant={cfg.variant}>{cfg.label}</Badge>
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="pending">Pending</SelectItem>
-                          <SelectItem value="done">Done</SelectItem>
-                          <SelectItem value="cancelled">Cancel</SelectItem>
+                          <SelectItem value="pending">{t("followups.pending")}</SelectItem>
+                          <SelectItem value="done">{t("followups.done")}</SelectItem>
+                          <SelectItem value="cancelled">{t("followups.cancelled")}</SelectItem>
                         </SelectContent>
                       </Select>
                       <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(fu)}>
@@ -172,35 +174,35 @@ export function FollowUpList({
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{editItem ? "Edit Follow-up" : "Jadwal Follow-up Baru"}</DialogTitle>
+            <DialogTitle>{editItem ? t("followups.editFollowup") : t("followups.newFollowup")}</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSave} className="space-y-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Tanggal Jatuh Tempo *</label>
+              <label className="text-sm font-medium">{t("followups.dueDate")} *</label>
               <Input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} required />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium">Catatan</label>
-              <Textarea placeholder="Catatan follow-up" value={note} onChange={(e) => setNote(e.target.value)} rows={2} />
+              <label className="text-sm font-medium">{t("followups.note")}</label>
+              <Textarea placeholder={t("followups.notePlaceholder")} value={note} onChange={(e) => setNote(e.target.value)} rows={2} />
             </div>
             {editItem && (
               <div className="space-y-2">
-                <label className="text-sm font-medium">Status</label>
+                <label className="text-sm font-medium">{t("followups.status")}</label>
                 <Select value={status} onValueChange={setStatus}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="pending">Pending</SelectItem>
-                    <SelectItem value="done">Done</SelectItem>
-                    <SelectItem value="cancelled">Cancelled</SelectItem>
+                    <SelectItem value="pending">{t("followups.pending")}</SelectItem>
+                    <SelectItem value="done">{t("followups.done")}</SelectItem>
+                    <SelectItem value="cancelled">{t("followups.cancelled")}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             )}
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setOpen(false)}>Batal</Button>
+              <Button type="button" variant="outline" onClick={() => setOpen(false)}>{t("common.cancel")}</Button>
               <Button type="submit" disabled={loading || !dueDate}>
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Simpan
+                {t("common.save")}
               </Button>
             </DialogFooter>
           </form>
@@ -211,11 +213,11 @@ export function FollowUpList({
       <Dialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Hapus Follow-up?</DialogTitle>
+            <DialogTitle>{t("followups.deleteTitle")}</DialogTitle>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleteId(null)}>Batal</Button>
-            <Button variant="destructive" onClick={handleDelete}>Hapus</Button>
+            <Button variant="outline" onClick={() => setDeleteId(null)}>{t("common.cancel")}</Button>
+            <Button variant="destructive" onClick={handleDelete}>{t("common.delete")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

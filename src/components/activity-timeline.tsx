@@ -4,6 +4,7 @@ import { formatDateTime } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Phone, MessageSquare, Mail, MapPin, Monitor, Presentation, FileText, CheckCircle } from "lucide-react";
+import { useLanguage } from "@/components/language-provider";
 
 interface ActivityItem {
   id: string;
@@ -13,21 +14,23 @@ interface ActivityItem {
   user?: { fullname: string } | null;
 }
 
-const typeConfig: Record<string, { icon: typeof Phone; label: string; color: string }> = {
-  call: { icon: Phone, label: "Call", color: "bg-blue-100 text-blue-700" },
-  whatsapp: { icon: MessageSquare, label: "WhatsApp", color: "bg-green-100 text-green-700" },
-  email: { icon: Mail, label: "Email", color: "bg-purple-100 text-purple-700" },
-  meeting: { icon: Monitor, label: "Meeting", color: "bg-orange-100 text-orange-700" },
-  visit: { icon: MapPin, label: "Visit", color: "bg-yellow-100 text-yellow-700" },
-  demo: { icon: Presentation, label: "Demo", color: "bg-cyan-100 text-cyan-700" },
-  proposal: { icon: FileText, label: "Proposal", color: "bg-indigo-100 text-indigo-700" },
-  closing: { icon: CheckCircle, label: "Closing", color: "bg-emerald-100 text-emerald-700" },
-};
-
 export function ActivityTimeline({ activities }: { activities: ActivityItem[] }) {
+  const { t } = useLanguage();
+
+  const typeConfig: Record<string, { icon: typeof Phone; label: string; color: string }> = {
+    call: { icon: Phone, label: t("activities.call"), color: "bg-blue-100 text-blue-700" },
+    whatsapp: { icon: MessageSquare, label: t("activities.whatsapp"), color: "bg-green-100 text-green-700" },
+    email: { icon: Mail, label: t("activities.email"), color: "bg-purple-100 text-purple-700" },
+    meeting: { icon: Monitor, label: t("activities.meeting"), color: "bg-orange-100 text-orange-700" },
+    visit: { icon: MapPin, label: t("activities.visit"), color: "bg-yellow-100 text-yellow-700" },
+    demo: { icon: Presentation, label: t("activities.demo"), color: "bg-cyan-100 text-cyan-700" },
+    proposal: { icon: FileText, label: t("activities.proposal"), color: "bg-indigo-100 text-indigo-700" },
+    closing: { icon: CheckCircle, label: t("activities.closing"), color: "bg-emerald-100 text-emerald-700" },
+  };
+
   if (activities.length === 0) {
     return (
-      <p className="text-center py-8 text-muted-foreground">Belum ada aktivitas</p>
+      <p className="text-center py-8 text-muted-foreground">{t("common.noActivities")}</p>
     );
   }
 
@@ -51,7 +54,7 @@ export function ActivityTimeline({ activities }: { activities: ActivityItem[] })
                     </span>
                     {activity.user && (
                       <span className="text-xs text-muted-foreground">
-                        oleh {activity.user.fullname}
+                        {t("activities.byUser")} {activity.user.fullname}
                       </span>
                     )}
                   </div>

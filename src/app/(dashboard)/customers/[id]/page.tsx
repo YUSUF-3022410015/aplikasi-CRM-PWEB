@@ -105,7 +105,7 @@ export default function CustomerDetailPage() {
   if (!customer) {
     return (
       <div className="flex items-center justify-center h-64">
-        <p className="text-muted-foreground">Customer not found</p>
+        <p className="text-muted-foreground">{t("customers.notFound")}</p>
       </div>
     );
   }

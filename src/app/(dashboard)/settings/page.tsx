@@ -14,23 +14,23 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useLanguage } from "@/components/language-provider";
 
 const settingKeys = [
-  { key: "company_name", label: "Nama Perusahaan", placeholder: "PT. Nama Perusahaan" },
-  { key: "company_email", label: "Email Perusahaan", placeholder: "info@perusahaan.com" },
-  { key: "company_phone", label: "Telepon", placeholder: "021-xxxx" },
-  { key: "company_website", label: "Website", placeholder: "https://perusahaan.com" },
-  { key: "company_address", label: "Alamat", placeholder: "Alamat lengkap" },
-  { key: "company_city", label: "Kota", placeholder: "Jakarta" },
-  { key: "company_country", label: "Negara", placeholder: "Indonesia" },
-  { key: "currency", label: "Mata Uang", placeholder: "IDR" },
-  { key: "timezone", label: "Timezone", placeholder: "Asia/Jakarta" },
-  { key: "logo_url", label: "Logo URL", placeholder: "https://example.com/logo.png" },
+  { key: "company_name", labelKey: "settings.companyName", placeholder: "PT. Nama Perusahaan" },
+  { key: "company_email", labelKey: "settings.companyEmail", placeholder: "info@perusahaan.com" },
+  { key: "company_phone", labelKey: "settings.companyPhone", placeholder: "021-xxxx" },
+  { key: "company_website", labelKey: "settings.companyWebsite", placeholder: "https://perusahaan.com" },
+  { key: "company_address", labelKey: "settings.companyAddress", placeholder: "Alamat lengkap" },
+  { key: "company_city", labelKey: "settings.companyCity", placeholder: "Jakarta" },
+  { key: "company_country", labelKey: "settings.companyCountry", placeholder: "Indonesia" },
+  { key: "currency", labelKey: "settings.currency", placeholder: "IDR" },
+  { key: "timezone", labelKey: "settings.timezone", placeholder: "Asia/Jakarta" },
+  { key: "logo_url", labelKey: "settings.logo", placeholder: "https://example.com/logo.png" },
 ];
 
 const emailTemplateKeys = [
-  { key: "email_quotation_subject", label: "Subject Quotation", placeholder: "Penawaran Harga {number}" },
-  { key: "email_quotation_body", label: "Template Body Quotation", placeholder: "Halo {customer},\n\nBerikut penawaran harga..." },
-  { key: "email_followup_subject", label: "Subject Follow-up", placeholder: "Pengingat Follow-up: {customer}" },
-  { key: "email_followup_body", label: "Template Body Follow-up", placeholder: "Halo,\n\nIni adalah pengingat untuk follow-up..." },
+  { key: "email_quotation_subject", labelKey: "quotations.title", placeholder: "Penawaran Harga {number}" },
+  { key: "email_quotation_body", labelKey: "quotations.notes", placeholder: "Halo {customer},\n\nBerikut penawaran harga..." },
+  { key: "email_followup_subject", labelKey: "followups.title", placeholder: "Pengingat Follow-up: {customer}" },
+  { key: "email_followup_body", labelKey: "followups.note", placeholder: "Halo,\n\nIni adalah pengingat untuk follow-up..." },
 ];
 
 const timezones = [
@@ -252,7 +252,7 @@ export default function SettingsPage() {
             <CardContent className="space-y-4">
               {emailTemplateKeys.map((s) => (
                 <div key={s.key} className="space-y-2">
-                  <Label>{s.label}</Label>
+                  <Label>{t(s.labelKey)}</Label>
                   {s.key.includes("body") ? (
                     <Textarea
                       value={values[s.key] || ""}

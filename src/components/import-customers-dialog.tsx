@@ -13,6 +13,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Upload, Download, FileSpreadsheet, CheckCircle, XCircle, AlertCircle } from "lucide-react";
+import { useLanguage } from "@/components/language-provider";
 
 interface ImportCustomersDialogProps {
   open: boolean;
@@ -27,6 +28,7 @@ export function ImportCustomersDialog({
   onOpenChange,
   onSuccess,
 }: ImportCustomersDialogProps) {
+  const { t } = useLanguage();
   const [state, setState] = useState<ImportState>("idle");
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<{
@@ -103,9 +105,9 @@ export function ImportCustomersDialog({
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>Import Customer dari Excel</DialogTitle>
+          <DialogTitle>{t("common.importFromExcel")}</DialogTitle>
           <DialogDescription>
-            Upload file Excel (.xlsx) untuk menambahkan data customer secara massal.
+            {t("common.importDescription")}
           </DialogDescription>
         </DialogHeader>
 
@@ -117,9 +119,9 @@ export function ImportCustomersDialog({
             >
               <Upload className="mx-auto h-10 w-10 text-muted-foreground mb-3" />
               <p className="text-sm text-muted-foreground">
-                Klik untuk memilih file atau drag & drop
+                {t("common.clickToSelect")}
               </p>
-              <p className="text-xs text-muted-foreground mt-1">Format: .xlsx, .xls</p>
+              <p className="text-xs text-muted-foreground mt-1">{t("common.formatXlsx")}</p>
             </div>
             <input
               ref={fileRef}
@@ -134,7 +136,7 @@ export function ImportCustomersDialog({
               onClick={handleDownloadTemplate}
             >
               <Download className="mr-2 h-4 w-4" />
-              Download Template
+              {t("common.downloadTemplate")}
             </Button>
           </div>
         )}
@@ -142,7 +144,7 @@ export function ImportCustomersDialog({
         {state === "parsing" && (
           <div className="py-8 text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4" />
-            <p className="text-sm text-muted-foreground">Memproses file...</p>
+            <p className="text-sm text-muted-foreground">{t("common.processing")}</p>
           </div>
         )}
 
@@ -151,15 +153,15 @@ export function ImportCustomersDialog({
             <div className="grid grid-cols-3 gap-3 text-center">
               <div className="rounded-lg border p-3">
                 <p className="text-2xl font-bold">{preview.total}</p>
-                <p className="text-xs text-muted-foreground">Total Baris</p>
+                <p className="text-xs text-muted-foreground">{t("common.totalRows")}</p>
               </div>
               <div className="rounded-lg border p-3">
                 <p className="text-2xl font-bold text-green-600">{preview.success}</p>
-                <p className="text-xs text-muted-foreground">Valid</p>
+                <p className="text-xs text-muted-foreground">{t("common.valid")}</p>
               </div>
               <div className="rounded-lg border p-3">
                 <p className="text-2xl font-bold text-red-600">{preview.failed}</p>
-                <p className="text-xs text-muted-foreground">Error</p>
+                <p className="text-xs text-muted-foreground">{t("common.error")}</p>
               </div>
             </div>
 
@@ -168,7 +170,7 @@ export function ImportCustomersDialog({
                 {preview.errors.map((err, i) => (
                   <p key={i} className="text-xs text-red-600 flex items-center gap-1">
                     <AlertCircle className="h-3 w-3" />
-                    Baris {err.row}: {err.message}
+                    {t("common.row")} {err.row}: {err.message}
                   </p>
                 ))}
               </div>
@@ -179,18 +181,18 @@ export function ImportCustomersDialog({
         {state === "importing" && (
           <div className="py-8 text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4" />
-            <p className="text-sm text-muted-foreground">Mengimport data...</p>
+            <p className="text-sm text-muted-foreground">{t("common.importing")}</p>
           </div>
         )}
 
         {state === "done" && result && (
           <div className="py-4 text-center space-y-3">
             <CheckCircle className="mx-auto h-12 w-12 text-green-600" />
-            <p className="font-medium">Import Selesai!</p>
+            <p className="font-medium">{t("common.importDone")}</p>
             <div className="flex justify-center gap-4 text-sm">
-              <span className="text-green-600">{result.imported} berhasil</span>
+              <span className="text-green-600">{result.imported} {t("common.success")}</span>
               {result.errors > 0 && (
-                <span className="text-red-600">{result.errors} gagal</span>
+                <span className="text-red-600">{result.errors} {t("common.failed")}</span>
               )}
             </div>
           </div>
@@ -200,16 +202,16 @@ export function ImportCustomersDialog({
           {state === "preview" && (
             <>
               <Button variant="outline" onClick={handleClose}>
-                Batal
+                {t("common.cancel")}
               </Button>
               <Button onClick={handleImport} disabled={preview?.success === 0}>
                 <Upload className="mr-2 h-4 w-4" />
-                Import {preview?.success} Data
+                {t("common.import")} {preview?.success} Data
               </Button>
             </>
           )}
           {state === "done" && (
-            <Button onClick={handleClose}>Tutup</Button>
+            <Button onClick={handleClose}>{t("common.close")}</Button>
           )}
         </DialogFooter>
       </DialogContent>

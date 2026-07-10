@@ -44,13 +44,10 @@ interface FollowUp {
   customer?: { name: string } | null;
 }
 
-const statusConfig: Record<string, { label: string; variant: "default" | "success" | "destructive" | "secondary" }> = {
-  pending: { label: "Pending", variant: "default" },
-  done: { label: "Done", variant: "success" },
-  cancelled: { label: "Cancelled", variant: "secondary" },
-};
+const statusConfig: Record<string, { label: string; variant: "default" | "success" | "destructive" | "secondary" }> = {};
 
 export default function FollowUpsPage() {
+  const { t } = useLanguage();
   const [followups, setFollowups] = useState<FollowUp[]>([]);
   const [customers, setCustomers] = useState<{ id: string; name: string }[]>([]);
   const [loading, setLoading] = useState(true);
@@ -61,7 +58,12 @@ export default function FollowUpsPage() {
   const [saving, setSaving] = useState(false);
   const supabase = createClient();
   const router = useRouter();
-  const { t } = useLanguage();
+
+  const getStatusConfig = () => ({
+    pending: { label: t("followups.pending"), variant: "default" as const },
+    done: { label: t("followups.done"), variant: "success" as const },
+    cancelled: { label: t("followups.cancelled"), variant: "secondary" as const },
+  });
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -138,7 +140,7 @@ export default function FollowUpsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">{t("followups.title")}</h1>
-          <p className="text-muted-foreground">Jadwal follow-up dan pengingat pelanggan</p>
+          <p className="text-muted-foreground">{t("followups.subtitle2")}</p>
         </div>
         <Button onClick={openCreate}>
           <Plus className="mr-2 h-4 w-4" />
@@ -149,7 +151,7 @@ export default function FollowUpsPage() {
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pending</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("followups.pending")}</CardTitle>
             <CalendarCheck className="h-4 w-4 text-orange-600" />
           </CardHeader>
           <CardContent>
@@ -158,7 +160,7 @@ export default function FollowUpsPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Overdue</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("followups.overdue")}</CardTitle>
             <CalendarCheck className="h-4 w-4 text-red-600" />
           </CardHeader>
           <CardContent>
@@ -167,7 +169,7 @@ export default function FollowUpsPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Selesai</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("followups.completed")}</CardTitle>
             <CalendarCheck className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
@@ -178,7 +180,7 @@ export default function FollowUpsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Semua Follow-up</CardTitle>
+          <CardTitle>{t("followups.allFollowups")}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="rounded-md border">
@@ -203,7 +205,7 @@ export default function FollowUpsPage() {
                   </TableRow>
                 ) : (
                   followups.map((f) => {
-                    const cfg = statusConfig[f.status] || statusConfig.pending;
+                    const cfg = getStatusConfig()[f.status] || getStatusConfig().pending;
                     const isOverdue = f.status === "pending" && f.due_date < today;
                     return (
                       <TableRow key={f.id}>
@@ -254,7 +256,7 @@ export default function FollowUpsPage() {
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label>Customer *</Label>
+              <Label>{t("followups.customer")} *</Label>
               <Select value={form.customer_id} onValueChange={(v) => setForm({ ...form, customer_id: v })}>
                 <SelectTrigger><SelectValue placeholder={t("customers.title")} /></SelectTrigger>
                 <SelectContent>

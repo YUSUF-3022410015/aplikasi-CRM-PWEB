@@ -122,28 +122,28 @@ export default function ReportsPage() {
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Total Customer</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("reports.totalCustomers")}</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent><div className="text-2xl font-bold">{stats.totalCustomers}</div></CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Revenue</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("reports.revenue")}</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent><div className="text-2xl font-bold">{formatCurrency(stats.totalRevenue)}</div></CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Deals Won</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("reports.dealsWon")}</CardTitle>
             <TrendingUp className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent><div className="text-2xl font-bold">{stats.dealsWon}</div></CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Deals Lost</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("reports.dealsLost")}</CardTitle>
             <TrendingDown className="h-4 w-4 text-red-600" />
           </CardHeader>
           <CardContent><div className="text-2xl font-bold">{stats.dealsLost}</div></CardContent>
@@ -152,14 +152,14 @@ export default function ReportsPage() {
 
       <Tabs defaultValue="revenue">
         <TabsList>
-          <TabsTrigger value="revenue">Revenue</TabsTrigger>
-          <TabsTrigger value="customers">Customer</TabsTrigger>
-          <TabsTrigger value="activities">Aktivitas</TabsTrigger>
-          <TabsTrigger value="followups">Follow-up</TabsTrigger>
+          <TabsTrigger value="revenue">{t("reports.tabRevenue")}</TabsTrigger>
+          <TabsTrigger value="customers">{t("reports.tabCustomers")}</TabsTrigger>
+          <TabsTrigger value="activities">{t("reports.tabActivities")}</TabsTrigger>
+          <TabsTrigger value="followups">{t("reports.tabFollowups")}</TabsTrigger>
         </TabsList>
         <TabsContent value="revenue">
           <Card>
-            <CardHeader><CardTitle>Revenue Bulanan</CardTitle></CardHeader>
+            <CardHeader><CardTitle>{t("reports.monthlyRevenue")}</CardTitle></CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={350}>
                 <BarChart data={stats.revenueByMonth}>
@@ -175,7 +175,7 @@ export default function ReportsPage() {
         </TabsContent>
         <TabsContent value="customers">
           <Card>
-            <CardHeader><CardTitle>Distribusi Customer</CardTitle></CardHeader>
+            <CardHeader><CardTitle>{t("reports.customerDistribution")}</CardTitle></CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={350}>
                 <PieChart>
@@ -193,7 +193,7 @@ export default function ReportsPage() {
         </TabsContent>
         <TabsContent value="activities">
           <Card>
-            <CardHeader><CardTitle>Aktivitas per Tipe</CardTitle></CardHeader>
+            <CardHeader><CardTitle>{t("reports.activitiesByType")}</CardTitle></CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={350}>
                 <BarChart data={stats.activitiesByType}>
@@ -209,20 +209,20 @@ export default function ReportsPage() {
         </TabsContent>
         <TabsContent value="followups">
           <Card>
-            <CardHeader><CardTitle>Ringkasan Follow-up</CardTitle></CardHeader>
+            <CardHeader><CardTitle>{t("reports.followupSummary")}</CardTitle></CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-6">
                 <div className="flex items-center gap-4 p-4 border rounded-lg">
                   <CalendarCheck className="h-8 w-8 text-orange-500" />
                   <div>
-                    <p className="text-sm text-muted-foreground">Pending</p>
+                    <p className="text-sm text-muted-foreground">{t("reports.pending")}</p>
                     <p className="text-3xl font-bold">{stats.followUpsPending}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-4 p-4 border rounded-lg">
                   <Activity className="h-8 w-8 text-green-500" />
                   <div>
-                    <p className="text-sm text-muted-foreground">Selesai</p>
+                    <p className="text-sm text-muted-foreground">{t("reports.completed")}</p>
                     <p className="text-3xl font-bold">{stats.followUpsDone}</p>
                   </div>
                 </div>

@@ -17,6 +17,7 @@ import {
   CalendarCheck,
   Bell,
 } from "lucide-react";
+import { useLanguage } from "@/components/language-provider";
 
 interface ActivityLogItem {
   id: string;
@@ -27,21 +28,6 @@ interface ActivityLogItem {
   created_at: string;
 }
 
-const typeConfig: Record<string, { icon: typeof Phone; label: string; color: string }> = {
-  call: { icon: Phone, label: "Call", color: "bg-blue-100 text-blue-700" },
-  whatsapp: { icon: MessageSquare, label: "WhatsApp", color: "bg-green-100 text-green-700" },
-  email: { icon: Mail, label: "Email", color: "bg-purple-100 text-purple-700" },
-  meeting: { icon: Monitor, label: "Meeting", color: "bg-orange-100 text-orange-700" },
-  visit: { icon: MapPin, label: "Visit", color: "bg-yellow-100 text-yellow-700" },
-  demo: { icon: Presentation, label: "Demo", color: "bg-cyan-100 text-cyan-700" },
-  proposal: { icon: FileText, label: "Proposal", color: "bg-indigo-100 text-indigo-700" },
-  closing: { icon: CheckCircle, label: "Closing", color: "bg-emerald-100 text-emerald-700" },
-  customer_created: { icon: UserPlus, label: "Customer Baru", color: "bg-blue-100 text-blue-700" },
-  quotation_created: { icon: ShoppingCart, label: "Quotation", color: "bg-purple-100 text-purple-700" },
-  followup_created: { icon: CalendarCheck, label: "Follow-up", color: "bg-orange-100 text-orange-700" },
-  notification: { icon: Bell, label: "Notifikasi", color: "bg-gray-100 text-gray-700" },
-};
-
 const moduleColors: Record<string, "default" | "secondary" | "success" | "warning" | "destructive"> = {
   customer: "default",
   activity: "secondary",
@@ -51,9 +37,26 @@ const moduleColors: Record<string, "default" | "secondary" | "success" | "warnin
 };
 
 export function ActivityLogList({ activities }: { activities: ActivityLogItem[] }) {
+  const { t } = useLanguage();
+
+  const typeConfig: Record<string, { icon: typeof Phone; label: string; color: string }> = {
+    call: { icon: Phone, label: t("activities.call"), color: "bg-blue-100 text-blue-700" },
+    whatsapp: { icon: MessageSquare, label: t("activities.whatsapp"), color: "bg-green-100 text-green-700" },
+    email: { icon: Mail, label: t("activities.email"), color: "bg-purple-100 text-purple-700" },
+    meeting: { icon: Monitor, label: t("activities.meeting"), color: "bg-orange-100 text-orange-700" },
+    visit: { icon: MapPin, label: t("activities.visit"), color: "bg-yellow-100 text-yellow-700" },
+    demo: { icon: Presentation, label: t("activities.demo"), color: "bg-cyan-100 text-cyan-700" },
+    proposal: { icon: FileText, label: t("activities.proposal"), color: "bg-indigo-100 text-indigo-700" },
+    closing: { icon: CheckCircle, label: t("activities.closing"), color: "bg-emerald-100 text-emerald-700" },
+    customer_created: { icon: UserPlus, label: t("customers.addCustomer"), color: "bg-blue-100 text-blue-700" },
+    quotation_created: { icon: ShoppingCart, label: t("quotations.title"), color: "bg-purple-100 text-purple-700" },
+    followup_created: { icon: CalendarCheck, label: t("common.followUp"), color: "bg-orange-100 text-orange-700" },
+    notification: { icon: Bell, label: t("notification.title"), color: "bg-gray-100 text-gray-700" },
+  };
+
   if (activities.length === 0) {
     return (
-      <p className="text-center py-8 text-muted-foreground">Belum ada activity log</p>
+      <p className="text-center py-8 text-muted-foreground">{t("common.noActivityLog")}</p>
     );
   }
 
@@ -81,7 +84,7 @@ export function ActivityLogList({ activities }: { activities: ActivityLogItem[] 
                   </div>
                   <p className="text-sm">{activity.description}</p>
                   {activity.user && (
-                    <p className="text-xs text-muted-foreground">oleh {activity.user}</p>
+                    <p className="text-xs text-muted-foreground">{t("activities.byUser")} {activity.user}</p>
                   )}
                 </div>
               </div>

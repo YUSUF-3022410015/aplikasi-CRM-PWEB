@@ -22,33 +22,6 @@ import { Loader2 } from "lucide-react";
 import { useLanguage } from "@/components/language-provider";
 import type { Customer } from "@/types/database";
 
-const customerSchema = z.object({
-  name: z.string().min(1, "Required"),
-  company: z.string().optional(),
-  email: z.string().email("Invalid email").optional().or(z.literal("")),
-  phone: z.string().optional(),
-  whatsapp: z.string().optional(),
-  industry: z.string().optional(),
-  city: z.string().optional(),
-  address: z.string().optional(),
-  website: z.string().optional(),
-  source: z.string().optional(),
-  assigned_to: z.string().optional(),
-  status: z.enum(["lead", "prospect", "active", "inactive", "archived"]),
-  pipeline_stage: z.enum([
-    "lead",
-    "qualified",
-    "contacted",
-    "meeting",
-    "proposal",
-    "negotiation",
-    "won",
-    "lost",
-  ]),
-});
-
-type CustomerFormData = z.infer<typeof customerSchema>;
-
 interface CustomerFormProps {
   customer?: Customer;
   mode: "create" | "edit";
@@ -59,6 +32,33 @@ export function CustomerForm({ customer, mode }: CustomerFormProps) {
   const router = useRouter();
   const supabase = createClient();
   const [salesUsers, setSalesUsers] = useState<{ id: string; fullname: string }[]>([]);
+
+  const customerSchema = z.object({
+    name: z.string().min(1, t("common.required")),
+    company: z.string().optional(),
+    email: z.string().email(t("common.invalidEmail")).optional().or(z.literal("")),
+    phone: z.string().optional(),
+    whatsapp: z.string().optional(),
+    industry: z.string().optional(),
+    city: z.string().optional(),
+    address: z.string().optional(),
+    website: z.string().optional(),
+    source: z.string().optional(),
+    assigned_to: z.string().optional(),
+    status: z.enum(["lead", "prospect", "active", "inactive", "archived"]),
+    pipeline_stage: z.enum([
+      "lead",
+      "qualified",
+      "contacted",
+      "meeting",
+      "proposal",
+      "negotiation",
+      "won",
+      "lost",
+    ]),
+  });
+
+  type CustomerFormData = z.infer<typeof customerSchema>;
 
   useEffect(() => {
     supabase.from("profiles").select("id, fullname").order("fullname").then(({ data }) => {
@@ -137,46 +137,46 @@ export function CustomerForm({ customer, mode }: CustomerFormProps) {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Informasi Dasar</CardTitle>
+          <CardTitle>{t("customers.info")}</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-4 md:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="name">Nama *</Label>
-            <Input id="name" {...register("name")} placeholder="Nama customer" />
+            <Label htmlFor="name">{t("customers.name")} *</Label>
+            <Input id="name" {...register("name")} placeholder={t("customers.namePlaceholder")} />
             {errors.name && (
               <p className="text-sm text-destructive">{errors.name.message}</p>
             )}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="company">Perusahaan</Label>
-            <Input id="company" {...register("company")} placeholder="Nama perusahaan" />
+            <Label htmlFor="company">{t("customers.company")}</Label>
+            <Input id="company" {...register("company")} placeholder={t("customers.companyPlaceholder")} />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" {...register("email")} placeholder="email@perusahaan.com" />
+            <Label htmlFor="email">{t("customers.email")}</Label>
+            <Input id="email" type="email" {...register("email")} placeholder={t("customers.emailPlaceholder")} />
             {errors.email && (
               <p className="text-sm text-destructive">{errors.email.message}</p>
             )}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="phone">Telepon</Label>
-            <Input id="phone" {...register("phone")} placeholder="08xxx" />
+            <Label htmlFor="phone">{t("customers.phone")}</Label>
+            <Input id="phone" {...register("phone")} placeholder={t("customers.phonePlaceholder")} />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="whatsapp">WhatsApp</Label>
-            <Input id="whatsapp" {...register("whatsapp")} placeholder="628xxx" />
+            <Label htmlFor="whatsapp">{t("customers.whatsapp")}</Label>
+            <Input id="whatsapp" {...register("whatsapp")} placeholder={t("customers.whatsappPlaceholder")} />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="industry">Industri</Label>
-            <Input id="industry" {...register("industry")} placeholder="Teknologi, Retail, dll" />
+            <Label htmlFor="industry">{t("customers.industry")}</Label>
+            <Input id="industry" {...register("industry")} placeholder={t("customers.industryPlaceholder")} />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="city">Kota</Label>
-            <Input id="city" {...register("city")} placeholder="Jakarta" />
+            <Label htmlFor="city">{t("customers.city")}</Label>
+            <Input id="city" {...register("city")} placeholder={t("customers.cityPlaceholder")} />
           </div>
           <div className="space-y-2">
             <Label htmlFor="website">{t("customers.website")}</Label>
-            <Input id="website" {...register("website")} placeholder="https://..." />
+            <Input id="website" {...register("website")} placeholder={t("customers.websitePlaceholder")} />
           </div>
           <div className="space-y-2 md:col-span-2">
             <Label htmlFor="address">{t("customers.address")}</Label>
@@ -184,14 +184,14 @@ export function CustomerForm({ customer, mode }: CustomerFormProps) {
           </div>
           <div className="space-y-2">
             <Label htmlFor="source">{t("customers.source")}</Label>
-            <Input id="source" {...register("source")} placeholder="Referral, Website, etc" />
+            <Input id="source" {...register("source")} placeholder={t("customers.sourcePlaceholder")} />
           </div>
           <div className="space-y-2">
-            <Label>Assigned Sales</Label>
+            <Label>{t("customers.assignedSales")}</Label>
             <Select value={watch("assigned_to")} onValueChange={(v) => setValue("assigned_to", v)}>
-              <SelectTrigger><SelectValue placeholder="Pilih sales" /></SelectTrigger>
+              <SelectTrigger><SelectValue placeholder={t("customers.assignedSales")} /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Belum ditentukan</SelectItem>
+                <SelectItem value="">{t("customers.notAssigned")}</SelectItem>
                 {salesUsers.map((u) => (
                   <SelectItem key={u.id} value={u.id}>{u.fullname}</SelectItem>
                 ))}
@@ -199,22 +199,22 @@ export function CustomerForm({ customer, mode }: CustomerFormProps) {
             </Select>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="status">Status</Label>
+            <Label htmlFor="status">{t("customers.status")}</Label>
             <Select value={watch("status")} onValueChange={(v) => setValue("status", v as CustomerFormData["status"])}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="lead">Lead</SelectItem>
-                <SelectItem value="prospect">Prospect</SelectItem>
-                <SelectItem value="active">Active</SelectItem>
-                <SelectItem value="inactive">Inactive</SelectItem>
-                <SelectItem value="archived">Archived</SelectItem>
+                <SelectItem value="lead">{t("customers.lead")}</SelectItem>
+                <SelectItem value="prospect">{t("customers.prospect")}</SelectItem>
+                <SelectItem value="active">{t("common.active")}</SelectItem>
+                <SelectItem value="inactive">{t("common.inactive")}</SelectItem>
+                <SelectItem value="archived">{t("customers.archived")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="pipeline_stage">Pipeline Stage</Label>
+            <Label htmlFor="pipeline_stage">{t("customers.pipeline")}</Label>
             <Select
               value={watch("pipeline_stage")}
               onValueChange={(v) => setValue("pipeline_stage", v as CustomerFormData["pipeline_stage"])}
@@ -223,14 +223,14 @@ export function CustomerForm({ customer, mode }: CustomerFormProps) {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="lead">Lead</SelectItem>
-                <SelectItem value="qualified">Qualified</SelectItem>
-                <SelectItem value="contacted">Contacted</SelectItem>
-                <SelectItem value="meeting">Meeting</SelectItem>
-                <SelectItem value="proposal">Proposal</SelectItem>
-                <SelectItem value="negotiation">Negotiation</SelectItem>
-                <SelectItem value="won">Won</SelectItem>
-                <SelectItem value="lost">Lost</SelectItem>
+                <SelectItem value="lead">{t("customers.lead")}</SelectItem>
+                <SelectItem value="qualified">{t("customers.qualified")}</SelectItem>
+                <SelectItem value="contacted">{t("customers.contacted")}</SelectItem>
+                <SelectItem value="meeting">{t("customers.meeting")}</SelectItem>
+                <SelectItem value="proposal">{t("customers.proposal")}</SelectItem>
+                <SelectItem value="negotiation">{t("customers.negotiation")}</SelectItem>
+                <SelectItem value="won">{t("customers.won")}</SelectItem>
+                <SelectItem value="lost">{t("customers.lost")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -239,18 +239,18 @@ export function CustomerForm({ customer, mode }: CustomerFormProps) {
 
       <div className="flex justify-end gap-4">
         <Button type="button" variant="outline" onClick={() => router.back()}>
-          Batal
+          {t("common.cancel")}
         </Button>
         <Button type="submit" disabled={isSubmitting}>
           {isSubmitting ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Menyimpan...
+              {t("common.saving")}
             </>
           ) : mode === "create" ? (
-            "Tambah Customer"
+            t("customers.addCustomer")
           ) : (
-            "Simpan Perubahan"
+            t("customers.saveChanges")
           )}
         </Button>
       </div>

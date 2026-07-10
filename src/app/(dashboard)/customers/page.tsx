@@ -169,11 +169,11 @@ export default function CustomersPage() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">{t("customers.allStatus")}</SelectItem>
-            <SelectItem value="lead">Lead</SelectItem>
-            <SelectItem value="prospect">Prospect</SelectItem>
-            <SelectItem value="active">Active</SelectItem>
-            <SelectItem value="inactive">Inactive</SelectItem>
-            <SelectItem value="archived">Archived</SelectItem>
+            <SelectItem value="lead">{t("customers.lead")}</SelectItem>
+            <SelectItem value="prospect">{t("customers.prospect")}</SelectItem>
+            <SelectItem value="active">{t("common.active")}</SelectItem>
+            <SelectItem value="inactive">{t("common.inactive")}</SelectItem>
+            <SelectItem value="archived">{t("customers.archived")}</SelectItem>
           </SelectContent>
         </Select>
       </div>

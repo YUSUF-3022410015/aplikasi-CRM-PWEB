@@ -48,7 +48,7 @@ export default function ForgotPasswordPage() {
       <CardHeader className="space-y-1 text-center">
         <CardTitle className="text-2xl font-bold">{t("auth.forgotPassword")}</CardTitle>
         <CardDescription>
-          Masukkan email Anda untuk menerima link reset password
+          {t("auth.forgotPasswordDesc")}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -56,11 +56,11 @@ export default function ForgotPasswordPage() {
           <div className="space-y-4 text-center">
             <CheckCircle className="mx-auto h-12 w-12 text-green-600" />
             <p className="text-sm text-muted-foreground">
-              Link reset password telah dikirim ke <strong>{email}</strong>. 
-              Silakan cek inbox email Anda.
+              {t("auth.resetLinkSent")} <strong>{email}</strong>. 
+              {t("auth.checkInbox")}
             </p>
             <Button variant="outline" className="w-full" asChild>
-              <Link href="/login">Kembali ke Login</Link>
+              <Link href="/login">{t("common.back")}</Link>
             </Button>
           </div>
         ) : (
@@ -90,7 +90,7 @@ export default function ForgotPasswordPage() {
               ) : (
                 <>
                   <Mail className="mr-2 h-4 w-4" />
-                  Kirim Link Reset
+                  {t("auth.sendResetLink")}
                 </>
               )}
             </Button>
@@ -98,7 +98,7 @@ export default function ForgotPasswordPage() {
         )}
       </CardContent>
       <div className="px-6 pb-6 text-center text-sm text-muted-foreground">
-        Ingat password?{" "}
+        {t("auth.rememberPassword")}{" "}
         <Link href="/login" className="text-primary underline hover:text-primary/80">
           {t("auth.login")}
         </Link>

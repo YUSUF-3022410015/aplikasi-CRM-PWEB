@@ -91,7 +91,7 @@ export default function ResetPasswordPage() {
         <CardHeader className="space-y-1 text-center">
           <CardTitle className="text-2xl font-bold">{t("auth.invalidLink")}</CardTitle>
           <CardDescription>
-            Link reset password tidak valid atau sudah expired.
+            {t("auth.invalidLinkDesc")}
           </CardDescription>
         </CardHeader>
         <CardContent className="text-center">
@@ -108,7 +108,7 @@ export default function ResetPasswordPage() {
       <CardHeader className="space-y-1 text-center">
         <CardTitle className="text-2xl font-bold">{t("auth.resetPassword")}</CardTitle>
         <CardDescription>
-          Masukkan password baru Anda
+          {t("auth.resetPasswordDesc")}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -116,7 +116,7 @@ export default function ResetPasswordPage() {
           <div className="space-y-4 text-center">
             <CheckCircle className="mx-auto h-12 w-12 text-green-600" />
             <p className="text-sm text-muted-foreground">
-              Password berhasil diubah! Anda akan dialihkan ke halaman login...
+              {t("auth.passwordChangedRedirect")}
             </p>
           </div>
         ) : (

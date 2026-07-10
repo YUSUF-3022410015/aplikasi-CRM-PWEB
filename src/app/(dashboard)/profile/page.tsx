@@ -63,7 +63,7 @@ export default function ProfilePage() {
     if (updateError) {
       setError(updateError.message);
     } else {
-      setSuccess("Profil berhasil diperbarui!");
+      setSuccess(t("profile.profileUpdated"));
       router.refresh();
     }
     setSaving(false);
@@ -85,7 +85,7 @@ export default function ProfilePage() {
     if (pwError) {
       setError(pwError.message);
     } else {
-      setSuccess("Password berhasil diubah!");
+      setSuccess(t("profile.passwordChanged"));
       setNewPassword("");
     }
     setChangingPassword(false);
@@ -103,7 +103,7 @@ export default function ProfilePage() {
     <div className="space-y-6 max-w-2xl">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">{t("nav.profile")}</h1>
-        <p className="text-muted-foreground">Kelola informasi akun Anda</p>
+        <p className="text-muted-foreground">{t("profile.manageAccount")}</p>
       </div>
 
       {success && (
@@ -117,9 +117,9 @@ export default function ProfilePage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <User className="h-5 w-5" />
-            Informasi Profil
+            {t("profile.profileInfo")}
           </CardTitle>
-          <CardDescription>Update nama dan informasi akun Anda</CardDescription>
+          <CardDescription>{t("profile.updateInfo")}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center gap-4">
@@ -136,18 +136,18 @@ export default function ProfilePage() {
           </div>
           <Separator />
           <div className="space-y-2">
-            <Label htmlFor="fullname">Nama Lengkap</Label>
+            <Label htmlFor="fullname">{t("profile.fullName")}</Label>
             <Input
               id="fullname"
               value={fullname}
               onChange={(e) => setFullname(e.target.value)}
-              placeholder="Nama lengkap"
+              placeholder={t("profile.fullNamePlaceholder")}
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t("auth.email")}</Label>
             <Input id="email" value={email} disabled />
-            <p className="text-xs text-muted-foreground">Email tidak dapat diubah</p>
+            <p className="text-xs text-muted-foreground">{t("profile.emailCannotBeChanged")}</p>
           </div>
           <Button onClick={handleSave} disabled={saving}>
             {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
@@ -158,12 +158,12 @@ export default function ProfilePage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Ubah Password</CardTitle>
-          <CardDescription>Minimal 6 karakter</CardDescription>
+          <CardTitle>{t("profile.changePassword")}</CardTitle>
+          <CardDescription>{t("profile.minChars")}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="newPassword">Password Baru</Label>
+            <Label htmlFor="newPassword">{t("profile.newPassword")}</Label>
             <Input
               id="newPassword"
               type="password"

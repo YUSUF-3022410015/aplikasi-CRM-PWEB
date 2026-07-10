@@ -17,6 +17,7 @@ import {
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/utils";
+import { useLanguage } from "@/components/language-provider";
 
 interface MonthlyData {
   name: string;
@@ -43,12 +44,14 @@ interface DashboardChartsProps {
 }
 
 export function DashboardCharts({ data, activitiesByType = [], customersByStatus = [] }: DashboardChartsProps) {
+  const { t } = useLanguage();
+
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       {/* Revenue Chart */}
       <Card className="md:col-span-2">
         <CardHeader>
-          <CardTitle className="text-sm font-medium">Revenue Bulanan</CardTitle>
+          <CardTitle className="text-sm font-medium">{t("dashboard.monthlyRevenue")}</CardTitle>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={300}>
@@ -74,7 +77,7 @@ export function DashboardCharts({ data, activitiesByType = [], customersByStatus
       {/* Deals Chart */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-sm font-medium">Deals Bulanan</CardTitle>
+          <CardTitle className="text-sm font-medium">{t("dashboard.monthlyDeals")}</CardTitle>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={300}>
@@ -100,7 +103,7 @@ export function DashboardCharts({ data, activitiesByType = [], customersByStatus
       {activitiesByType.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-sm font-medium">Aktivitas per Tipe</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("dashboard.activitiesByType")}</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
@@ -130,7 +133,7 @@ export function DashboardCharts({ data, activitiesByType = [], customersByStatus
       {customersByStatus.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-sm font-medium">Customer per Status</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("dashboard.customersByStatus")}</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
