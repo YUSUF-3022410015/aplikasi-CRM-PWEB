@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Eye, EyeOff, Loader2, CheckCircle2, Shield } from "lucide-react";
+import { useLanguage } from "@/components/language-provider";
 
 export default function SignupPage() {
   const [fullname, setFullname] = useState("");
@@ -33,6 +34,7 @@ export default function SignupPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const supabase = createClient();
+  const { t } = useLanguage();
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -90,14 +92,14 @@ export default function SignupPage() {
           <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-500/15">
             <CheckCircle2 className="h-6 w-6 text-green-600" />
           </div>
-          <CardTitle className="text-2xl font-bold">Pendaftaran Berhasil!</CardTitle>
+          <CardTitle className="text-2xl font-bold">{t("auth.signup")} ✓</CardTitle>
           <CardDescription>
-            Akun berhasil dibuat sebagai <strong>{role === "admin" ? "Administrator" : role === "manager" ? "Manager" : "Sales"}</strong>. Silakan cek email untuk verifikasi, lalu kembali ke halaman login.
+            {t("auth.email")}: <strong>{role === "admin" ? t("auth.admin") : role === "manager" ? t("auth.manager") : t("auth.sales")}</strong>
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Link href="/login">
-            <Button className="w-full">Kembali ke Login</Button>
+            <Button className="w-full">{t("auth.login")}</Button>
           </Link>
         </CardContent>
       </Card>
@@ -109,7 +111,7 @@ export default function SignupPage() {
       <CardHeader className="space-y-1 text-center">
         <CardTitle className="text-2xl font-bold">CRM</CardTitle>
         <CardDescription>
-          Buat akun baru untuk mulai menggunakan sistem
+          {t("auth.signup")}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -124,38 +126,38 @@ export default function SignupPage() {
           <div className="space-y-2">
             <Label className="flex items-center gap-2">
               <Shield className="h-4 w-4" />
-              Daftar Sebagai
+              {t("auth.role")}
             </Label>
             <Select value={role} onValueChange={setRole}>
               <SelectTrigger>
-                <SelectValue placeholder="Pilih role" />
+                <SelectValue placeholder={t("auth.role")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="sales">Sales (Karyawan)</SelectItem>
-                <SelectItem value="manager">Manager</SelectItem>
-                <SelectItem value="admin">Administrator</SelectItem>
+                <SelectItem value="sales">{t("auth.sales")}</SelectItem>
+                <SelectItem value="manager">{t("auth.manager")}</SelectItem>
+                <SelectItem value="admin">{t("auth.admin")}</SelectItem>
               </SelectContent>
             </Select>
             <p className="text-xs text-muted-foreground">
-              {role === "admin" && "Akses penuh ke semua fitur dan pengaturan sistem"}
-              {role === "manager" && "Akses ke semua data dan laporan"}
-              {role === "sales" && "Kelola customer dan aktivitas sendiri"}
+              {role === "admin" && t("auth.admin")}
+              {role === "manager" && t("auth.manager")}
+              {role === "sales" && t("auth.sales")}
             </p>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="fullname">Nama Lengkap</Label>
+            <Label htmlFor="fullname">{t("auth.fullname")}</Label>
             <Input
               id="fullname"
               type="text"
-              placeholder="Masukkan nama lengkap"
+              placeholder={t("auth.fullname")}
               value={fullname}
               onChange={(e) => setFullname(e.target.value)}
               required
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t("auth.email")}</Label>
             <Input
               id="email"
               type="email"
@@ -166,12 +168,12 @@ export default function SignupPage() {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{t("auth.password")}</Label>
             <div className="relative">
               <Input
                 id="password"
                 type={showPassword ? "text" : "password"}
-                placeholder="Minimal 6 karakter"
+                placeholder={t("auth.password")}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -192,11 +194,11 @@ export default function SignupPage() {
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="confirmPassword">Konfirmasi Password</Label>
+            <Label htmlFor="confirmPassword">{t("auth.confirmPassword")}</Label>
             <Input
               id="confirmPassword"
               type="password"
-              placeholder="Ulangi password"
+              placeholder={t("auth.confirmPassword")}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
@@ -206,17 +208,17 @@ export default function SignupPage() {
             {loading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Memproses...
+                {t("common.loading")}
               </>
             ) : (
-              "Daftar"
+              t("auth.signup")
             )}
           </Button>
         </form>
         <div className="mt-4 text-center text-sm text-muted-foreground">
-          Sudah punya akun?{" "}
+          {t("auth.hasAccount")}{" "}
           <Link href="/login" className="text-primary underline hover:text-primary/80">
-            Masuk
+            {t("auth.login")}
           </Link>
         </div>
       </CardContent>
