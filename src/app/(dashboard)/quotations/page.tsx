@@ -33,6 +33,7 @@ import { Plus, Eye, Trash2, FileText, Printer, Mail } from "lucide-react";
 import { formatCurrency, generateQuotationNumber } from "@/lib/utils";
 import { QuotationPrint, printQuotation } from "@/components/quotation-print";
 import { sendQuotationEmailAction } from "@/app/actions/email";
+import { useLanguage } from "@/components/language-provider";
 import type { Quotation, Customer, Product } from "@/types/database";
 
 const statusColors: Record<string, "default" | "secondary" | "success" | "destructive" | "warning"> = {
@@ -62,6 +63,7 @@ export default function QuotationsPage() {
   const [taxRate, setTaxRate] = useState(11);
   const [discount, setDiscount] = useState(0);
   const supabase = createClient();
+  const { t } = useLanguage();
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -170,12 +172,12 @@ export default function QuotationsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Quotations</h1>
-          <p className="text-muted-foreground">Kelola penawaran harga</p>
+          <h1 className="text-2xl font-bold tracking-tight">{t("quotations.title")}</h1>
+          <p className="text-muted-foreground">{t("quotations.subtitle")}</p>
         </div>
         <Button onClick={() => setDialogOpen(true)}>
           <Plus className="mr-2 h-4 w-4" />
-          Buat Quotation
+          {t("quotations.createQuotation")}
         </Button>
       </div>
 
@@ -183,18 +185,18 @@ export default function QuotationsPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Nomor</TableHead>
-              <TableHead>Customer</TableHead>
-              <TableHead>Total</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="w-[100px]">Aksi</TableHead>
+              <TableHead>{t("quotations.number")}</TableHead>
+              <TableHead>{t("quotations.customer")}</TableHead>
+              <TableHead>{t("quotations.total")}</TableHead>
+              <TableHead>{t("customers.status")}</TableHead>
+              <TableHead className="w-[100px]">{t("common.edit")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {loading ? (
-              <TableRow><TableCell colSpan={5} className="h-24 text-center">Memuat data...</TableCell></TableRow>
+              <TableRow><TableCell colSpan={5} className="h-24 text-center">{t("common.loading")}</TableCell></TableRow>
             ) : quotations.length === 0 ? (
-              <TableRow><TableCell colSpan={5} className="h-24 text-center">Belum ada quotation</TableCell></TableRow>
+              <TableRow><TableCell colSpan={5} className="h-24 text-center">{t("common.noData")}</TableCell></TableRow>
             ) : (
               quotations.map((q) => (
                 <TableRow key={q.id}>
@@ -347,16 +349,16 @@ export default function QuotationsPage() {
             </div>
           )}
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDetailOpen(false)}>Tutup</Button>
+            <Button variant="outline" onClick={() => setDetailOpen(false)}>{t("common.close")}</Button>
             {selectedQuotation?.id && (
               <Button variant="outline" onClick={() => handleSendEmail(selectedQuotation.id)}>
                 <Mail className="mr-2 h-4 w-4" />
-                Send Email
+                {t("quotations.sendEmail")}
               </Button>
             )}
             <Button variant="outline" onClick={printQuotation}>
               <Printer className="mr-2 h-4 w-4" />
-              Print PDF
+              {t("quotations.printPDF")}
             </Button>
           </DialogFooter>
         </DialogContent>
