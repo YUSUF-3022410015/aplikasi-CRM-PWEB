@@ -3,69 +3,10 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, UserPlus, TrendingUp, CalendarCheck, DollarSign, AlertTriangle, Package, FileText } from "lucide-react";
+import { Users, UserPlus, TrendingUp, CalendarCheck, DollarSign, AlertTriangle, Package } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 import { DashboardCharts } from "@/components/dashboard-charts";
 import { useLanguage } from "@/components/language-provider";
-
-async function getStats(supabase: Awaited<ReturnType<typeof createClient>>) {
-  const [customersRes, activitiesRes, followupsRes, quotationsRes] = await Promise.all([
-    supabase.from("customers").select("id, status, created_at", { count: "exact" }),
-    supabase.from("activities").select("id, type, created_at"),
-    supabase.from("followups").select("id, status, due_date"),
-    supabase.from("quotations").select("id, total, status, created_at"),
-  ]);
-
-  const customers = customersRes.data || [];
-  const activities = activitiesRes.data || [];
-  const followups = followupsRes.data || [];
-  const quotations = quotationsRes.data || [];
-
-  const today = new Date().toISOString().split("T")[0];
-  const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString();
-
-  const newCustomersThisMonth = customers.filter((c) => c.created_at >= monthStart).length;
-  const followUpsToday = followups.filter((f) => f.due_date?.startsWith(today) && f.status === "pending").length;
-  const followUpsOverdue = followups.filter((f) => f.due_date < today && f.status === "pending").length;
-
-  const dealsWon = quotations.filter((q) => q.status === "approved").length;
-  const dealsLost = quotations.filter((q) => q.status === "rejected").length;
-  const totalRevenue = quotations
-    .filter((q) => q.status === "approved")
-    .reduce((sum, q) => sum + (q.total || 0), 0);
-  const pipelineValue = quotations
-    .filter((q) => q.status === "draft" || q.status === "sent")
-    .reduce((sum, q) => sum + (q.total || 0), 0);
-
-  // Activities by type
-  const activityTypeMap: Record<string, number> = {};
-  activities.forEach((a) => {
-    activityTypeMap[a.type] = (activityTypeMap[a.type] || 0) + 1;
-  });
-  const activitiesByType = Object.entries(activityTypeMap).map(([name, value]) => ({ name, value }));
-
-  // Customers by status
-  const statusMap: Record<string, number> = {};
-  customers.forEach((c) => {
-    statusMap[c.status] = (statusMap[c.status] || 0) + 1;
-  });
-  const customersByStatus = Object.entries(statusMap).map(([name, value]) => ({ name, value }));
-
-  return {
-    totalCustomers: customersRes.count || 0,
-    newCustomers: newCustomersThisMonth,
-    totalRevenue,
-    dealsWon,
-    dealsLost,
-    followUpsToday,
-    followUpsOverdue,
-    pipelineValue,
-    recentActivities: activities.slice(0, 5),
-    monthlyData: getMonthlyData(quotations),
-    activitiesByType,
-    customersByStatus,
-  };
-}
 
 export default function DashboardPage() {
   const [stats, setStats] = useState<any>(null);
@@ -111,7 +52,7 @@ export default function DashboardPage() {
       customers.forEach((c) => { statusMap[c.status] = (statusMap[c.status] || 0) + 1; });
       const customersByStatus = Object.entries(statusMap).map(([name, value]) => ({ name, value }));
 
-      const monthShort = tArray("common.monthShort").length > 0 ? tArray("common.monthShort") : ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+      const monthShort = tArray("common.monthShort").length > 0 ? tArray("common.monthShort") : ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
       const currentYear = new Date().getFullYear();
       const monthlyData = monthShort.map((month, i) => {
         const monthQuotations = quotations.filter((q) => {
@@ -142,7 +83,7 @@ export default function DashboardPage() {
     };
 
     fetchStats();
-  }, [supabase]);
+  }, [supabase, tArray]);
 
   if (loading) {
     return <div className="flex items-center justify-center h-64"><p className="text-muted-foreground">{t("common.loading")}</p></div>;
