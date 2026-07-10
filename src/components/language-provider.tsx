@@ -1,7 +1,7 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
-import { type Locale, t, tArray } from "@/lib/translations";
+import { createContext, useContext, useEffect, useState, useCallback } from "react";
+import { type Locale, t as translateFn, tArray as translateArrayFn } from "@/lib/translations";
 
 interface LanguageContextType {
   locale: Locale;
@@ -12,33 +12,41 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType>({
   locale: "id",
-  setLocale: () => null,
+  setLocale: () => {},
   t: (key: string) => key,
   tArray: () => [],
 });
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>("id");
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const stored = localStorage.getItem("locale") as Locale | null;
-    if (stored && (stored === "id" || stored === "en")) {
-      setLocaleState(stored);
-    } else {
-      localStorage.setItem("locale", "id");
-    }
+    try {
+      const stored = localStorage.getItem("locale") as Locale | null;
+      if (stored === "id" || stored === "en") {
+        setLocaleState(stored);
+      }
+    } catch {}
+    setMounted(true);
   }, []);
 
-  const setLocale = (newLocale: Locale) => {
+  const setLocale = useCallback((newLocale: Locale) => {
     setLocaleState(newLocale);
-    localStorage.setItem("locale", newLocale);
-  };
+    try {
+      localStorage.setItem("locale", newLocale);
+    } catch {}
+  }, []);
 
-  const translate = (key: string) => t(key, locale);
-  const translateArray = (key: string) => tArray(key, locale);
+  const t = useCallback((key: string) => translateFn(key, locale), [locale]);
+  const tArray = useCallback((key: string) => translateArrayFn(key, locale), [locale]);
+
+  if (!mounted) {
+    return <>{children}</>;
+  }
 
   return (
-    <LanguageContext.Provider value={{ locale, setLocale, t: translate, tArray: translateArray }}>
+    <LanguageContext.Provider value={{ locale, setLocale, t, tArray }}>
       {children}
     </LanguageContext.Provider>
   );
