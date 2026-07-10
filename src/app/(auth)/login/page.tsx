@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/card";
 import Link from "next/link";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { useLanguage } from "@/components/language-provider";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -24,6 +25,7 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const router = useRouter();
   const supabase = createClient();
+  const { t } = useLanguage();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,7 +52,7 @@ export default function LoginPage() {
       <CardHeader className="space-y-1 text-center">
         <CardTitle className="text-2xl font-bold">CRM</CardTitle>
         <CardDescription>
-          Masuk ke akun Anda untuk mengakses sistem
+          {t("auth.login")}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -61,7 +63,7 @@ export default function LoginPage() {
             </div>
           )}
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t("auth.email")}</Label>
             <Input
               id="email"
               type="email"
@@ -72,12 +74,12 @@ export default function LoginPage() {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{t("auth.password")}</Label>
             <div className="relative">
               <Input
                 id="password"
                 type={showPassword ? "text" : "password"}
-                placeholder="Masukkan password"
+                placeholder={t("auth.password")}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -101,23 +103,23 @@ export default function LoginPage() {
             {loading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Memproses...
+                {t("common.loading")}
               </>
             ) : (
-              "Masuk"
+              t("auth.login")
             )}
           </Button>
           <div className="text-center">
             <Link href="/forgot-password" className="text-sm text-primary underline hover:text-primary/80">
-              Lupa password?
+              {t("auth.forgotPassword")}
             </Link>
           </div>
         </form>
       </CardContent>
       <div className="px-6 pb-6 text-center text-sm text-muted-foreground">
-        Belum punya akun?{" "}
+        {t("auth.noAccount")}{" "}
         <Link href="/signup" className="text-primary underline hover:text-primary/80">
-          Daftar
+          {t("auth.signup")}
         </Link>
       </div>
     </Card>
