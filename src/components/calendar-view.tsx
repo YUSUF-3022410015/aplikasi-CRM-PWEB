@@ -247,7 +247,7 @@ export function CalendarView({ followUps, onDateClick, onFollowUpClick }: Calend
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="font-medium">{fu.customer?.name || "Follow-up"}</p>
-                        <p className="text-sm text-muted-foreground">{fu.note || "Tidak ada catatan"}</p>
+                        <p className="text-sm text-muted-foreground">{fu.note || t("common.noData")}</p>
                       </div>
                       <Badge variant="outline" className={config.color}>
                         {config.label}

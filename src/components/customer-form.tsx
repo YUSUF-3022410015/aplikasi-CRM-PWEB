@@ -19,12 +19,13 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
+import { useLanguage } from "@/components/language-provider";
 import type { Customer } from "@/types/database";
 
 const customerSchema = z.object({
-  name: z.string().min(1, "Nama wajib diisi"),
+  name: z.string().min(1, "Required"),
   company: z.string().optional(),
-  email: z.string().email("Email tidak valid").optional().or(z.literal("")),
+  email: z.string().email("Invalid email").optional().or(z.literal("")),
   phone: z.string().optional(),
   whatsapp: z.string().optional(),
   industry: z.string().optional(),
@@ -173,16 +174,16 @@ export function CustomerForm({ customer, mode }: CustomerFormProps) {
             <Input id="city" {...register("city")} placeholder="Jakarta" />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="website">Website</Label>
+            <Label htmlFor="website">{t("customers.website")}</Label>
             <Input id="website" {...register("website")} placeholder="https://..." />
           </div>
           <div className="space-y-2 md:col-span-2">
-            <Label htmlFor="address">Alamat</Label>
-            <Textarea id="address" {...register("address")} placeholder="Alamat lengkap" />
+            <Label htmlFor="address">{t("customers.address")}</Label>
+            <Textarea id="address" {...register("address")} placeholder={t("customers.address")} />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="source">Sumber Lead</Label>
-            <Input id="source" {...register("source")} placeholder="Referral, Website, dll" />
+            <Label htmlFor="source">{t("customers.source")}</Label>
+            <Input id="source" {...register("source")} placeholder="Referral, Website, etc" />
           </div>
           <div className="space-y-2">
             <Label>Assigned Sales</Label>
