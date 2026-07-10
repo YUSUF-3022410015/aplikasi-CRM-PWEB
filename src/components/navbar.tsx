@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { LogOut, User, Bell, Shield } from "lucide-react";
 import { NotificationBell } from "@/components/notification-bell";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { LanguageToggle } from "@/components/language-toggle";
 import { Badge } from "@/components/ui/badge";
 import { roleNames, type Role } from "@/lib/permissions";
 import { Button } from "@/components/ui/button";
@@ -42,6 +43,7 @@ export function Navbar({ user }: NavbarProps) {
     <header className="no-print flex h-14 items-center justify-between border-b bg-card px-6">
       <div />
       <div className="flex items-center gap-4">
+        <LanguageToggle />
         <ThemeToggle />
         {user?.id && <NotificationBell userId={user.id} />}
         <DropdownMenu>
