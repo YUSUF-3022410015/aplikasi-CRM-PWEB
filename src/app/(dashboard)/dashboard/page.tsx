@@ -67,25 +67,6 @@ async function getStats(supabase: Awaited<ReturnType<typeof createClient>>) {
   };
 }
 
-function getMonthlyData(quotations: { created_at: string; total: number; status: string }[]) {
-  const months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
-  const currentYear = new Date().getFullYear();
-
-  return months.map((month, i) => {
-    const monthQuotations = quotations.filter((q) => {
-      const d = new Date(q.created_at);
-      return d.getFullYear() === currentYear && d.getMonth() === i;
-    });
-    return {
-      name: month,
-      revenue: monthQuotations
-        .filter((q) => q.status === "approved")
-        .reduce((sum, q) => sum + (q.total || 0), 0),
-      deals: monthQuotations.filter((q) => q.status === "approved").length,
-    };
-  });
-}
-
 export default function DashboardPage() {
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
