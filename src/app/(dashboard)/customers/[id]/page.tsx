@@ -55,6 +55,7 @@ interface Activity {
 interface Followup {
   id: string;
   title: string;
+  note: string;
   due_date: string;
   status: string;
 }
