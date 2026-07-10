@@ -59,10 +59,10 @@ export default function FollowUpsPage() {
   const supabase = createClient();
   const router = useRouter();
 
-  const getStatusConfig = () => ({
-    pending: { label: t("followups.pending"), variant: "default" as const },
-    done: { label: t("followups.done"), variant: "success" as const },
-    cancelled: { label: t("followups.cancelled"), variant: "secondary" as const },
+  const getStatusConfig = (): Record<string, { label: string; variant: "default" | "success" | "destructive" | "secondary" }> => ({
+    pending: { label: t("followups.pending"), variant: "default" },
+    done: { label: t("followups.done"), variant: "success" },
+    cancelled: { label: t("followups.cancelled"), variant: "secondary" },
   });
 
   const fetchData = useCallback(async () => {
