@@ -2,13 +2,14 @@
 
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import { LogOut, User, Bell, Shield } from "lucide-react";
+import { LogOut, User, Bell, Shield, Search, HelpCircle } from "lucide-react";
 import { NotificationBell } from "@/components/notification-bell";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { LanguageToggle } from "@/components/language-toggle";
 import { Badge } from "@/components/ui/badge";
 import { roleNames, type Role } from "@/lib/permissions";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -42,17 +43,32 @@ export function Navbar({ user }: NavbarProps) {
   };
 
   return (
-    <header className="no-print flex h-14 items-center justify-between border-b bg-card px-6">
-      <div />
-      <div className="flex items-center gap-4">
+    <header className="no-print sticky top-0 z-40 flex h-16 items-center justify-between border-b border-border bg-card px-6">
+      {/* Search Bar */}
+      <div className="flex-1 max-w-md">
+        <div className="relative flex items-center w-full rounded-lg bg-muted border border-border px-3 py-2 transition-all focus-within:ring-2 focus-within:ring-primary">
+          <Search className="h-4 w-4 text-muted-foreground mr-2 shrink-0" />
+          <Input
+            type="text"
+            placeholder={t("common.search") + "..."}
+            className="w-full border-0 bg-transparent p-0 text-sm focus-visible:ring-0 focus-visible:ring-offset-0 h-auto"
+          />
+        </div>
+      </div>
+
+      {/* Right Actions */}
+      <div className="flex items-center gap-2 ml-4">
         <LanguageToggle />
         <ThemeToggle />
         {user?.id && <NotificationBell userId={user.id} />}
+        <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-foreground">
+          <HelpCircle className="h-4 w-4" />
+        </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="relative h-9 w-9 rounded-full">
+            <Button variant="ghost" className="relative h-9 w-9 rounded-full ml-2 border border-border overflow-hidden">
               <Avatar className="h-9 w-9">
-                <AvatarFallback className="bg-primary text-primary-foreground text-xs">
+                <AvatarFallback className="bg-muted text-muted-foreground text-xs font-medium">
                   {user ? getInitials(user.fullname) : "U"}
                 </AvatarFallback>
               </Avatar>
