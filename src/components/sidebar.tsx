@@ -75,18 +75,25 @@ export function Sidebar() {
   return (
     <aside
       className={cn(
-        "no-print flex h-screen flex-col border-r bg-card transition-all duration-300",
+        "no-print flex h-screen flex-col border-r border-border bg-card transition-all duration-300 shadow-sm",
         collapsed ? "w-16" : "w-64"
       )}
     >
-      <div className="flex h-14 items-center border-b px-4">
+      {/* Logo */}
+      <div className="flex h-16 items-center border-b border-border px-4 gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-lg shrink-0">
+          N
+        </div>
         {!collapsed && (
-          <span className="text-lg font-bold text-primary">CRM</span>
+          <div className="min-w-0">
+            <h1 className="text-base font-bold text-primary truncate">Nexus CRM</h1>
+            <p className="text-xs text-muted-foreground truncate">Enterprise Edition</p>
+          </div>
         )}
         <Button
           variant="ghost"
           size="icon"
-          className={cn("ml-auto h-8 w-8", collapsed && "mx-auto")}
+          className={cn("ml-auto h-8 w-8 shrink-0", collapsed && "mx-auto")}
           onClick={() => setCollapsed(!collapsed)}
         >
           {collapsed ? (
@@ -96,8 +103,10 @@ export function Sidebar() {
           )}
         </Button>
       </div>
-      <ScrollArea className="flex-1 py-2">
-        <nav className="space-y-1 px-2">
+
+      {/* Navigation */}
+      <ScrollArea className="flex-1 py-3">
+        <nav className="space-y-1 px-3">
           {navItems.map((item) => {
             const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
             return (
@@ -105,19 +114,28 @@ export function Sidebar() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                  "flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 active:scale-[0.98]",
                   isActive
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    ? "bg-secondary text-primary shadow-sm"
+                    : "text-muted-foreground hover:bg-accent hover:text-foreground"
                 )}
               >
-                <item.icon className="h-4 w-4 shrink-0" />
+                <item.icon className="h-5 w-5 shrink-0" />
                 {!collapsed && <span className="truncate">{item.label}</span>}
               </Link>
             );
           })}
         </nav>
       </ScrollArea>
+
+      {/* Add New Record Button */}
+      {!collapsed && (
+        <div className="p-4 border-t border-border">
+          <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm" size="lg">
+            + {t("common.add")}
+          </Button>
+        </div>
+      )}
     </aside>
   );
 }
