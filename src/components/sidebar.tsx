@@ -21,9 +21,11 @@ import {
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createClient } from "@/lib/supabase/client";
+import { getAccessibleRoutes, type Role } from "@/lib/permissions";
 
-const navItems = [
+const allNavItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/customers", label: "Customers", icon: Users },
   { href: "/activities", label: "Activities", icon: Phone },
@@ -41,6 +43,32 @@ const navItems = [
 export function Sidebar() {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
+  const [accessibleRoutes, setAccessibleRoutes] = useState<string[]>([]);
+  const supabase = createClient();
+
+  useEffect(() => {
+    const fetchRole = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+      if (profile) {
+        const routes = getAccessibleRoutes(profile.role as Role);
+        setAccessibleRoutes(routes);
+      }
+    };
+
+    fetchRole();
+  }, [supabase]);
+
+  const navItems = allNavItems.filter((item) =>
+    accessibleRoutes.includes(item.href)
+  );
 
   return (
     <aside

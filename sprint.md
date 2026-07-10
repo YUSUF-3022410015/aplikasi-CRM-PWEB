@@ -1372,3 +1372,114 @@ Sprint dinyatakan selesai jika:
 * `src/components/activity-log-list.tsx` - komponen activity log
 * `src/app/(dashboard)/activity-log/page.tsx` - halaman activity log
 * Update `src/components/sidebar.tsx` - tambah link Activity Log
+
+---
+
+# RBAC - Role-Based Access Control
+
+**Feature:** Role-Based Access Control
+
+**Tanggal:** 8 Juli 2026
+
+**Tujuan**
+
+Membatasi akses fitur berdasarkan role pengguna (Admin, Manager, Sales).
+
+---
+
+# Role Definitions
+
+## Administrator
+- Akses penuh ke semua fitur
+- Kelola user (invite, edit role, delete)
+- Kelola pengaturan sistem
+- Lihat semua data dan laporan
+
+## Manager
+- Lihat semua data customer
+- Lihat semua laporan
+- Edit customer dan follow-up
+- Kelola product dan quotation
+- Akses activity log
+
+## Sales (Karyawan)
+- Kelola customer sendiri
+- Buat dan edit aktivitas
+- Buat dan edit follow-up
+- Buat quotation
+- Kirim WhatsApp dan email
+
+---
+
+# Permission Matrix
+
+| Fitur | Admin | Manager | Sales |
+|-------|-------|---------|-------|
+| Customer View All | ✅ | ✅ | ❌ |
+| Customer View Own | ✅ | ✅ | ✅ |
+| Customer Create | ✅ | ✅ | ✅ |
+| Customer Edit | ✅ | ✅ | ❌ |
+| Customer Delete | ✅ | ❌ | ❌ |
+| Customer Import | ✅ | ✅ | ❌ |
+| Activity View All | ✅ | ✅ | ❌ |
+| Activity Create | ✅ | ✅ | ✅ |
+| Follow-up View All | ✅ | ✅ | ❌ |
+| Follow-up Create | ✅ | ✅ | ✅ |
+| Product View | ✅ | ✅ | ✅ |
+| Product Create/Edit | ✅ | ✅ | ❌ |
+| Quotation View All | ✅ | ✅ | ❌ |
+| Quotation Create | ✅ | ✅ | ✅ |
+| Report View | ✅ | ✅ | ❌ |
+| User Management | ✅ | ❌ | ❌ |
+| Settings | ✅ | ❌ | ❌ |
+| Activity Log | ✅ | ✅ | ❌ |
+
+---
+
+# Task Breakdown
+
+## Utility
+
+* Buat `src/lib/permissions.ts`:
+  * Permission definitions per module
+  * `hasPermission()` function
+  * `getAccessibleRoutes()` function
+  * Role display names & descriptions
+
+## Hooks
+
+* Buat `src/hooks/use-permissions.ts`:
+  * Fetch user profile & role
+  * `checkPermission()` function
+  * `canAccess()` function
+  * Role flags (isAdmin, isManager, isSales)
+
+## Components
+
+* Update `src/components/sidebar.tsx`:
+  * Fetch user role
+  * Filter nav items by accessible routes
+
+* Update `src/components/navbar.tsx`:
+  * Tampilkan role badge di dropdown
+
+* Update `src/app/(auth)/signup/page.tsx`:
+  * Tambah role selector (Sales/Manager/Admin)
+  * Deskripsi per role
+
+## Pages
+
+* Buat `src/app/(dashboard)/unauthorized/page.tsx`:
+  * Halaman akses ditolak
+  * Link kembali ke dashboard
+
+---
+
+# Deliverables
+
+* `src/lib/permissions.ts` - RBAC utility
+* `src/hooks/use-permissions.ts` - permissions hook
+* `src/app/(dashboard)/unauthorized/page.tsx` - unauthorized page
+* Update `src/components/sidebar.tsx` - filter by role
+* Update `src/components/navbar.tsx` - role badge
+* Update `src/app/(auth)/signup/page.tsx` - role selection

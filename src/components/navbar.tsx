@@ -2,9 +2,11 @@
 
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import { LogOut, User, Bell } from "lucide-react";
+import { LogOut, User, Bell, Shield } from "lucide-react";
 import { NotificationBell } from "@/components/notification-bell";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { Badge } from "@/components/ui/badge";
+import { roleNames, type Role } from "@/lib/permissions";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -61,6 +63,12 @@ export function Navbar({ user }: NavbarProps) {
                 <p className="text-xs leading-none text-muted-foreground">
                   {user?.email || "user@email.com"}
                 </p>
+                {user?.role && (
+                  <Badge variant="outline" className="mt-1 w-fit text-[10px]">
+                    <Shield className="mr-1 h-3 w-3" />
+                    {roleNames[user.role as Role] || user.role}
+                  </Badge>
+                )}
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />

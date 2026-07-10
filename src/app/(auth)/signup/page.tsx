@@ -13,13 +13,21 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Eye, EyeOff, Loader2, CheckCircle2 } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Eye, EyeOff, Loader2, CheckCircle2, Shield } from "lucide-react";
 
 export default function SignupPage() {
   const [fullname, setFullname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [role, setRole] = useState("sales");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -47,7 +55,7 @@ export default function SignupPage() {
       email,
       password,
       options: {
-        data: { fullname, role: "sales" },
+        data: { fullname, role },
       },
     });
 
@@ -64,7 +72,7 @@ export default function SignupPage() {
           id: data.user.id,
           fullname,
           email,
-          role: "sales",
+          role,
         });
       } catch {
         // Profile insert failed, but signup succeeded — continue
@@ -84,7 +92,7 @@ export default function SignupPage() {
           </div>
           <CardTitle className="text-2xl font-bold">Pendaftaran Berhasil!</CardTitle>
           <CardDescription>
-            Akun berhasil dibuat. Silakan cek email untuk verifikasi, lalu kembali ke halaman login.
+            Akun berhasil dibuat sebagai <strong>{role === "admin" ? "Administrator" : role === "manager" ? "Manager" : "Sales"}</strong>. Silakan cek email untuk verifikasi, lalu kembali ke halaman login.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -111,6 +119,30 @@ export default function SignupPage() {
               {error}
             </div>
           )}
+
+          {/* Role Selection */}
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              <Shield className="h-4 w-4" />
+              Daftar Sebagai
+            </Label>
+            <Select value={role} onValueChange={setRole}>
+              <SelectTrigger>
+                <SelectValue placeholder="Pilih role" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="sales">Sales (Karyawan)</SelectItem>
+                <SelectItem value="manager">Manager</SelectItem>
+                <SelectItem value="admin">Administrator</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground">
+              {role === "admin" && "Akses penuh ke semua fitur dan pengaturan sistem"}
+              {role === "manager" && "Akses ke semua data dan laporan"}
+              {role === "sales" && "Kelola customer dan aktivitas sendiri"}
+            </p>
+          </div>
+
           <div className="space-y-2">
             <Label htmlFor="fullname">Nama Lengkap</Label>
             <Input
