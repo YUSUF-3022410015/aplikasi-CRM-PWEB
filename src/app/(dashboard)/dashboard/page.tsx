@@ -101,20 +101,20 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <div>
         <h1 className="text-xl font-bold tracking-tight sm:text-2xl">{t("dashboard.title")}</h1>
         <p className="text-sm text-muted-foreground sm:text-base">{t("dashboard.subtitle")}</p>
       </div>
-      <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-2 sm:gap-4 md:grid-cols-2 lg:grid-cols-4">
         {statCards.map((stat) => (
           <Card key={stat.title}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 sm:pb-2">
-              <CardTitle className="text-xs font-medium sm:text-sm">{stat.title}</CardTitle>
-              <stat.icon className={`h-3 w-3 sm:h-4 sm:w-4 ${stat.color}`} />
+              <CardTitle className="min-w-0 flex-1 truncate pr-2 text-[11px] font-medium sm:text-sm">{stat.title}</CardTitle>
+              <stat.icon className={`h-3 w-3 shrink-0 sm:h-4 sm:w-4 ${stat.color}`} />
             </CardHeader>
             <CardContent className="pt-0 sm:pt-0">
-              <div className="text-lg font-bold sm:text-2xl">{stat.value}</div>
+              <div className="text-base font-bold sm:text-2xl">{stat.value}</div>
             </CardContent>
           </Card>
         ))}
