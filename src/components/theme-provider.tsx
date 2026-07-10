@@ -28,19 +28,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const root = window.document.documentElement;
+    // Always force light mode
     root.classList.remove("light", "dark");
-
-    if (theme === "system") {
-      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
-        ? "dark"
-        : "light";
-      root.classList.add(systemTheme);
-    } else {
-      root.classList.add(theme);
-    }
-
-    localStorage.setItem("theme", theme);
-  }, [theme]);
+    root.classList.add("light");
+    localStorage.setItem("theme", "light");
+  }, []);
 
   return (
     <ThemeContext.Provider value={{ theme, setTheme }}>
