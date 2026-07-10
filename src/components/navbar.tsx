@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { getInitials } from "@/lib/utils";
+import { useLanguage } from "@/components/language-provider";
 
 interface NavbarProps {
   user?: {
@@ -32,6 +33,7 @@ interface NavbarProps {
 export function Navbar({ user }: NavbarProps) {
   const router = useRouter();
   const supabase = createClient();
+  const { t } = useLanguage();
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -76,12 +78,12 @@ export function Navbar({ user }: NavbarProps) {
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => router.push("/profile")}>
               <User className="mr-2 h-4 w-4" />
-              <span>Profile</span>
+              <span>{t("nav.profile")}</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout}>
               <LogOut className="mr-2 h-4 w-4" />
-              <span>Log out</span>
+              <span>{t("nav.logout")}</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

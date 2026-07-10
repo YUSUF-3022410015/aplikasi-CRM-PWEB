@@ -24,27 +24,29 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { getAccessibleRoutes, type Role } from "@/lib/permissions";
-
-const allNavItems = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/customers", label: "Customers", icon: Users },
-  { href: "/activities", label: "Activities", icon: Phone },
-  { href: "/followups", label: "Follow-ups", icon: CalendarCheck },
-  { href: "/calendar", label: "Calendar", icon: Calendar },
-  { href: "/pipeline", label: "Pipeline", icon: Kanban },
-  { href: "/products", label: "Products", icon: Package },
-  { href: "/quotations", label: "Quotations", icon: FileText },
-  { href: "/activity-log", label: "Activity Log", icon: Activity },
-  { href: "/reports", label: "Reports", icon: BarChart3 },
-  { href: "/users", label: "Users", icon: UserCog },
-  { href: "/settings", label: "Settings", icon: Settings },
-];
+import { useLanguage } from "@/components/language-provider";
 
 export function Sidebar() {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const [accessibleRoutes, setAccessibleRoutes] = useState<string[]>([]);
   const supabase = createClient();
+  const { t } = useLanguage();
+
+  const allNavItems = [
+    { href: "/dashboard", label: t("nav.dashboard"), icon: LayoutDashboard },
+    { href: "/customers", label: t("nav.customers"), icon: Users },
+    { href: "/activities", label: t("nav.activities"), icon: Phone },
+    { href: "/followups", label: t("nav.followups"), icon: CalendarCheck },
+    { href: "/calendar", label: t("nav.calendar"), icon: Calendar },
+    { href: "/pipeline", label: t("nav.pipeline"), icon: Kanban },
+    { href: "/products", label: t("nav.products"), icon: Package },
+    { href: "/quotations", label: t("nav.quotations"), icon: FileText },
+    { href: "/activity-log", label: t("nav.activityLog"), icon: Activity },
+    { href: "/reports", label: t("nav.reports"), icon: BarChart3 },
+    { href: "/users", label: t("nav.users"), icon: UserCog },
+    { href: "/settings", label: t("nav.settings"), icon: Settings },
+  ];
 
   useEffect(() => {
     const fetchRole = async () => {
