@@ -47,14 +47,14 @@ export function DashboardCharts({ data, activitiesByType = [], customersByStatus
   const { t } = useLanguage();
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-3">
       {/* Revenue Chart */}
       <Card className="md:col-span-2">
         <CardHeader>
-          <CardTitle className="text-sm font-medium">{t("dashboard.monthlyRevenue")}</CardTitle>
+          <CardTitle className="text-xs font-medium sm:text-sm">{t("dashboard.monthlyRevenue")}</CardTitle>
         </CardHeader>
         <CardContent>
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={250}>
             <BarChart data={data}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" fontSize={12} />
@@ -77,10 +77,10 @@ export function DashboardCharts({ data, activitiesByType = [], customersByStatus
       {/* Deals Chart */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-sm font-medium">{t("dashboard.monthlyDeals")}</CardTitle>
+          <CardTitle className="text-xs font-medium sm:text-sm">{t("dashboard.monthlyDeals")}</CardTitle>
         </CardHeader>
         <CardContent>
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={250}>
             <LineChart data={data}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" fontSize={12} />
@@ -103,10 +103,10 @@ export function DashboardCharts({ data, activitiesByType = [], customersByStatus
       {activitiesByType.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-sm font-medium">{t("dashboard.activitiesByType")}</CardTitle>
+            <CardTitle className="text-xs font-medium sm:text-sm">{t("dashboard.activitiesByType")}</CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height={250}>
               <PieChart>
                 <Pie
                   data={activitiesByType}
@@ -133,10 +133,10 @@ export function DashboardCharts({ data, activitiesByType = [], customersByStatus
       {customersByStatus.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-sm font-medium">{t("dashboard.customersByStatus")}</CardTitle>
+            <CardTitle className="text-xs font-medium sm:text-sm">{t("dashboard.customersByStatus")}</CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height={250}>
               <PieChart>
                 <Pie
                   data={customersByStatus}
