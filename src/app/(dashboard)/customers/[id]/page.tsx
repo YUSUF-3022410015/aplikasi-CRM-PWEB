@@ -46,6 +46,8 @@ interface Customer {
 
 interface Activity {
   id: string;
+  customer_id: string;
+  user_id: string;
   type: string;
   note: string;
   created_at: string;
