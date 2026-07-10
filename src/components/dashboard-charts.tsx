@@ -92,7 +92,7 @@ export function DashboardCharts({ data, activitiesByType = [], customersByStatus
                 dataKey="deals"
                 stroke="#10b981"
                 strokeWidth={2}
-                name="Deals Won"
+                name={t("common.dealsWon")}
               />
             </LineChart>
           </ResponsiveContainer>

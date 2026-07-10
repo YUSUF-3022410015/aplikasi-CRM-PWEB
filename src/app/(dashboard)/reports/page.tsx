@@ -26,7 +26,7 @@ import {
 const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#06b6d4"];
 
 export default function ReportsPage() {
-  const { t } = useLanguage();
+  const { t, tArray } = useLanguage();
   const [stats, setStats] = useState({
     totalCustomers: 0,
     totalRevenue: 0,
@@ -66,9 +66,9 @@ export default function ReportsPage() {
     const customersByStatus = Object.entries(statusMap).map(([name, value]) => ({ name, value }));
 
     // Revenue by month
-    const months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+    const monthShort = tArray("common.monthShort").length > 0 ? tArray("common.monthShort") : ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
     const year = new Date().getFullYear();
-    const revenueByMonth = months.map((m, i) => {
+    const revenueByMonth = monthShort.map((m, i) => {
       const rev = won.filter((q) => { const d = new Date(q.created_at); return d.getFullYear() === year && d.getMonth() === i; })
         .reduce((s, q) => s + (q.total || 0), 0);
       return { name: m, revenue: rev };

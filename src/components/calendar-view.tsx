@@ -29,7 +29,7 @@ interface CalendarViewProps {
 }
 
 export function CalendarView({ followUps, onDateClick, onFollowUpClick }: CalendarViewProps) {
-  const { t } = useLanguage();
+  const { t, tArray } = useLanguage();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [showDetail, setShowDetail] = useState(false);
@@ -40,11 +40,8 @@ export function CalendarView({ followUps, onDateClick, onFollowUpClick }: Calend
     cancelled: { label: t("followups.cancelled"), color: "bg-gray-100 text-gray-700 border-gray-300" },
   };
 
-  const daysInWeek = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
-  const months = [
-    "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-    "Juli", "Agustus", "September", "Oktober", "November", "Desember"
-  ];
+  const daysInWeek = tArray("common.dayNames").length > 0 ? tArray("common.dayNames") : ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
+  const months = tArray("common.monthNames").length > 0 ? tArray("common.monthNames") : ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();

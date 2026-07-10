@@ -52,6 +52,7 @@ export const translations = {
     importDescription: { id: "Upload file Excel (.xlsx) untuk menambahkan data customer secara massal.", en: "Upload Excel file (.xlsx) to add customer data in bulk." },
     active: { id: "Active", en: "Active" },
     inactive: { id: "Inactive", en: "Inactive" },
+    dealsWon: { id: "Deal Won", en: "Deals Won" },
   },
   // Navigation
   nav: {
@@ -418,4 +419,21 @@ export function t(key: string, locale: Locale = "id"): string {
   }
 
   return key;
+}
+
+// Helper to get array translations (months, days, etc.)
+export function tArray(key: string, locale: Locale = "id"): string[] {
+  const keys = key.split(".");
+  let value: any = translations;
+
+  for (const k of keys) {
+    value = value?.[k];
+  }
+
+  if (value && typeof value === "object" && locale in value) {
+    const result = value[locale];
+    if (Array.isArray(result)) return result;
+  }
+
+  return [];
 }

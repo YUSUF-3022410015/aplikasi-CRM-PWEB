@@ -1,18 +1,20 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { type Locale, t } from "@/lib/translations";
+import { type Locale, t, tArray } from "@/lib/translations";
 
 interface LanguageContextType {
   locale: Locale;
   setLocale: (locale: Locale) => void;
   t: (key: string) => string;
+  tArray: (key: string) => string[];
 }
 
 const LanguageContext = createContext<LanguageContextType>({
   locale: "id",
   setLocale: () => null,
   t: (key: string) => key,
+  tArray: () => [],
 });
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
@@ -33,9 +35,10 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   };
 
   const translate = (key: string) => t(key, locale);
+  const translateArray = (key: string) => tArray(key, locale);
 
   return (
-    <LanguageContext.Provider value={{ locale, setLocale, t: translate }}>
+    <LanguageContext.Provider value={{ locale, setLocale, t: translate, tArray: translateArray }}>
       {children}
     </LanguageContext.Provider>
   );

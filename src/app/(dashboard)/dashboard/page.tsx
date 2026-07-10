@@ -89,7 +89,7 @@ function getMonthlyData(quotations: { created_at: string; total: number; status:
 export default function DashboardPage() {
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const { t } = useLanguage();
+  const { t, tArray } = useLanguage();
   const supabase = createClient();
 
   useEffect(() => {
@@ -130,9 +130,9 @@ export default function DashboardPage() {
       customers.forEach((c) => { statusMap[c.status] = (statusMap[c.status] || 0) + 1; });
       const customersByStatus = Object.entries(statusMap).map(([name, value]) => ({ name, value }));
 
-      const months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+      const monthShort = tArray("common.monthShort").length > 0 ? tArray("common.monthShort") : ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
       const currentYear = new Date().getFullYear();
-      const monthlyData = months.map((month, i) => {
+      const monthlyData = monthShort.map((month, i) => {
         const monthQuotations = quotations.filter((q) => {
           const d = new Date(q.created_at);
           return d.getFullYear() === currentYear && d.getMonth() === i;
