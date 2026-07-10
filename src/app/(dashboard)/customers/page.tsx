@@ -35,6 +35,7 @@ import {
 import { Plus, Search, Edit, Trash2, Eye, Download, Upload } from "lucide-react";
 import { exportCustomersToExcel } from "@/lib/excel";
 import { ImportCustomersDialog } from "@/components/import-customers-dialog";
+import { useLanguage } from "@/components/language-provider";
 import type { Customer } from "@/types/database";
 
 const statusColors: Record<string, "default" | "secondary" | "success" | "warning" | "destructive"> = {
@@ -56,6 +57,7 @@ export default function CustomersPage() {
   const [importOpen, setImportOpen] = useState(false);
   const router = useRouter();
   const supabase = createClient();
+  const { t } = useLanguage();
   const limit = 10;
 
   const fetchCustomers = useCallback(async () => {
@@ -121,22 +123,22 @@ export default function CustomersPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Customers</h1>
-          <p className="text-muted-foreground">Kelola data pelanggan Anda</p>
+          <h1 className="text-2xl font-bold tracking-tight">{t("customers.title")}</h1>
+          <p className="text-muted-foreground">{t("customers.subtitle")}</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={handleExport}>
             <Download className="mr-2 h-4 w-4" />
-            Export
+            {t("common.export")}
           </Button>
           <Button variant="outline" onClick={() => setImportOpen(true)}>
             <Upload className="mr-2 h-4 w-4" />
-            Import
+            {t("common.import")}
           </Button>
           <Link href="/customers/new">
             <Button>
               <Plus className="mr-2 h-4 w-4" />
-              Tambah
+              {t("common.add")}
             </Button>
           </Link>
         </div>
@@ -146,7 +148,7 @@ export default function CustomersPage() {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Cari nama, perusahaan, atau email..."
+            placeholder={t("customers.searchPlaceholder")}
             className="pl-9"
             value={search}
             onChange={(e) => {
@@ -180,25 +182,25 @@ export default function CustomersPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Nama</TableHead>
-              <TableHead>Perusahaan</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Telepon</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="w-[120px]">Aksi</TableHead>
+              <TableHead>{t("customers.name")}</TableHead>
+              <TableHead>{t("customers.company")}</TableHead>
+              <TableHead>{t("customers.email")}</TableHead>
+              <TableHead>{t("customers.phone")}</TableHead>
+              <TableHead>{t("customers.status")}</TableHead>
+              <TableHead className="w-[120px]">{t("common.edit")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {loading ? (
               <TableRow>
                 <TableCell colSpan={6} className="h-24 text-center">
-                  Memuat data...
+                  {t("common.loading")}
                 </TableCell>
               </TableRow>
             ) : customers.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={6} className="h-24 text-center">
-                  Tidak ada data customer
+                  {t("common.noData")}
                 </TableCell>
               </TableRow>
             ) : (
@@ -251,7 +253,7 @@ export default function CustomersPage() {
       {totalPages > 1 && (
         <div className="flex items-center justify-between">
           <p className="text-sm text-muted-foreground">
-            Menampilkan {(page - 1) * limit + 1} - {Math.min(page * limit, total)} dari {total} data
+            {(page - 1) * limit + 1} - {Math.min(page * limit, total)} / {total}
           </p>
           <div className="flex gap-2">
             <Button
@@ -260,7 +262,7 @@ export default function CustomersPage() {
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
             >
-              Sebelumnya
+              {t("common.previous")}
             </Button>
             <Button
               variant="outline"
@@ -268,7 +270,7 @@ export default function CustomersPage() {
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
             >
-              Selanjutnya
+              {t("common.next")}
             </Button>
           </div>
         </div>
@@ -277,15 +279,15 @@ export default function CustomersPage() {
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Hapus Customer?</AlertDialogTitle>
+            <AlertDialogTitle>{t("customers.deleteConfirm")}</AlertDialogTitle>
             <AlertDialogDescription>
-              Tindakan ini tidak dapat dibatalkan. Data customer akan dihapus permanen.
+              {t("customers.deleteDescription")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Batal</AlertDialogCancel>
+            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
             <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-              Hapus
+              {t("common.delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
