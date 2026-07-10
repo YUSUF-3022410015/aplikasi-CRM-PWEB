@@ -46,6 +46,9 @@ export function CalendarView({ followUps, onDateClick, onFollowUpClick }: Calend
     "Juli", "Agustus", "September", "Oktober", "November", "Desember"
   ];
 
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
+
   // Get days in month
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const firstDayOfMonth = new Date(year, month, 1).getDay();
