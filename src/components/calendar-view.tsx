@@ -223,7 +223,7 @@ export function CalendarView({ followUps, onDateClick, onFollowUpClick }: Calend
           {selectedDateFollowUps.length === 0 ? (
             <div className="py-8 text-center text-muted-foreground">
               <CalendarCheck className="mx-auto h-12 w-12 mb-2 opacity-50" />
-              <p>Tidak ada follow-up pada tanggal ini</p>
+              <p>{t("common.noFollowupsOnDate")}</p>
               {onDateClick && (
                 <Button
                   variant="link"

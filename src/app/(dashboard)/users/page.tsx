@@ -269,18 +269,18 @@ export default function UsersPage() {
               <Select value={editRole} onValueChange={setEditRole}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="admin">Admin</SelectItem>
-                  <SelectItem value="manager">Manager</SelectItem>
-                  <SelectItem value="sales">Sales</SelectItem>
+                  <SelectItem value="admin">{t("auth.admin")}</SelectItem>
+                  <SelectItem value="manager">{t("auth.manager")}</SelectItem>
+                  <SelectItem value="sales">{t("auth.sales")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setEditUser(null)}>Batal</Button>
+            <Button variant="outline" onClick={() => setEditUser(null)}>{t("common.cancel")}</Button>
             <Button onClick={handleEditRole} disabled={editLoading || !editRole}>
               {editLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Simpan
+              {t("common.save")}
             </Button>
           </DialogFooter>
         </DialogContent>

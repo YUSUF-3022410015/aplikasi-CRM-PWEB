@@ -131,7 +131,7 @@ export default function ProfilePage() {
             <div>
               <p className="font-medium">{fullname || "User"}</p>
               <p className="text-sm text-muted-foreground">{email}</p>
-              <p className="text-xs text-muted-foreground capitalize mt-1">Role: {role}</p>
+              <p className="text-xs text-muted-foreground capitalize mt-1">{t("auth.role")}: {role}</p>
             </div>
           </div>
           <Separator />
