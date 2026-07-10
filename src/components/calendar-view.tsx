@@ -11,6 +11,8 @@ import {
 } from "@/components/ui/dialog";
 import { ChevronLeft, ChevronRight, CalendarCheck, Clock, AlertTriangle } from "lucide-react";
 import { formatDate } from "@/lib/utils";
+import { useLanguage } from "@/components/language-provider";
+import { useLanguage } from "@/components/language-provider";
 
 interface FollowUpItem {
   id: string;
@@ -40,6 +42,8 @@ const months = [
 ];
 
 export function CalendarView({ followUps, onDateClick, onFollowUpClick }: CalendarViewProps) {
+  const { t } = useLanguage();
+  const { t } = useLanguage();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [showDetail, setShowDetail] = useState(false);
