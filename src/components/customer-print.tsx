@@ -1,13 +1,29 @@
 "use client";
 
 import { formatDate } from "@/lib/utils";
-import type { Customer, Activity, FollowUp } from "@/types/database";
+
+interface CustomerPrintCustomer {
+  id: string;
+  name: string;
+  company?: string | null;
+  email?: string | null;
+  phone?: string | null;
+  whatsapp?: string | null;
+  industry?: string | null;
+  city?: string | null;
+  address?: string | null;
+  website?: string | null;
+  source?: string | null;
+  status: string;
+  pipeline_stage: string;
+  created_at: string;
+  updated_at: string;
+  activities?: { id: string; type: string; note: string; created_at: string; user?: { fullname: string } | null }[];
+  followups?: { id: string; note?: string; due_date: string; status: string }[];
+}
 
 interface CustomerPrintProps {
-  customer: Customer & {
-    activities?: Activity[];
-    followups?: FollowUp[];
-  };
+  customer: CustomerPrintCustomer;
 }
 
 export function CustomerPrint({ customer }: CustomerPrintProps) {
