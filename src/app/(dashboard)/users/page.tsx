@@ -29,6 +29,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Plus, UserCog, Shield, Pencil, Trash2, Loader2 } from "lucide-react";
+import { useLanguage } from "@/components/language-provider";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -66,6 +67,7 @@ export default function UsersPage() {
   const [editUser, setEditUser] = useState<UserProfile | null>(null);
   const [editRole, setEditRole] = useState("");
   const [editLoading, setEditLoading] = useState(false);
+  const { t } = useLanguage();
   const [deleteUserId, setDeleteUserId] = useState<string | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const supabase = createClient();
@@ -141,12 +143,12 @@ export default function UsersPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">User Management</h1>
-          <p className="text-muted-foreground">Kelola pengguna dan hak akses sistem</p>
+          <h1 className="text-2xl font-bold tracking-tight">{t("users.title")}</h1>
+          <p className="text-muted-foreground">{t("users.subtitle")}</p>
         </div>
         <Button onClick={() => setDialogOpen(true)}>
           <Plus className="mr-2 h-4 w-4" />
-          Invite User
+          {t("users.inviteUser")}
         </Button>
       </div>
 
@@ -154,17 +156,17 @@ export default function UsersPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Nama</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead className="w-[100px]">Aksi</TableHead>
+              <TableHead>{t("customers.name")}</TableHead>
+              <TableHead>{t("customers.email")}</TableHead>
+              <TableHead>{t("auth.role")}</TableHead>
+              <TableHead className="w-[100px]">{t("common.edit")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {loading ? (
-              <TableRow><TableCell colSpan={4} className="h-24 text-center">Memuat data...</TableCell></TableRow>
+              <TableRow><TableCell colSpan={4} className="h-24 text-center">{t("common.loading")}</TableCell></TableRow>
             ) : users.length === 0 ? (
-              <TableRow><TableCell colSpan={4} className="h-24 text-center">Belum ada pengguna</TableCell></TableRow>
+              <TableRow><TableCell colSpan={4} className="h-24 text-center">{t("common.noData")}</TableCell></TableRow>
             ) : (
               users.map((u) => (
                 <TableRow key={u.id}>
@@ -211,38 +213,38 @@ export default function UsersPage() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <UserCog className="h-5 w-5" />
-              Invite User Baru
+              {t("users.inviteUser")}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label>Fullname</Label>
+              <Label>{t("auth.fullname")}</Label>
               <Input value={fullname} onChange={(e) => setFullname(e.target.value)} placeholder="Nama lengkap" />
             </div>
             <div className="space-y-2">
-              <Label>Email</Label>
+              <Label>{t("auth.email")}</Label>
               <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="email@perusahaan.com" />
             </div>
             <div className="space-y-2">
-              <Label>Password</Label>
+              <Label>{t("auth.password")}</Label>
               <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Minimal 6 karakter" />
             </div>
             <div className="space-y-2">
-              <Label>Role</Label>
+              <Label>{t("auth.role")}</Label>
               <Select value={role} onValueChange={setRole}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="admin">Admin</SelectItem>
-                  <SelectItem value="manager">Manager</SelectItem>
-                  <SelectItem value="sales">Sales</SelectItem>
+                  <SelectItem value="admin">{t("auth.admin")}</SelectItem>
+                  <SelectItem value="manager">{t("auth.manager")}</SelectItem>
+                  <SelectItem value="sales">{t("auth.sales")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)}>Batal</Button>
+            <Button variant="outline" onClick={() => setDialogOpen(false)}>{t("common.cancel")}</Button>
             <Button onClick={handleInvite} disabled={inviteLoading || !email || !fullname || !password}>
-              {inviteLoading ? "Mengirim..." : "Invite"}
+              {inviteLoading ? t("common.loading") : t("users.inviteUser")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -254,16 +256,16 @@ export default function UsersPage() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <UserCog className="h-5 w-5" />
-              Edit Role User
+              {t("users.editRole")}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div>
-              <p className="text-sm text-muted-foreground">User</p>
+              <p className="text-sm text-muted-foreground">{t("nav.users")}</p>
               <p className="font-medium">{editUser?.fullname} ({editUser?.email})</p>
             </div>
             <div className="space-y-2">
-              <Label>Role</Label>
+              <Label>{t("auth.role")}</Label>
               <Select value={editRole} onValueChange={setEditRole}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -288,20 +290,20 @@ export default function UsersPage() {
       <AlertDialog open={!!deleteUserId} onOpenChange={() => setDeleteUserId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Hapus User?</AlertDialogTitle>
+            <AlertDialogTitle>{t("users.deleteUser")}?</AlertDialogTitle>
             <AlertDialogDescription>
-              Tindakan ini tidak dapat dibatalkan. User akan dihapus permanen dari sistem.
+              {t("customers.deleteDescription")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Batal</AlertDialogCancel>
+            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteUser}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               disabled={deleteLoading}
             >
               {deleteLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Hapus
+              {t("common.delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
