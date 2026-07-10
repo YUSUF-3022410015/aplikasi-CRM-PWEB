@@ -23,10 +23,13 @@ export default async function DashboardLayout({
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
-      <Sidebar />
-      <div className="flex flex-1 flex-col overflow-hidden ml-0 md:ml-64">
+      {/* Sidebar - hidden on mobile, visible on md+ */}
+      <div className="hidden md:block">
+        <Sidebar />
+      </div>
+      <div className="flex flex-1 flex-col overflow-hidden">
         <Navbar user={profile} />
-        <main className="flex-1 overflow-y-auto p-3 md:p-4">{children}</main>
+        <main className="flex-1 overflow-y-auto px-3 py-3 md:px-4 md:py-4">{children}</main>
       </div>
     </div>
   );

@@ -2,7 +2,7 @@
 
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import { LogOut, User, Shield, Search } from "lucide-react";
+import { LogOut, User, Shield, Search, Menu } from "lucide-react";
 import { NotificationBell } from "@/components/notification-bell";
 import { LanguageToggle } from "@/components/language-toggle";
 import { Badge } from "@/components/ui/badge";
@@ -42,10 +42,15 @@ export function Navbar({ user }: NavbarProps) {
   };
 
   return (
-    <header className="no-print sticky top-0 z-40 flex h-16 items-center justify-between border-b border-border bg-card px-6">
+    <header className="no-print sticky top-0 z-40 flex h-14 items-center justify-between border-b border-border bg-card px-3 md:px-6">
+      {/* Mobile menu button */}
+      <Button variant="ghost" size="icon" className="md:hidden h-9 w-9 mr-2">
+        <Menu className="h-5 w-5" />
+      </Button>
+
       {/* Search Bar */}
       <div className="flex-1 max-w-md">
-        <div className="relative flex items-center w-full rounded-lg bg-muted border border-border px-3 py-2 transition-all focus-within:ring-2 focus-within:ring-primary">
+        <div className="relative flex items-center w-full rounded-lg bg-muted border border-border px-3 py-1.5 transition-all focus-within:ring-2 focus-within:ring-primary">
           <Search className="h-4 w-4 text-muted-foreground mr-2 shrink-0" />
           <Input
             type="text"
@@ -56,12 +61,12 @@ export function Navbar({ user }: NavbarProps) {
       </div>
 
       {/* Right Actions */}
-      <div className="flex items-center gap-2 ml-4">
+      <div className="flex items-center gap-1 md:gap-2 ml-2 md:ml-4">
         <LanguageToggle />
         {user?.id && <NotificationBell userId={user.id} />}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="relative h-9 w-9 rounded-full ml-2 border border-border overflow-hidden">
+            <Button variant="ghost" className="relative h-9 w-9 rounded-full ml-1 md:ml-2 border border-border overflow-hidden">
               <Avatar className="h-9 w-9">
                 <AvatarFallback className="bg-muted text-muted-foreground text-xs font-medium">
                   {user ? getInitials(user.fullname) : "U"}
