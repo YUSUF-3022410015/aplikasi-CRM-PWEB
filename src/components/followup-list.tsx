@@ -27,7 +27,7 @@ import { formatDate } from "@/lib/utils";
 
 interface FollowUpItem {
   id: string;
-  note: string;
+  note?: string;
   due_date: string;
   status: string;
   assigned_user?: { fullname: string } | null;
