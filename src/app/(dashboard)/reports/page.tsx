@@ -23,7 +23,7 @@ import {
   Legend,
 } from "recharts";
 
-const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#06b6d4"];
+const COLORS = ["#0058be", "#006947", "#4edea3", "#ba1a1a", "#8b5cf6", "#06b6d4"];
 
 export default function ReportsPage() {
   const { t, tArray } = useLanguage();
@@ -119,34 +119,51 @@ export default function ReportsPage() {
         </div>
       </div>
 
+      {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">{t("reports.totalCustomers")}</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent><div className="text-2xl font-bold">{stats.totalCustomers}</div></CardContent>
+        <Card className="hover:shadow-md transition-shadow">
+          <CardContent className="p-5">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-sm font-medium text-muted-foreground">{t("reports.totalCustomers")}</span>
+              <div className="p-2.5 rounded-full bg-primary/10">
+                <Users className="h-5 w-5 text-primary" />
+              </div>
+            </div>
+            <div className="text-3xl font-bold text-foreground">{stats.totalCustomers}</div>
+          </CardContent>
         </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">{t("reports.revenue")}</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent><div className="text-2xl font-bold">{formatCurrency(stats.totalRevenue)}</div></CardContent>
+        <Card className="hover:shadow-md transition-shadow">
+          <CardContent className="p-5">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-sm font-medium text-muted-foreground">{t("reports.revenue")}</span>
+              <div className="p-2.5 rounded-full bg-primary/10">
+                <DollarSign className="h-5 w-5 text-primary" />
+              </div>
+            </div>
+            <div className="text-3xl font-bold text-foreground">{formatCurrency(stats.totalRevenue)}</div>
+          </CardContent>
         </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">{t("reports.dealsWon")}</CardTitle>
-            <TrendingUp className="h-4 w-4 text-green-600" />
-          </CardHeader>
-          <CardContent><div className="text-2xl font-bold">{stats.dealsWon}</div></CardContent>
+        <Card className="hover:shadow-md transition-shadow">
+          <CardContent className="p-5">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-sm font-medium text-muted-foreground">{t("reports.dealsWon")}</span>
+              <div className="p-2.5 rounded-full bg-tertiary/10">
+                <TrendingUp className="h-5 w-5 text-tertiary" />
+              </div>
+            </div>
+            <div className="text-3xl font-bold text-foreground">{stats.dealsWon}</div>
+          </CardContent>
         </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">{t("reports.dealsLost")}</CardTitle>
-            <TrendingDown className="h-4 w-4 text-red-600" />
-          </CardHeader>
-          <CardContent><div className="text-2xl font-bold">{stats.dealsLost}</div></CardContent>
+        <Card className="hover:shadow-md transition-shadow">
+          <CardContent className="p-5">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-sm font-medium text-muted-foreground">{t("reports.dealsLost")}</span>
+              <div className="p-2.5 rounded-full bg-destructive/10">
+                <TrendingDown className="h-5 w-5 text-destructive" />
+              </div>
+            </div>
+            <div className="text-3xl font-bold text-foreground">{stats.dealsLost}</div>
+          </CardContent>
         </Card>
       </div>
 
@@ -167,7 +184,7 @@ export default function ReportsPage() {
                   <XAxis dataKey="name" fontSize={12} />
                   <YAxis fontSize={12} />
                   <Tooltip formatter={(v: number) => formatCurrency(v)} />
-                  <Bar dataKey="revenue" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="revenue" fill="#0058be" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </CardContent>

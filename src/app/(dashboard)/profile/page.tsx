@@ -100,17 +100,18 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="space-y-6 max-w-2xl">
+    <div className="space-y-6 max-w-2xl mx-auto">
+      {/* Page Header */}
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">{t("nav.profile")}</h1>
-        <p className="text-muted-foreground">{t("profile.manageAccount")}</p>
+        <h1 className="text-2xl font-bold text-foreground md:text-3xl">{t("nav.profile")}</h1>
+        <p className="text-muted-foreground mt-1">{t("profile.manageAccount")}</p>
       </div>
 
       {success && (
-        <div className="rounded-md bg-green-500/15 p-3 text-sm text-green-600">{success}</div>
+        <div className="rounded-lg bg-tertiary/10 p-4 text-sm text-tertiary border border-tertiary/20">{success}</div>
       )}
       {error && (
-        <div className="rounded-md bg-destructive/15 p-3 text-sm text-destructive">{error}</div>
+        <div className="rounded-lg bg-destructive/10 p-4 text-sm text-destructive border border-destructive/20">{error}</div>
       )}
 
       <Card>

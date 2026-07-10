@@ -141,29 +141,32 @@ export default function UsersPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      {/* Page Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">{t("users.title")}</h1>
-          <p className="text-muted-foreground">{t("users.subtitle")}</p>
+          <h1 className="text-2xl font-bold text-foreground md:text-3xl">{t("users.title")}</h1>
+          <p className="text-muted-foreground mt-1">{t("users.subtitle")}</p>
         </div>
-        <Button onClick={() => setDialogOpen(true)}>
+        <Button onClick={() => setDialogOpen(true)} className="bg-primary text-primary-foreground shadow-sm">
           <Plus className="mr-2 h-4 w-4" />
           {t("users.inviteUser")}
         </Button>
       </div>
 
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>{t("customers.name")}</TableHead>
-              <TableHead>{t("customers.email")}</TableHead>
-              <TableHead>{t("auth.role")}</TableHead>
-              <TableHead className="w-[100px]">{t("common.edit")}</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {loading ? (
+      {/* Table Card */}
+      <Card>
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader>
+              <TableRow className="border-border">
+                <TableHead className="font-semibold">{t("customers.name")}</TableHead>
+                <TableHead className="font-semibold">{t("customers.email")}</TableHead>
+                <TableHead className="font-semibold">{t("auth.role")}</TableHead>
+                <TableHead className="w-[100px] font-semibold">{t("common.edit")}</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {loading ? (
               <TableRow><TableCell colSpan={4} className="h-24 text-center">{t("common.loading")}</TableCell></TableRow>
             ) : users.length === 0 ? (
               <TableRow><TableCell colSpan={4} className="h-24 text-center">{t("common.noData")}</TableCell></TableRow>

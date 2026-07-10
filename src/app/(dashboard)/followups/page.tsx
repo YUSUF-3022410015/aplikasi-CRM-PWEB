@@ -148,32 +148,39 @@ export default function FollowUpsPage() {
         </Button>
       </div>
 
+      {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-3">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{t("followups.pending")}</CardTitle>
-            <CalendarCheck className="h-4 w-4 text-orange-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{pendingCount}</div>
+        <Card className="hover:shadow-md transition-shadow">
+          <CardContent className="p-5">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-sm font-medium text-muted-foreground">{t("followups.pending")}</span>
+              <div className="p-2.5 rounded-full bg-tertiary/10">
+                <CalendarCheck className="h-5 w-5 text-tertiary" />
+              </div>
+            </div>
+            <div className="text-3xl font-bold text-foreground">{pendingCount}</div>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{t("followups.overdue")}</CardTitle>
-            <CalendarCheck className="h-4 w-4 text-red-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{overdueCount}</div>
+        <Card className="hover:shadow-md transition-shadow">
+          <CardContent className="p-5">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-sm font-medium text-muted-foreground">{t("followups.overdue")}</span>
+              <div className="p-2.5 rounded-full bg-destructive/10">
+                <CalendarCheck className="h-5 w-5 text-destructive" />
+              </div>
+            </div>
+            <div className="text-3xl font-bold text-foreground">{overdueCount}</div>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{t("followups.completed")}</CardTitle>
-            <CalendarCheck className="h-4 w-4 text-green-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{doneCount}</div>
+        <Card className="hover:shadow-md transition-shadow">
+          <CardContent className="p-5">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-sm font-medium text-muted-foreground">{t("followups.completed")}</span>
+              <div className="p-2.5 rounded-full bg-tertiary/10">
+                <CalendarCheck className="h-5 w-5 text-tertiary" />
+              </div>
+            </div>
+            <div className="text-3xl font-bold text-foreground">{doneCount}</div>
           </CardContent>
         </Card>
       </div>

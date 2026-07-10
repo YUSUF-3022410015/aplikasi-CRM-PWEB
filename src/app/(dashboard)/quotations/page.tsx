@@ -170,33 +170,36 @@ export default function QuotationsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      {/* Page Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">{t("quotations.title")}</h1>
-          <p className="text-muted-foreground">{t("quotations.subtitle")}</p>
+          <h1 className="text-2xl font-bold text-foreground md:text-3xl">{t("quotations.title")}</h1>
+          <p className="text-muted-foreground mt-1">{t("quotations.subtitle")}</p>
         </div>
-        <Button onClick={() => setDialogOpen(true)}>
+        <Button onClick={() => setDialogOpen(true)} className="bg-primary text-primary-foreground shadow-sm">
           <Plus className="mr-2 h-4 w-4" />
           {t("quotations.createQuotation")}
         </Button>
       </div>
 
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>{t("quotations.number")}</TableHead>
-              <TableHead>{t("quotations.customer")}</TableHead>
-              <TableHead>{t("quotations.total")}</TableHead>
-              <TableHead>{t("customers.status")}</TableHead>
-              <TableHead className="w-[100px]">{t("common.edit")}</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {loading ? (
-              <TableRow><TableCell colSpan={5} className="h-24 text-center">{t("common.loading")}</TableCell></TableRow>
-            ) : quotations.length === 0 ? (
-              <TableRow><TableCell colSpan={5} className="h-24 text-center">{t("common.noData")}</TableCell></TableRow>
+      {/* Table Card */}
+      <Card>
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader>
+              <TableRow className="border-border">
+                <TableHead className="font-semibold">{t("quotations.number")}</TableHead>
+                <TableHead className="font-semibold">{t("quotations.customer")}</TableHead>
+                <TableHead className="font-semibold">{t("quotations.total")}</TableHead>
+                <TableHead className="font-semibold">{t("customers.status")}</TableHead>
+                <TableHead className="w-[100px] font-semibold">{t("common.edit")}</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {loading ? (
+                <TableRow><TableCell colSpan={5} className="h-24 text-center">{t("common.loading")}</TableCell></TableRow>
+              ) : quotations.length === 0 ? (
+                <TableRow><TableCell colSpan={5} className="h-24 text-center">{t("common.noData")}</TableCell></TableRow>
             ) : (
               quotations.map((q) => (
                 <TableRow key={q.id}>

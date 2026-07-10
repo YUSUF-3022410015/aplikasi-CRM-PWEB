@@ -35,7 +35,7 @@ interface CustomerByStatus {
   value: number;
 }
 
-const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#06b6d4"];
+const COLORS = ["#0058be", "#006947", "#4edea3", "#ba1a1a", "#8b5cf6", "#06b6d4"];
 
 interface DashboardChartsProps {
   data: MonthlyData[];
@@ -47,19 +47,24 @@ export function DashboardCharts({ data, activitiesByType = [], customersByStatus
   const { t } = useLanguage();
 
   return (
-    <div className="grid gap-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-12">
       {/* Revenue Chart */}
-      <Card className="md:col-span-2">
+      <Card className="lg:col-span-8">
         <CardHeader>
-          <CardTitle className="text-xs font-medium sm:text-sm">{t("dashboard.monthlyRevenue")}</CardTitle>
+          <CardTitle className="text-lg font-semibold">{t("dashboard.monthlyRevenue")}</CardTitle>
         </CardHeader>
         <CardContent>
-          <ResponsiveContainer width="100%" height={250}>
+          <ResponsiveContainer width="100%" height={300}>
             <BarChart data={data}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" fontSize={12} />
-              <YAxis fontSize={12} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#e5eeff" />
+              <XAxis dataKey="name" fontSize={12} stroke="#424754" />
+              <YAxis fontSize={12} stroke="#424754" />
               <Tooltip
+                contentStyle={{
+                  backgroundColor: "#ffffff",
+                  border: "1px solid #c2c6d6",
+                  borderRadius: "8px",
+                }}
                 formatter={(value: number) =>
                   new Intl.NumberFormat("id-ID", {
                     style: "currency",
@@ -68,29 +73,35 @@ export function DashboardCharts({ data, activitiesByType = [], customersByStatus
                   }).format(value)
                 }
               />
-              <Bar dataKey="revenue" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="revenue" fill="#0058be" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </CardContent>
       </Card>
 
       {/* Deals Chart */}
-      <Card>
+      <Card className="lg:col-span-4">
         <CardHeader>
-          <CardTitle className="text-xs font-medium sm:text-sm">{t("dashboard.monthlyDeals")}</CardTitle>
+          <CardTitle className="text-lg font-semibold">{t("dashboard.monthlyDeals")}</CardTitle>
         </CardHeader>
         <CardContent>
-          <ResponsiveContainer width="100%" height={250}>
+          <ResponsiveContainer width="100%" height={300}>
             <LineChart data={data}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" fontSize={12} />
-              <YAxis fontSize={12} />
-              <Tooltip />
+              <CartesianGrid strokeDasharray="3 3" stroke="#e5eeff" />
+              <XAxis dataKey="name" fontSize={12} stroke="#424754" />
+              <YAxis fontSize={12} stroke="#424754" />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "#ffffff",
+                  border: "1px solid #c2c6d6",
+                  borderRadius: "8px",
+                }}
+              />
               <Legend />
               <Line
                 type="monotone"
                 dataKey="deals"
-                stroke="#10b981"
+                stroke="#006947"
                 strokeWidth={2}
                 name={t("common.dealsWon")}
               />
@@ -101,9 +112,9 @@ export function DashboardCharts({ data, activitiesByType = [], customersByStatus
 
       {/* Activities by Type */}
       {activitiesByType.length > 0 && (
-        <Card>
+        <Card className="lg:col-span-6">
           <CardHeader>
-            <CardTitle className="text-xs font-medium sm:text-sm">{t("dashboard.activitiesByType")}</CardTitle>
+            <CardTitle className="text-lg font-semibold">{t("dashboard.activitiesByType")}</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={250}>
@@ -121,7 +132,13 @@ export function DashboardCharts({ data, activitiesByType = [], customersByStatus
                     <Cell key={i} fill={COLORS[i % COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "#ffffff",
+                    border: "1px solid #c2c6d6",
+                    borderRadius: "8px",
+                  }}
+                />
                 <Legend />
               </PieChart>
             </ResponsiveContainer>
@@ -131,9 +148,9 @@ export function DashboardCharts({ data, activitiesByType = [], customersByStatus
 
       {/* Customer by Status */}
       {customersByStatus.length > 0 && (
-        <Card>
+        <Card className="lg:col-span-6">
           <CardHeader>
-            <CardTitle className="text-xs font-medium sm:text-sm">{t("dashboard.customersByStatus")}</CardTitle>
+            <CardTitle className="text-lg font-semibold">{t("dashboard.customersByStatus")}</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={250}>
@@ -151,7 +168,13 @@ export function DashboardCharts({ data, activitiesByType = [], customersByStatus
                     <Cell key={i} fill={COLORS[i % COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "#ffffff",
+                    border: "1px solid #c2c6d6",
+                    borderRadius: "8px",
+                  }}
+                />
                 <Legend />
               </PieChart>
             </ResponsiveContainer>

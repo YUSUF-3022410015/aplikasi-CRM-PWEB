@@ -86,34 +86,37 @@ export default function ProductsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      {/* Page Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">{t("products.title")}</h1>
-          <p className="text-muted-foreground">{t("products.subtitle")}</p>
+          <h1 className="text-2xl font-bold text-foreground md:text-3xl">{t("products.title")}</h1>
+          <p className="text-muted-foreground mt-1">{t("products.subtitle")}</p>
         </div>
-        <Button onClick={openCreate}>
+        <Button onClick={openCreate} className="bg-primary text-primary-foreground shadow-sm">
           <Plus className="mr-2 h-4 w-4" />
           {t("products.addProduct")}
         </Button>
       </div>
 
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>{t("products.sku")}</TableHead>
-              <TableHead>{t("products.name")}</TableHead>
-              <TableHead>{t("products.category")}</TableHead>
-              <TableHead>{t("products.price")}</TableHead>
-              <TableHead>{t("products.status")}</TableHead>
-              <TableHead className="w-[100px]">{t("products.actions")}</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {loading ? (
-              <TableRow>
-                <TableCell colSpan={6} className="h-24 text-center">{t("common.loading")}</TableCell>
+      {/* Table Card */}
+      <Card>
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader>
+              <TableRow className="border-border">
+                <TableHead className="font-semibold">{t("products.sku")}</TableHead>
+                <TableHead className="font-semibold">{t("products.name")}</TableHead>
+                <TableHead className="font-semibold">{t("products.category")}</TableHead>
+                <TableHead className="font-semibold">{t("products.price")}</TableHead>
+                <TableHead className="font-semibold">{t("products.status")}</TableHead>
+                <TableHead className="w-[100px] font-semibold">{t("products.actions")}</TableHead>
               </TableRow>
+            </TableHeader>
+            <TableBody>
+              {loading ? (
+                <TableRow>
+                  <TableCell colSpan={6} className="h-24 text-center">{t("common.loading")}</TableCell>
+                </TableRow>
             ) : products.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={6} className="h-24 text-center">{t("products.noProducts")}</TableCell>

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, UserPlus, TrendingUp, CalendarCheck, DollarSign, AlertTriangle, Package } from "lucide-react";
+import { Users, UserPlus, TrendingUp, CalendarCheck, DollarSign, AlertTriangle, Package, TrendingDown } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 import { DashboardCharts } from "@/components/dashboard-charts";
 import { useLanguage } from "@/components/language-provider";
@@ -86,39 +86,53 @@ export default function DashboardPage() {
   }, [supabase, tArray]);
 
   if (loading) {
-    return <div className="flex items-center justify-center h-64"><p className="text-muted-foreground">{t("common.loading")}</p></div>;
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">{t("common.loading")}</p>
+        </div>
+      </div>
+    );
   }
 
   const statCards = [
-    { title: t("dashboard.totalCustomers"), value: stats.totalCustomers, icon: Users, color: "text-blue-600" },
-    { title: t("dashboard.newCustomers"), value: stats.newCustomers, icon: UserPlus, color: "text-green-600" },
-    { title: t("dashboard.revenue"), value: formatCurrency(stats.totalRevenue), icon: DollarSign, color: "text-emerald-600" },
-    { title: t("dashboard.dealsWon"), value: stats.dealsWon, icon: TrendingUp, color: "text-green-600" },
-    { title: t("dashboard.dealsLost"), value: stats.dealsLost, icon: AlertTriangle, color: "text-red-600" },
-    { title: t("dashboard.followUpsToday"), value: stats.followUpsToday, icon: CalendarCheck, color: "text-orange-600" },
-    { title: t("dashboard.followUpsOverdue"), value: stats.followUpsOverdue, icon: AlertTriangle, color: "text-red-600" },
-    { title: t("dashboard.pipelineValue"), value: formatCurrency(stats.pipelineValue), icon: Package, color: "text-purple-600" },
+    { title: t("dashboard.totalCustomers"), value: stats.totalCustomers, icon: Users, iconBg: "bg-primary/10", iconColor: "text-primary" },
+    { title: t("dashboard.newCustomers"), value: stats.newCustomers, icon: UserPlus, iconBg: "bg-tertiary/10", iconColor: "text-tertiary" },
+    { title: t("dashboard.revenue"), value: formatCurrency(stats.totalRevenue), icon: DollarSign, iconBg: "bg-primary/10", iconColor: "text-primary" },
+    { title: t("dashboard.dealsWon"), value: stats.dealsWon, icon: TrendingUp, iconBg: "bg-tertiary/10", iconColor: "text-tertiary" },
+    { title: t("dashboard.dealsLost"), value: stats.dealsLost, icon: TrendingDown, iconBg: "bg-destructive/10", iconColor: "text-destructive" },
+    { title: t("dashboard.followUpsToday"), value: stats.followUpsToday, icon: CalendarCheck, iconBg: "bg-tertiary/10", iconColor: "text-tertiary" },
+    { title: t("dashboard.followUpsOverdue"), value: stats.followUpsOverdue, icon: AlertTriangle, iconBg: "bg-destructive/10", iconColor: "text-destructive" },
+    { title: t("dashboard.pipelineValue"), value: formatCurrency(stats.pipelineValue), icon: Package, iconBg: "bg-primary/10", iconColor: "text-primary" },
   ];
 
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <div className="space-y-6">
+      {/* Page Header */}
       <div>
-        <h1 className="text-xl font-bold tracking-tight sm:text-2xl">{t("dashboard.title")}</h1>
-        <p className="text-sm text-muted-foreground sm:text-base">{t("dashboard.subtitle")}</p>
+        <h1 className="text-2xl font-bold text-foreground md:text-3xl">{t("dashboard.title")}</h1>
+        <p className="text-muted-foreground mt-1">{t("dashboard.subtitle")}</p>
       </div>
-      <div className="grid grid-cols-2 gap-2 sm:gap-4 md:grid-cols-2 lg:grid-cols-4">
+
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {statCards.map((stat) => (
-          <Card key={stat.title}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 sm:pb-2">
-              <CardTitle className="min-w-0 flex-1 truncate pr-2 text-[11px] font-medium sm:text-sm">{stat.title}</CardTitle>
-              <stat.icon className={`h-3 w-3 shrink-0 sm:h-4 sm:w-4 ${stat.color}`} />
-            </CardHeader>
-            <CardContent className="pt-0 sm:pt-0">
-              <div className="text-base font-bold sm:text-2xl">{stat.value}</div>
+          <Card key={stat.title} className="hover:shadow-md transition-shadow">
+            <CardContent className="p-5">
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-sm font-medium text-muted-foreground">{stat.title}</span>
+                <div className={`p-2.5 rounded-full ${stat.iconBg}`}>
+                  <stat.icon className={`h-5 w-5 ${stat.iconColor}`} />
+                </div>
+              </div>
+              <div className="text-3xl font-bold text-foreground">{stat.value}</div>
             </CardContent>
           </Card>
         ))}
       </div>
+
+      {/* Charts */}
       <DashboardCharts
         data={stats.monthlyData}
         activitiesByType={stats.activitiesByType}

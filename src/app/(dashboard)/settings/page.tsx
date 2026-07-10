@@ -95,29 +95,30 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6 max-w-5xl mx-auto">
+      {/* Page Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">{t("settings.title")}</h1>
-          <p className="text-muted-foreground">{t("settings.subtitle")}</p>
+          <h1 className="text-2xl font-bold text-foreground md:text-3xl">{t("settings.title")}</h1>
+          <p className="text-muted-foreground mt-1">{t("settings.subtitle")}</p>
         </div>
-        <Button onClick={handleSave} disabled={saving}>
+        <Button onClick={handleSave} disabled={saving} className="bg-primary text-primary-foreground shadow-sm">
           {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
           {t("common.save")}
         </Button>
       </div>
 
       <Tabs defaultValue="company">
-        <TabsList>
-          <TabsTrigger value="company" className="flex items-center gap-2">
+        <TabsList className="bg-muted p-1">
+          <TabsTrigger value="company" className="flex items-center gap-2 data-[state=active]:bg-card data-[state=active]:shadow-sm">
             <Building className="h-4 w-4" />
             {t("settings.companyProfile")}
           </TabsTrigger>
-          <TabsTrigger value="general" className="flex items-center gap-2">
+          <TabsTrigger value="general" className="flex items-center gap-2 data-[state=active]:bg-card data-[state=active]:shadow-sm">
             <Globe className="h-4 w-4" />
             {t("settings.general")}
           </TabsTrigger>
-          <TabsTrigger value="email" className="flex items-center gap-2">
+          <TabsTrigger value="email" className="flex items-center gap-2 data-[state=active]:bg-card data-[state=active]:shadow-sm">
             <Mail className="h-4 w-4" />
             {t("settings.emailTemplate")}
           </TabsTrigger>

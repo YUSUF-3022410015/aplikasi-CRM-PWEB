@@ -121,22 +121,23 @@ export default function CustomersPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      {/* Page Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">{t("customers.title")}</h1>
-          <p className="text-muted-foreground">{t("customers.subtitle")}</p>
+          <h1 className="text-2xl font-bold text-foreground md:text-3xl">{t("customers.title")}</h1>
+          <p className="text-muted-foreground mt-1">{t("customers.subtitle")}</p>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={handleExport}>
+        <div className="flex gap-3">
+          <Button variant="outline" onClick={handleExport} className="border-border">
             <Download className="mr-2 h-4 w-4" />
             {t("common.export")}
           </Button>
-          <Button variant="outline" onClick={() => setImportOpen(true)}>
+          <Button variant="outline" onClick={() => setImportOpen(true)} className="border-border">
             <Upload className="mr-2 h-4 w-4" />
             {t("common.import")}
           </Button>
           <Link href="/customers/new">
-            <Button>
+            <Button className="bg-primary text-primary-foreground shadow-sm">
               <Plus className="mr-2 h-4 w-4" />
               {t("common.add")}
             </Button>
@@ -144,12 +145,13 @@ export default function CustomersPage() {
         </div>
       </div>
 
-      <div className="flex gap-4">
-        <div className="relative flex-1">
+      {/* Filter Bar */}
+      <div className="bg-card rounded-xl border border-border p-4 flex flex-col sm:flex-row gap-4 items-center shadow-sm">
+        <div className="relative flex-1 w-full">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder={t("customers.searchPlaceholder")}
-            className="pl-9"
+            className="pl-9 border-border bg-background"
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -164,7 +166,7 @@ export default function CustomersPage() {
             setPage(1);
           }}
         >
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="w-full sm:w-[180px] border-border bg-background">
             <SelectValue placeholder={t("customers.filterStatus")} />
           </SelectTrigger>
           <SelectContent>
