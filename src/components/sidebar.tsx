@@ -127,15 +127,6 @@ export function Sidebar() {
           })}
         </nav>
       </ScrollArea>
-
-      {/* Add New Record Button */}
-      {!collapsed && (
-        <div className="p-4 border-t border-border">
-          <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm" size="lg">
-            + {t("common.add")}
-          </Button>
-        </div>
-      )}
     </aside>
   );
 }

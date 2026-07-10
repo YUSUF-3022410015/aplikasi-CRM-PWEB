@@ -2,9 +2,8 @@
 
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import { LogOut, User, Bell, Shield, Search, HelpCircle } from "lucide-react";
+import { LogOut, User, Bell, Shield, Search } from "lucide-react";
 import { NotificationBell } from "@/components/notification-bell";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { LanguageToggle } from "@/components/language-toggle";
 import { Badge } from "@/components/ui/badge";
 import { roleNames, type Role } from "@/lib/permissions";
@@ -59,11 +58,7 @@ export function Navbar({ user }: NavbarProps) {
       {/* Right Actions */}
       <div className="flex items-center gap-2 ml-4">
         <LanguageToggle />
-        <ThemeToggle />
         {user?.id && <NotificationBell userId={user.id} />}
-        <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-foreground">
-          <HelpCircle className="h-4 w-4" />
-        </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="relative h-9 w-9 rounded-full ml-2 border border-border overflow-hidden">
