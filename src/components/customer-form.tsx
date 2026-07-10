@@ -55,6 +55,7 @@ interface CustomerFormProps {
 }
 
 export function CustomerForm({ customer, mode }: CustomerFormProps) {
+  const { t } = useLanguage();
   const router = useRouter();
   const supabase = createClient();
   const [salesUsers, setSalesUsers] = useState<{ id: string; fullname: string }[]>([]);
