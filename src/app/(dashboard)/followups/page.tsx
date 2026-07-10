@@ -33,6 +33,7 @@ import {
 } from "@/components/ui/select";
 import { formatDate } from "@/lib/utils";
 import { CalendarCheck, Plus, Pencil, Trash2, Loader2 } from "lucide-react";
+import { useLanguage } from "@/components/language-provider";
 
 interface FollowUp {
   id: string;
@@ -60,6 +61,7 @@ export default function FollowUpsPage() {
   const [saving, setSaving] = useState(false);
   const supabase = createClient();
   const router = useRouter();
+  const { t } = useLanguage();
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -135,12 +137,12 @@ export default function FollowUpsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Follow-ups</h1>
+          <h1 className="text-2xl font-bold tracking-tight">{t("followups.title")}</h1>
           <p className="text-muted-foreground">Jadwal follow-up dan pengingat pelanggan</p>
         </div>
         <Button onClick={openCreate}>
           <Plus className="mr-2 h-4 w-4" />
-          Tambah Follow-up
+          {t("followups.addFollowup")}
         </Button>
       </div>
 
@@ -183,21 +185,21 @@ export default function FollowUpsPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Catatan</TableHead>
-                  <TableHead>Customer</TableHead>
-                  <TableHead>Jatuh Tempo</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="w-[120px]">Aksi</TableHead>
+                  <TableHead>{t("followups.note")}</TableHead>
+                  <TableHead>{t("followups.customer")}</TableHead>
+                  <TableHead>{t("followups.dueDate")}</TableHead>
+                  <TableHead>{t("followups.status")}</TableHead>
+                  <TableHead className="w-[120px]">{t("followups.actions")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {loading ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="h-24 text-center">Memuat data...</TableCell>
+                    <TableCell colSpan={5} className="h-24 text-center">{t("common.loading")}</TableCell>
                   </TableRow>
                 ) : followups.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="h-24 text-center">Belum ada follow-up</TableCell>
+                    <TableCell colSpan={5} className="h-24 text-center">{t("followups.empty")}</TableCell>
                   </TableRow>
                 ) : (
                   followups.map((f) => {
@@ -218,9 +220,9 @@ export default function FollowUpsPage() {
                               <Badge variant={cfg.variant} className="text-xs">{cfg.label}</Badge>
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="pending">Pending</SelectItem>
-                              <SelectItem value="done">Done</SelectItem>
-                              <SelectItem value="cancelled">Cancelled</SelectItem>
+                              <SelectItem value="pending">{t("followups.pending")}</SelectItem>
+                              <SelectItem value="done">{t("followups.done")}</SelectItem>
+                              <SelectItem value="cancelled">{t("followups.cancelled")}</SelectItem>
                             </SelectContent>
                           </Select>
                         </TableCell>
@@ -248,7 +250,7 @@ export default function FollowUpsPage() {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{editItem ? "Edit Follow-up" : "Tambah Follow-up"}</DialogTitle>
+            <DialogTitle>{editItem ? t("followups.editFollowup") : t("followups.addFollowup")}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
@@ -263,30 +265,30 @@ export default function FollowUpsPage() {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label>Tanggal Jatuh Tempo *</Label>
+              <Label>{t("followups.dueDate")} *</Label>
               <Input type="date" value={form.due_date} onChange={(e) => setForm({ ...form, due_date: e.target.value })} />
             </div>
             <div className="space-y-2">
-              <Label>Catatan</Label>
-              <Textarea value={form.note} onChange={(e) => setForm({ ...form, note: e.target.value })} placeholder="Catatan follow-up" rows={3} />
+              <Label>{t("followups.note")}</Label>
+              <Textarea value={form.note} onChange={(e) => setForm({ ...form, note: e.target.value })} placeholder={t("followups.notePlaceholder")} rows={3} />
             </div>
             <div className="space-y-2">
-              <Label>Status</Label>
+              <Label>{t("followups.status")}</Label>
               <Select value={form.status} onValueChange={(v) => setForm({ ...form, status: v })}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="done">Done</SelectItem>
-                  <SelectItem value="cancelled">Cancelled</SelectItem>
+                  <SelectItem value="pending">{t("followups.pending")}</SelectItem>
+                  <SelectItem value="done">{t("followups.done")}</SelectItem>
+                  <SelectItem value="cancelled">{t("followups.cancelled")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)}>Batal</Button>
+            <Button variant="outline" onClick={() => setDialogOpen(false)}>{t("common.cancel")}</Button>
             <Button onClick={handleSave} disabled={saving || !form.customer_id || !form.due_date}>
               {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Simpan
+              {t("common.save")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -296,11 +298,11 @@ export default function FollowUpsPage() {
       <Dialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Hapus Follow-up?</DialogTitle>
+            <DialogTitle>{t("followups.deleteTitle")}</DialogTitle>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleteId(null)}>Batal</Button>
-            <Button variant="destructive" onClick={handleDelete}>Hapus</Button>
+            <Button variant="outline" onClick={() => setDeleteId(null)}>{t("common.cancel")}</Button>
+            <Button variant="destructive" onClick={handleDelete}>{t("common.delete")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

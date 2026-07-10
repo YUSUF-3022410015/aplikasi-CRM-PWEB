@@ -1,18 +1,22 @@
-import { createClient } from "@/lib/supabase/server";
-import { notFound } from "next/navigation";
+"use client";
+
+import { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { formatDate, formatDateTime } from "@/lib/utils";
-import { Pencil, Phone, Mail, MapPin, Building, Globe, MessageSquare, Printer, Download } from "lucide-react";
+import { formatDate } from "@/lib/utils";
+import { Pencil, Phone, Mail, MapPin, Building, Globe, MessageSquare, Printer } from "lucide-react";
 import Link from "next/link";
 import { ActivityTimeline } from "@/components/activity-timeline";
 import { AddActivityForm } from "@/components/add-activity-form";
 import { FollowUpList } from "@/components/followup-list";
 import { CustomerPrint, printCustomer } from "@/components/customer-print";
 import { WhatsAppButton } from "@/components/whatsapp-button";
+import { useLanguage } from "@/components/language-provider";
 
 const statusColors: Record<string, "default" | "secondary" | "success" | "warning" | "destructive"> = {
   lead: "secondary",
@@ -22,42 +26,110 @@ const statusColors: Record<string, "default" | "secondary" | "success" | "warnin
   archived: "default",
 };
 
-export default async function CustomerDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
-  const supabase = await createClient();
+interface Customer {
+  id: string;
+  name: string;
+  company: string | null;
+  email: string | null;
+  phone: string | null;
+  whatsapp: string | null;
+  industry: string | null;
+  city: string | null;
+  address: string | null;
+  website: string | null;
+  source: string | null;
+  status: string;
+  pipeline_stage: string;
+  created_at: string;
+  updated_at: string;
+}
 
-  const { data: customer } = await supabase
-    .from("customers")
-    .select("*")
-    .eq("id", id)
-    .single();
+interface Activity {
+  id: string;
+  type: string;
+  note: string;
+  created_at: string;
+  user?: { fullname: string } | null;
+}
 
-  if (!customer) {
-    notFound();
+interface Followup {
+  id: string;
+  title: string;
+  due_date: string;
+  status: string;
+}
+
+export default function CustomerDetailPage() {
+  const { t } = useLanguage();
+  const params = useParams();
+  const id = params.id as string;
+  const supabase = createClient();
+
+  const [customer, setCustomer] = useState<Customer | null>(null);
+  const [activities, setActivities] = useState<Activity[]>([]);
+  const [followups, setFollowups] = useState<Followup[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      const { data: cust } = await supabase
+        .from("customers")
+        .select("*")
+        .eq("id", id)
+        .single();
+
+      if (!cust) {
+        setCustomer(null);
+        setLoading(false);
+        return;
+      }
+
+      setCustomer(cust);
+
+      const { data: acts } = await supabase
+        .from("activities")
+        .select("*, user:profiles(fullname)")
+        .eq("customer_id", id)
+        .order("created_at", { ascending: false });
+
+      setActivities(acts || []);
+
+      const { data: fups } = await supabase
+        .from("followups")
+        .select("*")
+        .eq("customer_id", id)
+        .order("due_date", { ascending: false });
+
+      setFollowups(fups || []);
+      setLoading(false);
+    };
+
+    fetchData();
+  }, [id, supabase]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <p className="text-muted-foreground">{t("common.loading")}</p>
+      </div>
+    );
   }
 
-  const { data: activities } = await supabase
-    .from("activities")
-    .select("*, user:profiles(fullname)")
-    .eq("customer_id", id)
-    .order("created_at", { ascending: false });
-
-  const { data: followups } = await supabase
-    .from("followups")
-    .select("*")
-    .eq("customer_id", id)
-    .order("due_date", { ascending: false });
+  if (!customer) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <p className="text-muted-foreground">Customer not found</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">{customer.name}</h1>
-          <p className="text-muted-foreground">{customer.company || "Tanpa perusahaan"}</p>
+          <p className="text-muted-foreground">{customer.company || t("customers.noCompany")}</p>
         </div>
         <div className="flex gap-2">
           <WhatsAppButton
@@ -66,12 +138,12 @@ export default async function CustomerDetailPage({
           />
           <Button variant="outline" onClick={printCustomer}>
             <Printer className="mr-2 h-4 w-4" />
-            Print PDF
+            {t("customers.printPdf")}
           </Button>
           <Link href={`/customers/${customer.id}/edit`}>
             <Button>
               <Pencil className="mr-2 h-4 w-4" />
-              Edit
+              {t("common.edit")}
             </Button>
           </Link>
         </div>
@@ -81,49 +153,49 @@ export default async function CustomerDetailPage({
         <div className="md:col-span-2">
           <Card>
             <CardHeader>
-              <CardTitle>Informasi Customer</CardTitle>
+              <CardTitle>{t("customers.info")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="flex items-center gap-3">
                   <Building className="h-4 w-4 text-muted-foreground" />
                   <div>
-                    <p className="text-sm text-muted-foreground">Perusahaan</p>
+                    <p className="text-sm text-muted-foreground">{t("customers.company")}</p>
                     <p className="font-medium">{customer.company || "-"}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <Mail className="h-4 w-4 text-muted-foreground" />
                   <div>
-                    <p className="text-sm text-muted-foreground">Email</p>
+                    <p className="text-sm text-muted-foreground">{t("customers.email")}</p>
                     <p className="font-medium">{customer.email || "-"}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <Phone className="h-4 w-4 text-muted-foreground" />
                   <div>
-                    <p className="text-sm text-muted-foreground">Telepon</p>
+                    <p className="text-sm text-muted-foreground">{t("customers.phone")}</p>
                     <p className="font-medium">{customer.phone || "-"}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <MessageSquare className="h-4 w-4 text-muted-foreground" />
                   <div>
-                    <p className="text-sm text-muted-foreground">WhatsApp</p>
+                    <p className="text-sm text-muted-foreground">{t("customers.whatsapp")}</p>
                     <p className="font-medium">{customer.whatsapp || "-"}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <MapPin className="h-4 w-4 text-muted-foreground" />
                   <div>
-                    <p className="text-sm text-muted-foreground">Kota</p>
+                    <p className="text-sm text-muted-foreground">{t("customers.city")}</p>
                     <p className="font-medium">{customer.city || "-"}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <Globe className="h-4 w-4 text-muted-foreground" />
                   <div>
-                    <p className="text-sm text-muted-foreground">Website</p>
+                    <p className="text-sm text-muted-foreground">{t("customers.website")}</p>
                     <p className="font-medium">{customer.website || "-"}</p>
                   </div>
                 </div>
@@ -132,7 +204,7 @@ export default async function CustomerDetailPage({
                 <>
                   <Separator />
                   <div>
-                    <p className="text-sm text-muted-foreground">Alamat</p>
+                    <p className="text-sm text-muted-foreground">{t("customers.address")}</p>
                     <p className="font-medium">{customer.address}</p>
                   </div>
                 </>
@@ -140,19 +212,19 @@ export default async function CustomerDetailPage({
               <Separator />
               <div className="flex gap-4">
                 <div>
-                  <p className="text-sm text-muted-foreground">Status</p>
+                  <p className="text-sm text-muted-foreground">{t("customers.status")}</p>
                   <Badge variant={statusColors[customer.status] || "default"} className="mt-1">
                     {customer.status}
                   </Badge>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Pipeline</p>
+                  <p className="text-sm text-muted-foreground">{t("customers.pipeline")}</p>
                   <Badge variant="outline" className="mt-1">
                     {customer.pipeline_stage}
                   </Badge>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Sumber Lead</p>
+                  <p className="text-sm text-muted-foreground">{t("customers.source")}</p>
                   <p className="font-medium">{customer.source || "-"}</p>
                 </div>
               </div>
@@ -163,21 +235,21 @@ export default async function CustomerDetailPage({
         <div>
           <Card>
             <CardHeader>
-              <CardTitle>Detail</CardTitle>
+              <CardTitle>{t("customers.detail")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-sm">
               <div>
-                <p className="text-muted-foreground">Industri</p>
+                <p className="text-muted-foreground">{t("customers.industry")}</p>
                 <p className="font-medium">{customer.industry || "-"}</p>
               </div>
               <Separator />
               <div>
-                <p className="text-muted-foreground">Dibuat</p>
+                <p className="text-muted-foreground">{t("customers.createdAt")}</p>
                 <p className="font-medium">{formatDate(customer.created_at)}</p>
               </div>
               <Separator />
               <div>
-                <p className="text-muted-foreground">Diupdate</p>
+                <p className="text-muted-foreground">{t("customers.updatedAt")}</p>
                 <p className="font-medium">{formatDate(customer.updated_at)}</p>
               </div>
             </CardContent>
@@ -187,15 +259,15 @@ export default async function CustomerDetailPage({
 
       <Tabs defaultValue="activities">
         <TabsList>
-          <TabsTrigger value="activities">Aktivitas</TabsTrigger>
-          <TabsTrigger value="followups">Follow-up</TabsTrigger>
+          <TabsTrigger value="activities">{t("customers.activities")}</TabsTrigger>
+          <TabsTrigger value="followups">{t("customers.followupsTab")}</TabsTrigger>
         </TabsList>
         <TabsContent value="activities" className="space-y-4">
           <AddActivityForm customerId={customer.id} />
-          <ActivityTimeline activities={activities || []} />
+          <ActivityTimeline activities={activities} />
         </TabsContent>
         <TabsContent value="followups" className="space-y-4">
-          <FollowUpList followups={followups || []} customerId={customer.id} />
+          <FollowUpList followups={followups} customerId={customer.id} />
         </TabsContent>
       </Tabs>
 
@@ -203,8 +275,8 @@ export default async function CustomerDetailPage({
       <CustomerPrint
         customer={{
           ...customer,
-          activities: activities || [],
-          followups: followups || [],
+          activities,
+          followups,
         }}
       />
     </div>

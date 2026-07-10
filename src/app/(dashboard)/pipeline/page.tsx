@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { useLanguage } from "@/components/language-provider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/utils";
@@ -25,6 +26,7 @@ const stages = [
 ];
 
 export default function PipelinePage() {
+  const { t } = useLanguage();
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [loading, setLoading] = useState(true);
   const supabase = createClient();
@@ -54,12 +56,12 @@ export default function PipelinePage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Pipeline</h1>
-        <p className="text-muted-foreground">Visualisasi alur penjualan pelanggan</p>
+        <h1 className="text-2xl font-bold tracking-tight">{t("pipeline.title")}</h1>
+        <p className="text-muted-foreground">{t("pipeline.subtitle")}</p>
       </div>
 
       {loading ? (
-        <p className="text-center py-8 text-muted-foreground">Memuat data...</p>
+        <p className="text-center py-8 text-muted-foreground">{t("common.loading")}</p>
       ) : (
         <div className="flex gap-4 overflow-x-auto pb-4">
           {stages.map((stage) => {
@@ -91,12 +93,12 @@ export default function PipelinePage() {
                     >
                       <CardContent className="p-3">
                         <p className="font-medium text-sm">{c.name}</p>
-                        <p className="text-xs text-muted-foreground">{c.company || "Tanpa perusahaan"}</p>
+                        <p className="text-xs text-muted-foreground">{c.company || t("pipeline.noCompany")}</p>
                       </CardContent>
                     </Card>
                   ))}
                   {stageCustomers.length === 0 && (
-                    <p className="text-xs text-muted-foreground text-center py-4">Kosong</p>
+                    <p className="text-xs text-muted-foreground text-center py-4">{t("pipeline.empty")}</p>
                   )}
                 </div>
               </div>

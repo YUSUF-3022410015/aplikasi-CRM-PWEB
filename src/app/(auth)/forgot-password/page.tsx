@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { useLanguage } from "@/components/language-provider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,6 +17,7 @@ import Link from "next/link";
 import { Loader2, Mail, CheckCircle } from "lucide-react";
 
 export default function ForgotPasswordPage() {
+  const { t } = useLanguage();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
@@ -44,7 +46,7 @@ export default function ForgotPasswordPage() {
   return (
     <Card className="w-full max-w-md">
       <CardHeader className="space-y-1 text-center">
-        <CardTitle className="text-2xl font-bold">Lupa Password</CardTitle>
+        <CardTitle className="text-2xl font-bold">{t("auth.forgotPassword")}</CardTitle>
         <CardDescription>
           Masukkan email Anda untuk menerima link reset password
         </CardDescription>
@@ -69,7 +71,7 @@ export default function ForgotPasswordPage() {
               </div>
             )}
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t("auth.email")}</Label>
               <Input
                 id="email"
                 type="email"
@@ -83,7 +85,7 @@ export default function ForgotPasswordPage() {
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Mengirim...
+                  {t("common.loading")}
                 </>
               ) : (
                 <>
@@ -98,7 +100,7 @@ export default function ForgotPasswordPage() {
       <div className="px-6 pb-6 text-center text-sm text-muted-foreground">
         Ingat password?{" "}
         <Link href="/login" className="text-primary underline hover:text-primary/80">
-          Masuk
+          {t("auth.login")}
         </Link>
       </div>
     </Card>

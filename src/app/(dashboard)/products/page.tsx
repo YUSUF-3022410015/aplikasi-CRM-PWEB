@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { useLanguage } from "@/components/language-provider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -34,6 +35,7 @@ import { formatCurrency } from "@/lib/utils";
 import type { Product } from "@/types/database";
 
 export default function ProductsPage() {
+  const { t } = useLanguage();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -86,12 +88,12 @@ export default function ProductsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Products</h1>
-          <p className="text-muted-foreground">Daftar produk dan layanan</p>
+          <h1 className="text-2xl font-bold tracking-tight">{t("products.title")}</h1>
+          <p className="text-muted-foreground">{t("products.subtitle")}</p>
         </div>
         <Button onClick={openCreate}>
           <Plus className="mr-2 h-4 w-4" />
-          Tambah Product
+          {t("products.addProduct")}
         </Button>
       </div>
 
@@ -99,22 +101,22 @@ export default function ProductsPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>SKU</TableHead>
-              <TableHead>Nama</TableHead>
-              <TableHead>Kategori</TableHead>
-              <TableHead>Harga</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="w-[100px]">Aksi</TableHead>
+              <TableHead>{t("products.sku")}</TableHead>
+              <TableHead>{t("products.name")}</TableHead>
+              <TableHead>{t("products.category")}</TableHead>
+              <TableHead>{t("products.price")}</TableHead>
+              <TableHead>{t("products.status")}</TableHead>
+              <TableHead className="w-[100px]">{t("products.actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={6} className="h-24 text-center">Memuat data...</TableCell>
+                <TableCell colSpan={6} className="h-24 text-center">{t("common.loading")}</TableCell>
               </TableRow>
             ) : products.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="h-24 text-center">Belum ada produk</TableCell>
+                <TableCell colSpan={6} className="h-24 text-center">{t("products.noProducts")}</TableCell>
               </TableRow>
             ) : (
               products.map((p) => (
@@ -148,7 +150,7 @@ export default function ProductsPage() {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{editProduct ? "Edit Product" : "Tambah Product"}</DialogTitle>
+            <DialogTitle>{editProduct ? t("products.editProduct") : t("products.addProduct")}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
@@ -156,23 +158,23 @@ export default function ProductsPage() {
               <Input value={form.sku} onChange={(e) => setForm({ ...form, sku: e.target.value })} placeholder="SKU-001" />
             </div>
             <div className="space-y-2">
-              <Label>Nama</Label>
+              <Label>{t("products.name")}</Label>
               <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Nama produk" />
             </div>
             <div className="space-y-2">
-              <Label>Kategori</Label>
+              <Label>{t("products.category")}</Label>
               <Input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} placeholder="Kategori" />
             </div>
             <div className="space-y-2">
-              <Label>Harga (IDR)</Label>
+              <Label>{t("products.price")} (IDR)</Label>
               <Input type="number" value={form.price} onChange={(e) => setForm({ ...form, price: Number(e.target.value) })} />
             </div>
             <div className="space-y-2">
-              <Label>Deskripsi</Label>
+              <Label>{t("products.description")}</Label>
               <Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} />
             </div>
             <div className="space-y-2">
-              <Label>Status</Label>
+              <Label>{t("products.status")}</Label>
               <Select value={form.status} onValueChange={(v) => setForm({ ...form, status: v as "active" | "inactive" })}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -183,8 +185,8 @@ export default function ProductsPage() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)}>Batal</Button>
-            <Button onClick={handleSave} disabled={!form.name}>Simpan</Button>
+            <Button variant="outline" onClick={() => setDialogOpen(false)}>{t("common.cancel")}</Button>
+            <Button onClick={handleSave} disabled={!form.name}>{t("common.save")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { useLanguage } from "@/components/language-provider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,6 +18,7 @@ import Link from "next/link";
 import { Loader2, Eye, EyeOff, CheckCircle } from "lucide-react";
 
 export default function ResetPasswordPage() {
+  const { t } = useLanguage();
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -42,12 +44,12 @@ export default function ResetPasswordPage() {
     setError("");
 
     if (password !== confirmPassword) {
-      setError("Password tidak cocok");
+      setError(t("auth.passwordMismatch"));
       return;
     }
 
     if (password.length < 6) {
-      setError("Password minimal 6 karakter");
+      setError(t("auth.passwordMinLength"));
       return;
     }
 
@@ -77,7 +79,7 @@ export default function ResetPasswordPage() {
       <Card className="w-full max-w-md">
         <CardContent className="py-8 text-center">
           <Loader2 className="mx-auto h-8 w-8 animate-spin text-muted-foreground" />
-          <p className="mt-2 text-sm text-muted-foreground">Memverifikasi link...</p>
+          <p className="mt-2 text-sm text-muted-foreground">{t("common.loading")}</p>
         </CardContent>
       </Card>
     );
@@ -87,14 +89,14 @@ export default function ResetPasswordPage() {
     return (
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
-          <CardTitle className="text-2xl font-bold">Link Tidak Valid</CardTitle>
+          <CardTitle className="text-2xl font-bold">{t("auth.invalidLink")}</CardTitle>
           <CardDescription>
             Link reset password tidak valid atau sudah expired.
           </CardDescription>
         </CardHeader>
         <CardContent className="text-center">
           <Button asChild>
-            <Link href="/forgot-password">Minta Link Baru</Link>
+            <Link href="/forgot-password">{t("common.back")}</Link>
           </Button>
         </CardContent>
       </Card>
@@ -104,7 +106,7 @@ export default function ResetPasswordPage() {
   return (
     <Card className="w-full max-w-md">
       <CardHeader className="space-y-1 text-center">
-        <CardTitle className="text-2xl font-bold">Reset Password</CardTitle>
+        <CardTitle className="text-2xl font-bold">{t("auth.resetPassword")}</CardTitle>
         <CardDescription>
           Masukkan password baru Anda
         </CardDescription>
@@ -125,7 +127,7 @@ export default function ResetPasswordPage() {
               </div>
             )}
             <div className="space-y-2">
-              <Label htmlFor="password">Password Baru</Label>
+              <Label htmlFor="password">{t("auth.password")}</Label>
               <div className="relative">
                 <Input
                   id="password"
@@ -151,7 +153,7 @@ export default function ResetPasswordPage() {
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Konfirmasi Password</Label>
+              <Label htmlFor="confirmPassword">{t("auth.confirmPassword")}</Label>
               <Input
                 id="confirmPassword"
                 type={showPassword ? "text" : "password"}
@@ -165,10 +167,10 @@ export default function ResetPasswordPage() {
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Menyimpan...
+                  {t("common.loading")}
                 </>
               ) : (
-                "Reset Password"
+                t("auth.resetPassword")
               )}
             </Button>
           </form>

@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Phone, MessageSquare, Mail, MapPin, Monitor, Presentation, FileText, CheckCircle } from "lucide-react";
 import { formatDateTime } from "@/lib/utils";
+import { useLanguage } from "@/components/language-provider";
 
 interface Activity {
   id: string;
@@ -39,6 +40,7 @@ export default function ActivitiesPage() {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(true);
   const supabase = createClient();
+  const { t } = useLanguage();
 
   const fetchActivities = useCallback(async () => {
     setLoading(true);
@@ -58,34 +60,34 @@ export default function ActivitiesPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Activities</h1>
+        <h1 className="text-2xl font-bold tracking-tight">{t("activities.title")}</h1>
         <p className="text-muted-foreground">Riwayat semua aktivitas komunikasi</p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Daftar Aktivitas</CardTitle>
+          <CardTitle>{t("activities.listTitle")}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="rounded-md border">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Tipe</TableHead>
-                  <TableHead>Customer</TableHead>
-                  <TableHead>Catatan</TableHead>
-                  <TableHead>User</TableHead>
-                  <TableHead>Tanggal</TableHead>
+                  <TableHead>{t("activities.type")}</TableHead>
+                  <TableHead>{t("activities.customer")}</TableHead>
+                  <TableHead>{t("activities.note")}</TableHead>
+                  <TableHead>{t("activities.user")}</TableHead>
+                  <TableHead>{t("activities.date")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {loading ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="h-24 text-center">Memuat data...</TableCell>
+                    <TableCell colSpan={5} className="h-24 text-center">{t("common.loading")}</TableCell>
                   </TableRow>
                 ) : activities.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="h-24 text-center">Belum ada aktivitas</TableCell>
+                    <TableCell colSpan={5} className="h-24 text-center">{t("activities.empty")}</TableCell>
                   </TableRow>
                 ) : (
                   activities.map((a) => {

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useLanguage } from "@/components/language-provider";
 import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -25,6 +26,7 @@ import {
 const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#06b6d4"];
 
 export default function ReportsPage() {
+  const { t } = useLanguage();
   const [stats, setStats] = useState({
     totalCustomers: 0,
     totalRevenue: 0,
@@ -95,24 +97,24 @@ export default function ReportsPage() {
   useEffect(() => { fetchData(); }, [fetchData]);
 
   if (loading) {
-    return <div className="flex items-center justify-center h-64"><p className="text-muted-foreground">Memuat laporan...</p></div>;
+    return <div className="flex items-center justify-center h-64"><p className="text-muted-foreground">{t("common.loading")}</p></div>;
   }
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Reports</h1>
-          <p className="text-muted-foreground">Laporan dan analisis performa bisnis</p>
+          <h1 className="text-2xl font-bold tracking-tight">{t("reports.title")}</h1>
+          <p className="text-muted-foreground">{t("reports.subtitle")}</p>
         </div>
         <div className="flex gap-2 no-print">
           <Button variant="outline" onClick={() => exportReportToExcel(stats)}>
             <Download className="mr-2 h-4 w-4" />
-            Export Excel
+            {t("reports.exportExcel")}
           </Button>
           <Button variant="outline" onClick={exportReportToPDF}>
             <FileText className="mr-2 h-4 w-4" />
-            Export PDF
+            {t("reports.exportPDF")}
           </Button>
         </div>
       </div>

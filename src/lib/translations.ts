@@ -44,6 +44,28 @@ export const translations = {
     profile: { id: "Profile", en: "Profile" },
     logout: { id: "Keluar", en: "Logout" },
   },
+  // Products
+  products: {
+    title: { id: "Products", en: "Products" },
+    subtitle: { id: "Daftar produk dan layanan", en: "Product and service list" },
+    addProduct: { id: "Tambah Product", en: "Add Product" },
+    sku: { id: "SKU", en: "SKU" },
+    name: { id: "Nama", en: "Name" },
+    category: { id: "Kategori", en: "Category" },
+    price: { id: "Harga", en: "Price" },
+    status: { id: "Status", en: "Status" },
+    actions: { id: "Aksi", en: "Actions" },
+    noProducts: { id: "Belum ada produk", en: "No products yet" },
+    editProduct: { id: "Edit Product", en: "Edit Product" },
+    description: { id: "Deskripsi", en: "Description" },
+  },
+  // Pipeline
+  pipeline: {
+    title: { id: "Pipeline", en: "Pipeline" },
+    subtitle: { id: "Visualisasi alur penjualan pelanggan", en: "Customer sales flow visualization" },
+    empty: { id: "Kosong", en: "Empty" },
+    noCompany: { id: "Tanpa perusahaan", en: "No company" },
+  },
   // Dashboard
   dashboard: {
     title: { id: "Dashboard", en: "Dashboard" },
@@ -85,6 +107,12 @@ export const translations = {
     allStatus: { id: "Semua Status", en: "All Status" },
     deleteConfirm: { id: "Hapus Customer?", en: "Delete Customer?" },
     deleteDescription: { id: "Tindakan ini tidak dapat dibatalkan. Data customer akan dihapus permanen.", en: "This action cannot be undone. Customer data will be permanently deleted." },
+    detail: { id: "Detail", en: "Detail" },
+    info: { id: "Informasi Customer", en: "Customer Information" },
+    activities: { id: "Aktivitas", en: "Activities" },
+    followupsTab: { id: "Follow-up", en: "Follow-up" },
+    printPdf: { id: "Print PDF", en: "Print PDF" },
+    noCompany: { id: "Tanpa perusahaan", en: "No company" },
   },
   // Activities
   activities: {

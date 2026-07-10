@@ -11,6 +11,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { getInitials } from "@/lib/utils";
 import { Save, Loader2, User } from "lucide-react";
+import { useLanguage } from "@/components/language-provider";
 
 export default function ProfilePage() {
   const [fullname, setFullname] = useState("");
@@ -24,6 +25,7 @@ export default function ProfilePage() {
   const [error, setError] = useState("");
   const supabase = createClient();
   const router = useRouter();
+  const { t } = useLanguage();
 
   const fetchProfile = useCallback(async () => {
     setLoading(true);
@@ -92,7 +94,7 @@ export default function ProfilePage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <p className="text-muted-foreground">Memuat profil...</p>
+        <p className="text-muted-foreground">{t("common.loading")}</p>
       </div>
     );
   }
@@ -100,7 +102,7 @@ export default function ProfilePage() {
   return (
     <div className="space-y-6 max-w-2xl">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Profil</h1>
+        <h1 className="text-2xl font-bold tracking-tight">{t("nav.profile")}</h1>
         <p className="text-muted-foreground">Kelola informasi akun Anda</p>
       </div>
 
@@ -149,7 +151,7 @@ export default function ProfilePage() {
           </div>
           <Button onClick={handleSave} disabled={saving}>
             {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
-            Simpan Perubahan
+            {t("common.save")}
           </Button>
         </CardContent>
       </Card>
@@ -172,7 +174,7 @@ export default function ProfilePage() {
           </div>
           <Button onClick={handleChangePassword} disabled={changingPassword || !newPassword}>
             {changingPassword ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-            Ubah Password
+            {t("common.changePassword")}
           </Button>
         </CardContent>
       </Card>
