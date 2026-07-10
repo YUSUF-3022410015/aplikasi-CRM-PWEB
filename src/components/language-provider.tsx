@@ -22,6 +22,8 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     const stored = localStorage.getItem("locale") as Locale | null;
     if (stored && (stored === "id" || stored === "en")) {
       setLocaleState(stored);
+    } else {
+      localStorage.setItem("locale", "id");
     }
   }, []);
 
