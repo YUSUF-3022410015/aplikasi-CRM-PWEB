@@ -17,6 +17,7 @@ import { FollowUpList } from "@/components/followup-list";
 import { CustomerPrint, printCustomer } from "@/components/customer-print";
 import { WhatsAppButton } from "@/components/whatsapp-button";
 import { useLanguage } from "@/components/language-provider";
+import type { Activity as ActivityType, FollowUp as FollowUpType } from "@/types/database";
 
 const statusColors: Record<string, "default" | "secondary" | "success" | "warning" | "destructive"> = {
   lead: "secondary",
@@ -44,24 +45,6 @@ interface Customer {
   updated_at: string;
 }
 
-interface Activity {
-  id: string;
-  customer_id: string;
-  user_id: string;
-  type: string;
-  note: string;
-  created_at: string;
-  user?: { fullname: string } | null;
-}
-
-interface Followup {
-  id: string;
-  title: string;
-  note: string;
-  due_date: string;
-  status: string;
-}
-
 export default function CustomerDetailPage() {
   const { t } = useLanguage();
   const params = useParams();
@@ -69,8 +52,8 @@ export default function CustomerDetailPage() {
   const supabase = createClient();
 
   const [customer, setCustomer] = useState<Customer | null>(null);
-  const [activities, setActivities] = useState<Activity[]>([]);
-  const [followups, setFollowups] = useState<Followup[]>([]);
+  const [activities, setActivities] = useState<ActivityType[]>([]);
+  const [followups, setFollowups] = useState<FollowUpType[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
