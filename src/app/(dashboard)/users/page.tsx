@@ -29,8 +29,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, UserCog, Shield, Pencil, Trash2, Loader2 } from "lucide-react";
+import { Plus, UserCog, Shield, Pencil, Trash2, Loader2, KeyRound } from "lucide-react";
 import { useLanguage } from "@/components/language-provider";
+import { resetUserPassword } from "@/app/actions/admin";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -71,6 +72,10 @@ export default function UsersPage() {
   const { t } = useLanguage();
   const [deleteUserId, setDeleteUserId] = useState<string | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [resetUser, setResetUser] = useState<UserProfile | null>(null);
+  const [newPassword, setNewPassword] = useState("");
+  const [resetLoading, setResetLoading] = useState(false);
+  const [resetSuccess, setResetSuccess] = useState(false);
   const supabase = createClient();
 
   const fetchUsers = useCallback(async () => {
@@ -140,6 +145,26 @@ export default function UsersPage() {
     fetchUsers();
   };
 
+  const handleResetPassword = async () => {
+    if (!resetUser || !newPassword || newPassword.length < 6) return;
+    setResetLoading(true);
+
+    const result = await resetUserPassword(resetUser.id, newPassword);
+
+    if (result.success) {
+      setResetSuccess(true);
+      setTimeout(() => {
+        setResetUser(null);
+        setNewPassword("");
+        setResetSuccess(false);
+      }, 2000);
+    } else {
+      alert(`Gagal: ${result.error}`);
+    }
+
+    setResetLoading(false);
+  };
+
   return (
     <div className="space-y-6">
       {/* Page Header */}
@@ -184,6 +209,19 @@ export default function UsersPage() {
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        title="Reset Password"
+                        onClick={() => {
+                          setResetUser(u);
+                          setNewPassword("");
+                          setResetSuccess(false);
+                        }}
+                      >
+                        <KeyRound className="h-4 w-4" />
+                      </Button>
                       <Button
                         variant="ghost"
                         size="icon"
@@ -313,6 +351,64 @@ export default function UsersPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Reset Password Dialog */}
+      <Dialog open={!!resetUser} onOpenChange={() => {
+        setResetUser(null);
+        setNewPassword("");
+        setResetSuccess(false);
+      }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <KeyRound className="h-5 w-5" />
+              Reset Password
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div>
+              <p className="text-sm text-muted-foreground">User</p>
+              <p className="font-medium">{resetUser?.fullname} ({resetUser?.email})</p>
+            </div>
+            {resetSuccess ? (
+              <div className="rounded-md bg-green-50 p-3 text-sm text-green-700 dark:bg-green-900/20 dark:text-green-400">
+                Password berhasil direset!
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <Label>Password Baru</Label>
+                <Input
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="Masukkan password baru (min 6 karakter)"
+                />
+                {newPassword.length > 0 && newPassword.length < 6 && (
+                  <p className="text-xs text-destructive">Password minimal 6 karakter</p>
+                )}
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => {
+              setResetUser(null);
+              setNewPassword("");
+              setResetSuccess(false);
+            }}>
+              {t("common.close")}
+            </Button>
+            {!resetSuccess && (
+              <Button
+                onClick={handleResetPassword}
+                disabled={resetLoading || newPassword.length < 6}
+              >
+                {resetLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Reset Password
+              </Button>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
