@@ -33,6 +33,7 @@ import { Plus, Eye, Trash2, FileText, Printer, Mail } from "lucide-react";
 import { formatCurrency, generateQuotationNumber } from "@/lib/utils";
 import { QuotationPrint, printQuotation } from "@/components/quotation-print";
 import { sendQuotationEmailAction } from "@/app/actions/email";
+import { updateQuotationStatus } from "@/app/actions/quotation";
 import { useLanguage } from "@/components/language-provider";
 import type { Quotation, Customer, Product } from "@/types/database";
 
@@ -169,44 +170,11 @@ export default function QuotationsPage() {
   };
 
   const handleStatusChange = async (quotationId: string, newStatus: string) => {
-    // Update quotation status
-    await supabase.from("quotations").update({ status: newStatus }).eq("id", quotationId);
+    // Use server action to update status and send notifications
+    const result = await updateQuotationStatus(quotationId, newStatus);
 
-    // Get quotation details for notification
-    const { data: quotation } = await supabase
-      .from("quotations")
-      .select("*, customer:customers(name)")
-      .eq("id", quotationId)
-      .single();
-
-    if (quotation) {
-      const customerName = (quotation.customer as { name: string })?.name || "Unknown";
-      const { data: { user } } = await supabase.auth.getUser();
-
-      // Create notifications for all users
-      if (newStatus === "approved") {
-        await supabase.from("notifications").insert(
-          (await supabase.from("profiles").select("id")).data?.map((u) => ({
-            user_id: u.id,
-            title: "Quotation Disetujui",
-            message: `Quotation ${quotation.quotation_number} untuk ${customerName} telah disetujui (Rp ${quotation.total.toLocaleString("id-ID")})`,
-            type: "quotation_approved",
-            link: "/quotations",
-            read: false,
-          })) || []
-        );
-      } else if (newStatus === "rejected") {
-        await supabase.from("notifications").insert(
-          (await supabase.from("profiles").select("id")).data?.map((u) => ({
-            user_id: u.id,
-            title: "Quotation Ditolak",
-            message: `Quotation ${quotation.quotation_number} untuk ${customerName} telah ditolak`,
-            type: "quotation_rejected",
-            link: "/quotations",
-            read: false,
-          })) || []
-        );
-      }
+    if (!result.success) {
+      console.error("Failed to update status:", result.error);
     }
 
     // Update local state
