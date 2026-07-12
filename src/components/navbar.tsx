@@ -2,9 +2,10 @@
 
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import { LogOut, User, Shield, Search, Menu } from "lucide-react";
+import { LogOut, User, Shield, Search } from "lucide-react";
 import { NotificationBell } from "@/components/notification-bell";
 import { LanguageToggle } from "@/components/language-toggle";
+import { MobileNav } from "@/components/mobile-nav";
 import { Badge } from "@/components/ui/badge";
 import { roleNames, type Role } from "@/lib/permissions";
 import { Button } from "@/components/ui/button";
@@ -44,9 +45,7 @@ export function Navbar({ user }: NavbarProps) {
   return (
     <header className="no-print sticky top-0 z-40 flex h-14 items-center justify-between border-b border-border bg-card px-3 md:px-6">
       {/* Mobile menu button */}
-      <Button variant="ghost" size="icon" className="md:hidden h-9 w-9 mr-2">
-        <Menu className="h-5 w-5" />
-      </Button>
+      <MobileNav />
 
       {/* Search Bar */}
       <div className="flex-1 max-w-md">
