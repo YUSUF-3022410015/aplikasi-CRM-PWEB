@@ -168,6 +168,54 @@ export default function QuotationsPage() {
     setDetailOpen(true);
   };
 
+  const handleStatusChange = async (quotationId: string, newStatus: string) => {
+    // Update quotation status
+    await supabase.from("quotations").update({ status: newStatus }).eq("id", quotationId);
+
+    // Get quotation details for notification
+    const { data: quotation } = await supabase
+      .from("quotations")
+      .select("*, customer:customers(name)")
+      .eq("id", quotationId)
+      .single();
+
+    if (quotation) {
+      const customerName = (quotation.customer as { name: string })?.name || "Unknown";
+      const { data: { user } } = await supabase.auth.getUser();
+
+      // Create notifications for all users
+      if (newStatus === "approved") {
+        await supabase.from("notifications").insert(
+          (await supabase.from("profiles").select("id")).data?.map((u) => ({
+            user_id: u.id,
+            title: "Quotation Disetujui",
+            message: `Quotation ${quotation.quotation_number} untuk ${customerName} telah disetujui (Rp ${quotation.total.toLocaleString("id-ID")})`,
+            type: "quotation_approved",
+            link: "/quotations",
+            read: false,
+          })) || []
+        );
+      } else if (newStatus === "rejected") {
+        await supabase.from("notifications").insert(
+          (await supabase.from("profiles").select("id")).data?.map((u) => ({
+            user_id: u.id,
+            title: "Quotation Ditolak",
+            message: `Quotation ${quotation.quotation_number} untuk ${customerName} telah ditolak`,
+            type: "quotation_rejected",
+            link: "/quotations",
+            read: false,
+          })) || []
+        );
+      }
+    }
+
+    // Update local state
+    if (selectedQuotation?.id === quotationId) {
+      setSelectedQuotation({ ...selectedQuotation!, status: newStatus as Quotation["status"] });
+    }
+    fetchData();
+  };
+
   return (
     <div className="space-y-6">
       {/* Page Header */}
@@ -320,7 +368,24 @@ export default function QuotationsPage() {
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div><span className="text-muted-foreground">{t("quotations.customer")}:</span> {(selectedQuotation.customer as { name: string })?.name}</div>
-                <div><span className="text-muted-foreground">{t("customers.status")}:</span> <Badge variant={statusColors[selectedQuotation.status]}>{selectedQuotation.status}</Badge></div>
+                <div className="flex items-center gap-2">
+                  <span className="text-muted-foreground">{t("customers.status")}:</span>
+                  <Select
+                    value={selectedQuotation.status}
+                    onValueChange={(value) => handleStatusChange(selectedQuotation.id, value)}
+                  >
+                    <SelectTrigger className="w-32 h-8">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="draft">Draft</SelectItem>
+                      <SelectItem value="sent">Sent</SelectItem>
+                      <SelectItem value="approved">Setuju</SelectItem>
+                      <SelectItem value="rejected">Menolak</SelectItem>
+                      <SelectItem value="expired">Expired</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
               <Table>
                 <TableHeader>

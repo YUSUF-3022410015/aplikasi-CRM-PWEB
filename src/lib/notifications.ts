@@ -31,6 +31,39 @@ export async function createNotification(
   return !error;
 }
 
+// Notify all users (admin, manager, sales)
+export async function notifyAllUsers(
+  title: string,
+  message: string,
+  type: Notification["type"],
+  link?: string,
+  excludeUserId?: string
+) {
+  const supabase = await createClient();
+
+  // Get all users
+  const { data: users } = await supabase.from("profiles").select("id");
+
+  if (!users || users.length === 0) return false;
+
+  // Create notifications for all users (except optionally the current user)
+  const notifications = users
+    .filter((u) => u.id !== excludeUserId)
+    .map((u) => ({
+      user_id: u.id,
+      title,
+      message,
+      type,
+      link: link || null,
+      read: false,
+    }));
+
+  if (notifications.length === 0) return false;
+
+  const { error } = await supabase.from("notifications").insert(notifications);
+  return !error;
+}
+
 // Get user notifications
 export async function getUserNotifications(userId: string, limit = 20) {
   const supabase = await createClient();

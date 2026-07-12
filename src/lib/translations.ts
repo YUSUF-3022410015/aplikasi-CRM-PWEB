@@ -363,6 +363,8 @@ export const translations = {
     title: { id: "Notifikasi", en: "Notifications" },
     markAllRead: { id: "Tandai semua sudah dibaca", en: "Mark all as read" },
     empty: { id: "Tidak ada notifikasi", en: "No notifications" },
+    quotationApproved: { id: "Quotation Disetujui", en: "Quotation Approved" },
+    quotationRejected: { id: "Quotation Ditolak", en: "Quotation Rejected" },
   },
   // Print
   print: {
