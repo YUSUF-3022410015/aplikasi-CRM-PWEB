@@ -140,13 +140,8 @@ export default function UsersPage() {
     if (!deleteUserId) return;
     setDeleteLoading(true);
 
-    // Delete from auth.users (includes profile via cascade or manual delete)
-    const result = await deleteUser(deleteUserId);
-
-    if (result.success) {
-      // Also delete profile
-      await supabase.from("profiles").delete().eq("id", deleteUserId);
-    }
+    // Delete user from auth.users and profiles
+    await deleteUser(deleteUserId);
 
     setDeleteUserId(null);
     setDeleteLoading(false);

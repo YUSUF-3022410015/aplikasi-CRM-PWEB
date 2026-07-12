@@ -15,6 +15,9 @@ const supabaseAdmin = createClient(
 
 export async function deleteUser(userId: string) {
   try {
+    // Delete from profiles first (using admin to bypass RLS)
+    await supabaseAdmin.from("profiles").delete().eq("id", userId);
+
     // Delete from auth.users
     const { error: authError } = await supabaseAdmin.auth.admin.deleteUser(userId);
 
