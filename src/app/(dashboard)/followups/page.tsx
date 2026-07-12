@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { useRouter } from "next/navigation";
 import {
   Table,
   TableBody,
@@ -44,8 +43,6 @@ interface FollowUp {
   customer?: { name: string } | null;
 }
 
-const statusConfig: Record<string, { label: string; variant: "default" | "success" | "destructive" | "secondary" }> = {};
-
 export default function FollowUpsPage() {
   const { t } = useLanguage();
   const [followups, setFollowups] = useState<FollowUp[]>([]);
@@ -57,7 +54,6 @@ export default function FollowUpsPage() {
   const [form, setForm] = useState({ customer_id: "", note: "", due_date: "", status: "pending" });
   const [saving, setSaving] = useState(false);
   const supabase = createClient();
-  const router = useRouter();
 
   const getStatusConfig = (): Record<string, { label: string; variant: "default" | "success" | "destructive" | "secondary" }> => ({
     pending: { label: t("followups.pending"), variant: "default" },

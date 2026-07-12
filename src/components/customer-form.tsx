@@ -188,10 +188,10 @@ export function CustomerForm({ customer, mode }: CustomerFormProps) {
           </div>
           <div className="space-y-2">
             <Label>{t("customers.assignedSales")}</Label>
-            <Select value={watch("assigned_to")} onValueChange={(v) => setValue("assigned_to", v)}>
+            <Select value={watch("assigned_to") || "none"} onValueChange={(v) => setValue("assigned_to", v === "none" ? "" : v)}>
               <SelectTrigger><SelectValue placeholder={t("customers.assignedSales")} /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="">{t("customers.notAssigned")}</SelectItem>
+                <SelectItem value="none">{t("customers.notAssigned")}</SelectItem>
                 {salesUsers.map((u) => (
                   <SelectItem key={u.id} value={u.id}>{u.fullname}</SelectItem>
                 ))}

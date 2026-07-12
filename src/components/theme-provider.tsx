@@ -10,29 +10,46 @@ interface ThemeContextType {
 }
 
 const ThemeContext = createContext<ThemeContextType>({
-  theme: "system",
+  theme: "light",
   setTheme: () => null,
 });
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>("light");
+  const [theme, setThemeState] = useState<Theme>("light");
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     const stored = localStorage.getItem("theme") as Theme | null;
     if (stored) {
-      setTheme(stored);
+      setThemeState(stored);
+      applyTheme(stored);
     } else {
-      setTheme("light");
+      applyTheme("light");
     }
+    setMounted(true);
   }, []);
 
-  useEffect(() => {
+  const applyTheme = (newTheme: Theme) => {
     const root = window.document.documentElement;
-    // Always force light mode
     root.classList.remove("light", "dark");
-    root.classList.add("light");
-    localStorage.setItem("theme", "light");
-  }, []);
+
+    if (newTheme === "system") {
+      const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      root.classList.add(systemDark ? "dark" : "light");
+    } else {
+      root.classList.add(newTheme);
+    }
+  };
+
+  const setTheme = (newTheme: Theme) => {
+    setThemeState(newTheme);
+    localStorage.setItem("theme", newTheme);
+    applyTheme(newTheme);
+  };
+
+  if (!mounted) {
+    return <>{children}</>;
+  }
 
   return (
     <ThemeContext.Provider value={{ theme, setTheme }}>
