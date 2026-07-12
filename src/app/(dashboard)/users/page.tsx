@@ -32,6 +32,7 @@ import {
 import { Plus, UserCog, Shield, Pencil, Trash2, Loader2, KeyRound } from "lucide-react";
 import { useLanguage } from "@/components/language-provider";
 import { resetUserPassword } from "@/app/actions/admin";
+import { deleteUser } from "@/app/actions/delete-user";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -139,8 +140,13 @@ export default function UsersPage() {
     if (!deleteUserId) return;
     setDeleteLoading(true);
 
-    // Delete profile
-    await supabase.from("profiles").delete().eq("id", deleteUserId);
+    // Delete from auth.users (includes profile via cascade or manual delete)
+    const result = await deleteUser(deleteUserId);
+
+    if (result.success) {
+      // Also delete profile
+      await supabase.from("profiles").delete().eq("id", deleteUserId);
+    }
 
     setDeleteUserId(null);
     setDeleteLoading(false);
