@@ -16,7 +16,7 @@ const supabaseAdmin = createClient(
 export async function generateResetLink(email: string) {
   try {
     const { data, error } = await supabaseAdmin.auth.admin.generateLink({
-      type: "magiclink",
+      type: "recovery",
       email,
     });
 
