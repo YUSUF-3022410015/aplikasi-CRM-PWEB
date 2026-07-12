@@ -28,9 +28,10 @@ export async function resetPasswordByEmail(email: string, newPassword: string) {
       return { success: false, error: "Email tidak ditemukan" };
     }
 
-    // Update password
+    // Update password AND confirm email
     const { error } = await supabaseAdmin.auth.admin.updateUserById(user.id, {
       password: newPassword,
+      email_confirm: true,
     });
 
     if (error) {

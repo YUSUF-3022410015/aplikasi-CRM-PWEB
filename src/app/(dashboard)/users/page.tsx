@@ -94,10 +94,12 @@ export default function UsersPage() {
     if (!email || !fullname || !password) return;
     setInviteLoading(true);
 
-    const { data, error } = await supabase.auth.signUp({
+    // Use server-side to auto-confirm email
+    const { data, error } = await supabase.auth.admin.createUser({
       email,
       password,
-      options: { data: { fullname, role } },
+      email_confirm: true,
+      user_metadata: { fullname, role },
     });
 
     if (!error && data.user) {
