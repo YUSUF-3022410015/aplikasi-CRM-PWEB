@@ -33,7 +33,6 @@ import { Plus, Eye, Trash2, FileText, Printer, Mail } from "lucide-react";
 import { formatCurrency, generateQuotationNumber } from "@/lib/utils";
 import { QuotationPrint, printQuotation } from "@/components/quotation-print";
 import { sendQuotationEmailAction } from "@/app/actions/email";
-import { updateQuotationStatus } from "@/app/actions/quotation";
 import { useLanguage } from "@/components/language-provider";
 import type { Quotation, Customer, Product } from "@/types/database";
 
@@ -170,11 +169,38 @@ export default function QuotationsPage() {
   };
 
   const handleStatusChange = async (quotationId: string, newStatus: string) => {
-    // Use server action to update status and send notifications
-    const result = await updateQuotationStatus(quotationId, newStatus);
+    // Update quotation status
+    await supabase.from("quotations").update({ status: newStatus }).eq("id", quotationId);
 
-    if (!result.success) {
-      console.error("Failed to update status:", result.error);
+    // Get quotation details
+    const { data: quotation } = await supabase
+      .from("quotations")
+      .select("*, customer:customers(name)")
+      .eq("id", quotationId)
+      .single();
+
+    if (quotation) {
+      const customerName = (quotation.customer as { name: string })?.name || "Unknown";
+
+      // Get all user IDs
+      const { data: users } = await supabase.from("profiles").select("id");
+
+      if (users && users.length > 0 && (newStatus === "approved" || newStatus === "rejected")) {
+        // Insert notification for each user
+        for (const u of users) {
+          await supabase.from("notifications").insert({
+            user_id: u.id,
+            title: newStatus === "approved" ? "Quotation Disetujui" : "Quotation Ditolak",
+            message:
+              newStatus === "approved"
+                ? `Quotation ${quotation.quotation_number} untuk ${customerName} telah disetujui`
+                : `Quotation ${quotation.quotation_number} untuk ${customerName} telah ditolak`,
+            type: newStatus === "approved" ? "quotation_approved" : "quotation_rejected",
+            link: "/quotations",
+            read: false,
+          });
+        }
+      }
     }
 
     // Update local state
