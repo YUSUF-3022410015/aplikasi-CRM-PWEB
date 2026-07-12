@@ -15,12 +15,9 @@ const supabaseAdmin = createClient(
 
 export async function generateResetLink(email: string) {
   try {
-    const redirectUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL!.replace(/\.supabase\.co$/, "")}.vercel.app/reset-password`;
-
     const { data, error } = await supabaseAdmin.auth.admin.generateLink({
       type: "magiclink",
       email,
-      redirectTo: redirectUrl,
     });
 
     if (error) {
