@@ -108,7 +108,15 @@ export default function ReportsPage() {
           <p className="text-muted-foreground">{t("reports.subtitle")}</p>
         </div>
         <div className="flex gap-2 no-print">
-          <Button variant="outline" onClick={() => exportReportToExcel(stats)}>
+          <Button variant="outline" onClick={() => {
+            const blob = exportReportToExcel(stats);
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `laporan_${new Date().toISOString().split("T")[0]}.xlsx`;
+            a.click();
+            URL.revokeObjectURL(url);
+          }}>
             <Download className="mr-2 h-4 w-4" />
             {t("reports.exportExcel")}
           </Button>

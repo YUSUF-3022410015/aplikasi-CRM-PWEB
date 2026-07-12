@@ -170,8 +170,8 @@ export const translations = {
     meeting: { id: "Pertemuan", en: "Meeting" },
     proposal: { id: "Penawaran", en: "Proposal" },
     negotiation: { id: "Negosiasi", en: "Negotiation" },
-    won: { id: "Menang", en: "Won" },
-    lost: { id: "Kalah", en: "Lost" },
+    won: { id: "Setuju", en: "Agreed" },
+    lost: { id: "Menolak", en: "Rejected" },
   },
   // Activities
   activities: {
@@ -413,8 +413,8 @@ export const translations = {
     meeting: { id: "Pertemuan", en: "Meeting" },
     proposal: { id: "Penawaran", en: "Proposal" },
     negotiation: { id: "Negosiasi", en: "Negotiation" },
-    won: { id: "Menang", en: "Won" },
-    lost: { id: "Kalah", en: "Lost" },
+    won: { id: "Setuju", en: "Agreed" },
+    lost: { id: "Menolak", en: "Rejected" },
   },
 } as const;
 
