@@ -31,7 +31,7 @@ import {
 } from "@/components/ui/select";
 import { Plus, UserCog, Shield, Pencil, Trash2, Loader2, KeyRound } from "lucide-react";
 import { useLanguage } from "@/components/language-provider";
-import { resetUserPassword } from "@/app/actions/admin";
+import { resetUserPassword, inviteUser, editUserRole } from "@/app/actions/admin";
 import { deleteUser } from "@/app/actions/delete-user";
 import {
   AlertDialog,
@@ -95,21 +95,10 @@ export default function UsersPage() {
     if (!email || !fullname || !password) return;
     setInviteLoading(true);
 
-    // Use server-side to auto-confirm email
-    const { data, error } = await supabase.auth.admin.createUser({
-      email,
-      password,
-      email_confirm: true,
-      user_metadata: { fullname, role },
-    });
+    const result = await inviteUser(email, fullname, password, role);
 
-    if (!error && data.user) {
-      await supabase.from("profiles").upsert({
-        id: data.user.id,
-        fullname,
-        email,
-        role,
-      });
+    if (!result.success) {
+      alert(`Gagal mengundang user: ${result.error}`);
     }
 
     setDialogOpen(false);
@@ -125,10 +114,11 @@ export default function UsersPage() {
     if (!editUser || !editRole) return;
     setEditLoading(true);
 
-    await supabase
-      .from("profiles")
-      .update({ role: editRole })
-      .eq("id", editUser.id);
+    const result = await editUserRole(editUser.id, editRole);
+
+    if (!result.success) {
+      alert(`Gagal mengubah role: ${result.error}`);
+    }
 
     setEditUser(null);
     setEditRole("");
@@ -140,12 +130,16 @@ export default function UsersPage() {
     if (!deleteUserId) return;
     setDeleteLoading(true);
 
-    // Delete user from auth.users and profiles
-    await deleteUser(deleteUserId);
+    const result = await deleteUser(deleteUserId);
 
-    setDeleteUserId(null);
+    if (result.success) {
+      setDeleteUserId(null);
+      fetchUsers();
+    } else {
+      alert(`Gagal menghapus user: ${result.error}`);
+    }
+
     setDeleteLoading(false);
-    fetchUsers();
   };
 
   const handleResetPassword = async () => {
@@ -333,7 +327,7 @@ export default function UsersPage() {
       </Dialog>
 
       {/* Delete User Dialog */}
-      <AlertDialog open={!!deleteUserId} onOpenChange={() => setDeleteUserId(null)}>
+      <AlertDialog open={!!deleteUserId} onOpenChange={(open) => { if (!open && !deleteLoading) setDeleteUserId(null); }}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{t("users.deleteUser")}?</AlertDialogTitle>
@@ -342,15 +336,15 @@ export default function UsersPage() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
-            <AlertDialogAction
+            <AlertDialogCancel disabled={deleteLoading}>{t("common.cancel")}</AlertDialogCancel>
+            <Button
               onClick={handleDeleteUser}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               disabled={deleteLoading}
             >
               {deleteLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {t("common.delete")}
-            </AlertDialogAction>
+            </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

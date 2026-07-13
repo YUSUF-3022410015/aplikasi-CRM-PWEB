@@ -41,6 +41,13 @@ export default function SignupPage() {
     setLoading(true);
     setError("");
 
+    // Server-side validation: admin role cannot be created via public signup
+    if (role === "admin") {
+      setError("Pendaftaran sebagai Admin tidak diperbolehkan. Hubungi administrator.");
+      setLoading(false);
+      return;
+    }
+
     if (password !== confirmPassword) {
       setError(t("auth.passwordMismatch"));
       setLoading(false);
@@ -122,7 +129,7 @@ export default function SignupPage() {
             </div>
           )}
 
-          {/* Role Selection */}
+          {/* Role Selection - Admin only via User Management page */}
           <div className="space-y-2">
             <Label className="flex items-center gap-2">
               <Shield className="h-4 w-4" />
@@ -135,11 +142,9 @@ export default function SignupPage() {
               <SelectContent>
                 <SelectItem value="sales">{t("auth.sales")}</SelectItem>
                 <SelectItem value="manager">{t("auth.manager")}</SelectItem>
-                <SelectItem value="admin">{t("auth.admin")}</SelectItem>
               </SelectContent>
             </Select>
             <p className="text-xs text-muted-foreground">
-              {role === "admin" && t("auth.admin")}
               {role === "manager" && t("auth.manager")}
               {role === "sales" && t("auth.sales")}
             </p>

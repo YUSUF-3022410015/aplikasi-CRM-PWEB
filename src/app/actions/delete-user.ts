@@ -15,10 +15,29 @@ const supabaseAdmin = createClient(
 
 export async function deleteUser(userId: string) {
   try {
-    // Delete from profiles first (using admin to bypass RLS)
-    await supabaseAdmin.from("profiles").delete().eq("id", userId);
+    // 1. Nullify foreign key references first (bypass RLS with service role)
+    await supabaseAdmin
+      .from("customers")
+      .update({ assigned_to: null })
+      .eq("assigned_to", userId);
 
-    // Delete from auth.users
+    await supabaseAdmin
+      .from("activities")
+      .update({ user_id: null })
+      .eq("user_id", userId);
+
+    await supabaseAdmin
+      .from("followups")
+      .update({ assigned_to: null })
+      .eq("assigned_to", userId);
+
+    // 2. Delete notifications that reference this user
+    await supabaseAdmin
+      .from("notifications")
+      .delete()
+      .eq("user_id", userId);
+
+    // 3. Delete from auth.users (profiles cascades automatically via ON DELETE CASCADE)
     const { error: authError } = await supabaseAdmin.auth.admin.deleteUser(userId);
 
     if (authError) {
