@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { getInitials } from "@/lib/utils";
-import { Save, Loader2, User } from "lucide-react";
+import { Save, Loader2, User, Lock, Shield } from "lucide-react";
 import { useLanguage } from "@/components/language-provider";
 
 export default function ProfilePage() {
@@ -93,90 +93,122 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <p className="text-muted-foreground">{t("common.loading")}</p>
+      <div className="space-y-4 animate-fade-in">
+        <div className="h-8 w-48 bg-muted rounded-md animate-pulse-soft" />
+        <div className="rounded-xl border bg-card p-6 space-y-4">
+          <div className="flex items-center gap-4">
+            <div className="h-16 w-16 rounded-full bg-muted animate-pulse-soft" />
+            <div className="space-y-2">
+              <div className="h-4 w-32 bg-muted rounded-md animate-pulse-soft" />
+              <div className="h-3 w-48 bg-muted rounded-md animate-pulse-soft" />
+            </div>
+          </div>
+          <div className="h-10 w-full bg-muted rounded-md animate-pulse-soft" />
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 max-w-2xl mx-auto">
+    <div className="space-y-6 max-w-2xl mx-auto animate-fade-in">
       {/* Page Header */}
-      <div>
+      <div className="animate-slide-up">
         <h1 className="text-2xl font-bold text-foreground md:text-3xl">{t("nav.profile")}</h1>
         <p className="text-muted-foreground mt-1">{t("profile.manageAccount")}</p>
       </div>
 
       {success && (
-        <div className="rounded-lg bg-tertiary/10 p-4 text-sm text-tertiary border border-tertiary/20">{success}</div>
+        <div className="rounded-lg bg-emerald-50 dark:bg-emerald-950/30 p-4 text-sm text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 animate-slide-down">
+          {success}
+        </div>
       )}
       {error && (
-        <div className="rounded-lg bg-destructive/10 p-4 text-sm text-destructive border border-destructive/20">{error}</div>
+        <div className="rounded-lg bg-destructive/10 p-4 text-sm text-destructive border border-destructive/20 animate-slide-down">
+          {error}
+        </div>
       )}
 
-      <Card>
+      {/* Profile Info Card */}
+      <Card className="border-border/50 shadow-sm hover:shadow-md transition-shadow animate-slide-up" style={{ animationDelay: "0.1s" }}>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <User className="h-5 w-5" />
+            <div className="p-2 rounded-lg bg-primary/10">
+              <User className="h-5 w-5 text-primary" />
+            </div>
             {t("profile.profileInfo")}
           </CardTitle>
           <CardDescription>{t("profile.updateInfo")}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex items-center gap-4">
-            <Avatar className="h-16 w-16">
-              <AvatarFallback className="bg-primary text-primary-foreground text-xl">
+          <div className="flex items-center gap-4 animate-slide-up" style={{ animationDelay: "0.15s" }}>
+            <Avatar className="h-16 w-16 shadow-lg">
+              <AvatarFallback className="bg-primary text-primary-foreground text-xl font-bold">
                 {getInitials(fullname || "U")}
               </AvatarFallback>
             </Avatar>
             <div>
-              <p className="font-medium">{fullname || "User"}</p>
+              <p className="font-medium text-lg">{fullname || "User"}</p>
               <p className="text-sm text-muted-foreground">{email}</p>
-              <p className="text-xs text-muted-foreground capitalize mt-1">{t("auth.role")}: {role}</p>
+              <div className="flex items-center gap-1 mt-1">
+                <Shield className="h-3 w-3 text-muted-foreground" />
+                <p className="text-xs text-muted-foreground capitalize">{t("auth.role")}: {role}</p>
+              </div>
             </div>
           </div>
           <Separator />
-          <div className="space-y-2">
-            <Label htmlFor="fullname">{t("profile.fullName")}</Label>
+          <div className="space-y-2 animate-slide-up" style={{ animationDelay: "0.2s" }}>
+            <Label htmlFor="fullname" className="text-sm font-medium">{t("profile.fullName")}</Label>
             <Input
               id="fullname"
               value={fullname}
               onChange={(e) => setFullname(e.target.value)}
               placeholder={t("profile.fullNamePlaceholder")}
+              className="border-border/60 bg-background/50 focus:bg-background transition-colors"
             />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="email">{t("auth.email")}</Label>
-            <Input id="email" value={email} disabled />
+          <div className="space-y-2 animate-slide-up" style={{ animationDelay: "0.25s" }}>
+            <Label htmlFor="email" className="text-sm font-medium">{t("auth.email")}</Label>
+            <Input id="email" value={email} disabled className="bg-muted/50" />
             <p className="text-xs text-muted-foreground">{t("profile.emailCannotBeChanged")}</p>
           </div>
-          <Button onClick={handleSave} disabled={saving}>
-            {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
-            {t("common.save")}
-          </Button>
+          <div className="animate-slide-up" style={{ animationDelay: "0.3s" }}>
+            <Button onClick={handleSave} disabled={saving} className="shadow-sm hover:shadow-md transition-shadow">
+              {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
+              {t("common.save")}
+            </Button>
+          </div>
         </CardContent>
       </Card>
 
-      <Card>
+      {/* Change Password Card */}
+      <Card className="border-border/50 shadow-sm hover:shadow-md transition-shadow animate-slide-up" style={{ animationDelay: "0.2s" }}>
         <CardHeader>
-          <CardTitle>{t("profile.changePassword")}</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <div className="p-2 rounded-lg bg-primary/10">
+              <Lock className="h-5 w-5 text-primary" />
+            </div>
+            {t("profile.changePassword")}
+          </CardTitle>
           <CardDescription>{t("profile.minChars")}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="newPassword">{t("profile.newPassword")}</Label>
+          <div className="space-y-2 animate-slide-up" style={{ animationDelay: "0.25s" }}>
+            <Label htmlFor="newPassword" className="text-sm font-medium">{t("profile.newPassword")}</Label>
             <Input
               id="newPassword"
               type="password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               placeholder={t("auth.password")}
+              className="border-border/60 bg-background/50 focus:bg-background transition-colors"
             />
           </div>
-          <Button onClick={handleChangePassword} disabled={changingPassword || !newPassword}>
-            {changingPassword ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-            {t("common.changePassword")}
-          </Button>
+          <div className="animate-slide-up" style={{ animationDelay: "0.3s" }}>
+            <Button onClick={handleChangePassword} disabled={changingPassword || !newPassword} className="shadow-sm hover:shadow-md transition-shadow">
+              {changingPassword ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Lock className="mr-2 h-4 w-4" />}
+              {t("common.changePassword")}
+            </Button>
+          </div>
         </CardContent>
       </Card>
     </div>

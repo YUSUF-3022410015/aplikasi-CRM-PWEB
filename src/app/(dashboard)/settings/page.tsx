@@ -6,8 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { Settings, Save, Loader2, Upload, Building, Globe, Mail } from "lucide-react";
+import { Settings, Save, Loader2, Building, Globe, Mail, Image } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -91,122 +90,145 @@ export default function SettingsPage() {
   };
 
   if (loading) {
-    return <div className="flex items-center justify-center h-64"><p className="text-muted-foreground">{t("common.loading")}</p></div>;
+    return (
+      <div className="space-y-4 animate-fade-in">
+        <div className="h-8 w-48 bg-muted rounded-md animate-pulse-soft" />
+        <div className="h-10 w-64 bg-muted rounded-lg animate-pulse-soft" />
+        <div className="rounded-xl border bg-card p-6 space-y-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="space-y-2">
+              <div className="h-4 w-32 bg-muted rounded-md animate-pulse-soft" />
+              <div className="h-10 w-full bg-muted rounded-md animate-pulse-soft" />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
+    <div className="space-y-6 max-w-5xl mx-auto animate-fade-in">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-slide-up">
         <div>
           <h1 className="text-2xl font-bold text-foreground md:text-3xl">{t("settings.title")}</h1>
           <p className="text-muted-foreground mt-1">{t("settings.subtitle")}</p>
         </div>
-        <Button onClick={handleSave} disabled={saving} className="bg-primary text-primary-foreground shadow-sm">
+        <Button onClick={handleSave} disabled={saving} className="bg-primary text-primary-foreground shadow-sm hover:shadow-md transition-shadow">
           {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
           {t("common.save")}
         </Button>
       </div>
 
-      <Tabs defaultValue="company">
+      <Tabs defaultValue="company" className="animate-slide-up" style={{ animationDelay: "0.1s" }}>
         <TabsList className="bg-muted p-1">
-          <TabsTrigger value="company" className="flex items-center gap-2 data-[state=active]:bg-card data-[state=active]:shadow-sm">
+          <TabsTrigger value="company" className="flex items-center gap-2 data-[state=active]:bg-card data-[state=active]:shadow-sm transition-all">
             <Building className="h-4 w-4" />
-            {t("settings.companyProfile")}
+            <span className="hidden sm:inline">{t("settings.companyProfile")}</span>
           </TabsTrigger>
-          <TabsTrigger value="general" className="flex items-center gap-2 data-[state=active]:bg-card data-[state=active]:shadow-sm">
+          <TabsTrigger value="general" className="flex items-center gap-2 data-[state=active]:bg-card data-[state=active]:shadow-sm transition-all">
             <Globe className="h-4 w-4" />
-            {t("settings.general")}
+            <span className="hidden sm:inline">{t("settings.general")}</span>
           </TabsTrigger>
-          <TabsTrigger value="email" className="flex items-center gap-2 data-[state=active]:bg-card data-[state=active]:shadow-sm">
+          <TabsTrigger value="email" className="flex items-center gap-2 data-[state=active]:bg-card data-[state=active]:shadow-sm transition-all">
             <Mail className="h-4 w-4" />
-            {t("settings.emailTemplate")}
+            <span className="hidden sm:inline">{t("settings.emailTemplate")}</span>
           </TabsTrigger>
         </TabsList>
 
+        {/* Company Tab */}
         <TabsContent value="company">
-          <Card>
+          <Card className="border-border/50 shadow-sm animate-scale-in">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Building className="h-5 w-5" />
+                <div className="p-2 rounded-lg bg-primary/10">
+                  <Building className="h-5 w-5 text-primary" />
+                </div>
                 {t("settings.companyProfile")}
               </CardTitle>
               <CardDescription>{t("settings.companyProfile")}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {/* Logo */}
-              <div className="space-y-2">
-                <Label>{t("settings.logo")}</Label>
-                <div className="flex items-center gap-4">
+              <div className="space-y-2 animate-slide-up" style={{ animationDelay: "0.05s" }}>
+                <Label className="text-sm font-medium flex items-center gap-2">
+                  <Image className="h-4 w-4" />
+                  {t("settings.logo")}
+                </Label>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                   {values.logo_url && (
                     <img
                       src={values.logo_url}
                       alt="Logo"
-                      className="h-16 w-16 object-contain border rounded"
+                      className="h-16 w-16 object-contain border rounded-lg shadow-sm"
                     />
                   )}
                   <Input
                     value={values.logo_url || ""}
                     onChange={(e) => setValues((prev) => ({ ...prev, logo_url: e.target.value }))}
                     placeholder="URL logo"
+                    className="flex-1 border-border/60 bg-background/50 focus:bg-background transition-colors"
                   />
                 </div>
               </div>
 
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <Label>{t("settings.companyName")}</Label>
-                  <Input value={values.company_name || ""} onChange={(e) => setValues((prev) => ({ ...prev, company_name: e.target.value }))} placeholder={t("settings.companyName")} />
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-2 animate-slide-up" style={{ animationDelay: "0.1s" }}>
+                  <Label className="text-sm font-medium">{t("settings.companyName")}</Label>
+                  <Input value={values.company_name || ""} onChange={(e) => setValues((prev) => ({ ...prev, company_name: e.target.value }))} placeholder="PT. Nama Perusahaan" className="border-border/60 bg-background/50 focus:bg-background transition-colors" />
                 </div>
-                <div className="space-y-2">
-                  <Label>{t("settings.companyEmail")}</Label>
-                  <Input value={values.company_email || ""} onChange={(e) => setValues((prev) => ({ ...prev, company_email: e.target.value }))} placeholder="info@perusahaan.com" />
+                <div className="space-y-2 animate-slide-up" style={{ animationDelay: "0.15s" }}>
+                  <Label className="text-sm font-medium">{t("settings.companyEmail")}</Label>
+                  <Input value={values.company_email || ""} onChange={(e) => setValues((prev) => ({ ...prev, company_email: e.target.value }))} placeholder="info@perusahaan.com" className="border-border/60 bg-background/50 focus:bg-background transition-colors" />
                 </div>
-                <div className="space-y-2">
-                  <Label>{t("settings.companyPhone")}</Label>
-                  <Input value={values.company_phone || ""} onChange={(e) => setValues((prev) => ({ ...prev, company_phone: e.target.value }))} placeholder="021-xxxx" />
+                <div className="space-y-2 animate-slide-up" style={{ animationDelay: "0.2s" }}>
+                  <Label className="text-sm font-medium">{t("settings.companyPhone")}</Label>
+                  <Input value={values.company_phone || ""} onChange={(e) => setValues((prev) => ({ ...prev, company_phone: e.target.value }))} placeholder="021-xxxx" className="border-border/60 bg-background/50 focus:bg-background transition-colors" />
                 </div>
-                <div className="space-y-2">
-                  <Label>{t("settings.companyWebsite")}</Label>
-                  <Input value={values.company_website || ""} onChange={(e) => setValues((prev) => ({ ...prev, company_website: e.target.value }))} placeholder="https://perusahaan.com" />
+                <div className="space-y-2 animate-slide-up" style={{ animationDelay: "0.25s" }}>
+                  <Label className="text-sm font-medium">{t("settings.companyWebsite")}</Label>
+                  <Input value={values.company_website || ""} onChange={(e) => setValues((prev) => ({ ...prev, company_website: e.target.value }))} placeholder="https://perusahaan.com" className="border-border/60 bg-background/50 focus:bg-background transition-colors" />
                 </div>
               </div>
-              <div className="grid gap-4 md:grid-cols-3">
-                <div className="space-y-2">
-                  <Label>{t("settings.companyAddress")}</Label>
-                  <Input value={values.company_address || ""} onChange={(e) => setValues((prev) => ({ ...prev, company_address: e.target.value }))} placeholder={t("settings.companyAddress")} />
+              <div className="grid gap-4 sm:grid-cols-3">
+                <div className="space-y-2 animate-slide-up" style={{ animationDelay: "0.3s" }}>
+                  <Label className="text-sm font-medium">{t("settings.companyAddress")}</Label>
+                  <Input value={values.company_address || ""} onChange={(e) => setValues((prev) => ({ ...prev, company_address: e.target.value }))} placeholder="Alamat lengkap" className="border-border/60 bg-background/50 focus:bg-background transition-colors" />
                 </div>
-                <div className="space-y-2">
-                  <Label>{t("settings.companyCity")}</Label>
-                  <Input value={values.company_city || ""} onChange={(e) => setValues((prev) => ({ ...prev, company_city: e.target.value }))} placeholder={t("settings.companyCity")} />
+                <div className="space-y-2 animate-slide-up" style={{ animationDelay: "0.35s" }}>
+                  <Label className="text-sm font-medium">{t("settings.companyCity")}</Label>
+                  <Input value={values.company_city || ""} onChange={(e) => setValues((prev) => ({ ...prev, company_city: e.target.value }))} placeholder="Jakarta" className="border-border/60 bg-background/50 focus:bg-background transition-colors" />
                 </div>
-                <div className="space-y-2">
-                  <Label>{t("settings.companyCountry")}</Label>
-                  <Input value={values.company_country || ""} onChange={(e) => setValues((prev) => ({ ...prev, company_country: e.target.value }))} placeholder={t("settings.companyCountry")} />
+                <div className="space-y-2 animate-slide-up" style={{ animationDelay: "0.4s" }}>
+                  <Label className="text-sm font-medium">{t("settings.companyCountry")}</Label>
+                  <Input value={values.company_country || ""} onChange={(e) => setValues((prev) => ({ ...prev, company_country: e.target.value }))} placeholder="Indonesia" className="border-border/60 bg-background/50 focus:bg-background transition-colors" />
                 </div>
               </div>
             </CardContent>
           </Card>
         </TabsContent>
 
+        {/* General Tab */}
         <TabsContent value="general">
-          <Card>
+          <Card className="border-border/50 shadow-sm animate-scale-in">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Globe className="h-5 w-5" />
+                <div className="p-2 rounded-lg bg-primary/10">
+                  <Globe className="h-5 w-5 text-primary" />
+                </div>
                 {t("settings.general")}
               </CardTitle>
               <CardDescription>{t("settings.currency")} & {t("settings.timezone")}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <Label>{t("settings.currency")}</Label>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-2 animate-slide-up" style={{ animationDelay: "0.05s" }}>
+                  <Label className="text-sm font-medium">{t("settings.currency")}</Label>
                   <Select
                     value={values.currency || "IDR"}
                     onValueChange={(v) => setValues((prev) => ({ ...prev, currency: v }))}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="border-border/60 bg-background/50">
                       <SelectValue placeholder="IDR" />
                     </SelectTrigger>
                     <SelectContent>
@@ -218,13 +240,13 @@ export default function SettingsPage() {
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="space-y-2">
-                  <Label>{t("settings.timezone")}</Label>
+                <div className="space-y-2 animate-slide-up" style={{ animationDelay: "0.1s" }}>
+                  <Label className="text-sm font-medium">{t("settings.timezone")}</Label>
                   <Select
                     value={values.timezone || "Asia/Jakarta"}
                     onValueChange={(v) => setValues((prev) => ({ ...prev, timezone: v }))}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="border-border/60 bg-background/50">
                       <SelectValue placeholder="Asia/Jakarta" />
                     </SelectTrigger>
                     <SelectContent>
@@ -241,31 +263,36 @@ export default function SettingsPage() {
           </Card>
         </TabsContent>
 
+        {/* Email Template Tab */}
         <TabsContent value="email">
-          <Card>
+          <Card className="border-border/50 shadow-sm animate-scale-in">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Mail className="h-5 w-5" />
+                <div className="p-2 rounded-lg bg-primary/10">
+                  <Mail className="h-5 w-5 text-primary" />
+                </div>
                 {t("settings.emailTemplate")}
               </CardTitle>
               <CardDescription>{t("settings.emailTemplate")}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {emailTemplateKeys.map((s) => (
-                <div key={s.key} className="space-y-2">
-                  <Label>{t(s.labelKey)}</Label>
+              {emailTemplateKeys.map((s, i) => (
+                <div key={s.key} className="space-y-2 animate-slide-up" style={{ animationDelay: `${0.05 * (i + 1)}s` }}>
+                  <Label className="text-sm font-medium">{t(s.labelKey)}</Label>
                   {s.key.includes("body") ? (
                     <Textarea
                       value={values[s.key] || ""}
                       onChange={(e) => setValues((prev) => ({ ...prev, [s.key]: e.target.value }))}
                       placeholder={s.placeholder}
                       rows={4}
+                      className="border-border/60 bg-background/50 focus:bg-background transition-colors"
                     />
                   ) : (
                     <Input
                       value={values[s.key] || ""}
                       onChange={(e) => setValues((prev) => ({ ...prev, [s.key]: e.target.value }))}
                       placeholder={s.placeholder}
+                      className="border-border/60 bg-background/50 focus:bg-background transition-colors"
                     />
                   )}
                   <p className="text-xs text-muted-foreground">
