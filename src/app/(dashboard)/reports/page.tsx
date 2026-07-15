@@ -102,12 +102,12 @@ export default function ReportsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">{t("reports.title")}</h1>
           <p className="text-muted-foreground">{t("reports.subtitle")}</p>
         </div>
-        <div className="flex gap-2 no-print">
+        <div className="flex flex-wrap gap-2 no-print">
           <Button variant="outline" onClick={() => {
             const blob = exportReportToExcel(stats);
             const url = URL.createObjectURL(blob);
@@ -236,7 +236,7 @@ export default function ReportsPage() {
           <Card>
             <CardHeader><CardTitle>{t("reports.followupSummary")}</CardTitle></CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="flex items-center gap-4 p-4 border rounded-lg">
                   <CalendarCheck className="h-8 w-8 text-orange-500" />
                   <div>

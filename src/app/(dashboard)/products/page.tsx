@@ -102,7 +102,8 @@ export default function ProductsPage() {
       {/* Table Card */}
       <Card>
         <CardContent className="p-0">
-          <Table>
+          <div className="overflow-x-auto">
+          <Table className="min-w-[600px]">
             <TableHeader>
               <TableRow className="border-border">
                 <TableHead className="font-semibold">{t("products.sku")}</TableHead>
@@ -149,6 +150,7 @@ export default function ProductsPage() {
             )}
           </TableBody>
         </Table>
+          </div>
         </CardContent>
       </Card>
 

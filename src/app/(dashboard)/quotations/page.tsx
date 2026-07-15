@@ -233,7 +233,8 @@ export default function QuotationsPage() {
       {/* Table Card */}
       <Card>
         <CardContent className="p-0">
-          <Table>
+          <div className="overflow-x-auto">
+          <Table className="min-w-[500px]">
             <TableHeader>
               <TableRow className="border-border">
                 <TableHead className="font-semibold">{t("quotations.number")}</TableHead>
@@ -272,6 +273,7 @@ export default function QuotationsPage() {
             )}
           </TableBody>
         </Table>
+          </div>
         </CardContent>
       </Card>
 
@@ -333,7 +335,7 @@ export default function QuotationsPage() {
                 </div>
               ))}
             </div>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="space-y-2">
                 <Label>{t("quotations.discount")} (IDR)</Label>
                 <Input type="number" value={discount} onChange={(e) => setDiscount(Number(e.target.value))} />
@@ -366,7 +368,7 @@ export default function QuotationsPage() {
           </DialogHeader>
           {selectedQuotation && (
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4 text-sm">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                 <div><span className="text-muted-foreground">{t("quotations.customer")}:</span> {(selectedQuotation.customer as { name: string })?.name}</div>
                 <div className="flex items-center gap-2">
                   <span className="text-muted-foreground">{t("customers.status")}:</span>

@@ -179,7 +179,8 @@ export default function UsersPage() {
       {/* Table Card */}
       <Card>
         <CardContent className="p-0">
-          <Table>
+          <div className="overflow-x-auto">
+          <Table className="min-w-[500px]">
             <TableHeader>
               <TableRow className="border-border">
                 <TableHead className="font-semibold">{t("customers.name")}</TableHead>
@@ -245,6 +246,7 @@ export default function UsersPage() {
             )}
           </TableBody>
         </Table>
+          </div>
         </CardContent>
       </Card>
 
