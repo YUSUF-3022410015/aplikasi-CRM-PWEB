@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -32,12 +32,10 @@ export function NotificationBell({ userId }: { userId: string }) {
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [open, setOpen] = useState(false);
-  const [tableReady, setTableReady] = useState(false);
-  const [tried, setTried] = useState(false);
   const [supabase] = useState(() => createClient());
   const router = useRouter();
 
-  const fetchNotifications = async () => {
+  const fetchNotifications = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from("notifications")
@@ -46,49 +44,45 @@ export function NotificationBell({ userId }: { userId: string }) {
         .order("created_at", { ascending: false })
         .limit(10);
 
-      if (error) {
-        setTableReady(false);
-        setTried(true);
-        return;
-      }
+      if (error) return;
 
-      setTableReady(true);
-      setTried(true);
       setNotifications(data || []);
       setUnreadCount((data || []).filter((n) => !n.read).length);
     } catch {
-      setTableReady(false);
-      setTried(true);
+      // silently fail
     }
-  };
+  }, [supabase, userId]);
 
   useEffect(() => {
     fetchNotifications();
 
-    // Subscribe to real-time notifications
+    // Realtime subscription
     const channel = supabase
       .channel("notifications-realtime")
       .on(
         "postgres_changes",
-        { event: "INSERT", schema: "public", table: "notifications", filter: `user_id=eq.${userId}` },
-        () => {
-          fetchNotifications();
+        { event: "INSERT", schema: "public", table: "notifications" },
+        (payload) => {
+          // Only refresh if notification belongs to this user
+          if ((payload.new as NotificationItem)?.user_id === userId) {
+            fetchNotifications();
+          }
         }
       )
       .subscribe();
 
+    // Polling fallback - refresh every 15 seconds
+    const interval = setInterval(fetchNotifications, 15000);
+
     return () => {
       supabase.removeChannel(channel);
+      clearInterval(interval);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userId]);
+  }, [userId, fetchNotifications, supabase]);
 
-  // Refresh when dropdown opens
   const handleOpenChange = (isOpen: boolean) => {
     setOpen(isOpen);
-    if (isOpen) {
-      fetchNotifications();
-    }
+    if (isOpen) fetchNotifications();
   };
 
   const markAsRead = async (id: string) => {
@@ -107,9 +101,7 @@ export function NotificationBell({ userId }: { userId: string }) {
 
   const handleNotificationClick = (notification: NotificationItem) => {
     markAsRead(notification.id);
-    if (notification.link) {
-      router.push(notification.link);
-    }
+    if (notification.link) router.push(notification.link);
     setOpen(false);
   };
 
@@ -139,13 +131,7 @@ export function NotificationBell({ userId }: { userId: string }) {
           )}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {!tried ? (
-          <div className="py-6 text-center text-sm text-muted-foreground">{t("common.loading")}</div>
-        ) : !tableReady ? (
-          <div className="py-6 text-center text-sm text-muted-foreground">
-            {t("notification.empty")}
-          </div>
-        ) : notifications.length === 0 ? (
+        {notifications.length === 0 ? (
           <div className="py-6 text-center text-sm text-muted-foreground">
             {t("notification.empty")}
           </div>
