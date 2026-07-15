@@ -126,7 +126,8 @@ export function CustomerForm({ customer, mode }: CustomerFormProps) {
       const { error } = await supabase
         .from("customers")
         .update({
-          ...data,
+          name: data.name,
+          company: data.company || null,
           email: data.email || null,
           phone: data.phone || null,
           whatsapp: data.whatsapp || null,
@@ -135,7 +136,9 @@ export function CustomerForm({ customer, mode }: CustomerFormProps) {
           address: data.address || null,
           website: data.website || null,
           source: data.source || null,
-          updated_at: new Date().toISOString(),
+          assigned_to: data.assigned_to || null,
+          status: data.status,
+          pipeline_stage: data.pipeline_stage,
         })
         .eq("id", customer!.id);
       if (error) {
