@@ -135,18 +135,18 @@ export default function CustomersPage() {
           <h1 className="text-2xl font-bold text-foreground md:text-3xl">{t("customers.title")}</h1>
           <p className="text-muted-foreground mt-1">{t("customers.subtitle")}</p>
         </div>
-        <div className="flex gap-3">
-          <Button variant="outline" onClick={handleExport} disabled={exporting} className="border-border">
-            <Download className="mr-2 h-4 w-4" />
+        <div className="flex flex-wrap gap-2">
+          <Button variant="outline" size="sm" onClick={handleExport} disabled={exporting} className="border-border">
+            <Download className="mr-1 h-4 w-4" />
             {exporting ? t("common.loading") : t("common.export")}
           </Button>
-          <Button variant="outline" onClick={() => setImportOpen(true)} className="border-border">
-            <Upload className="mr-2 h-4 w-4" />
+          <Button variant="outline" size="sm" onClick={() => setImportOpen(true)} className="border-border">
+            <Upload className="mr-1 h-4 w-4" />
             {t("common.import")}
           </Button>
           <Link href="/customers/new">
-            <Button className="bg-primary text-primary-foreground shadow-sm">
-              <Plus className="mr-2 h-4 w-4" />
+            <Button size="sm" className="bg-primary text-primary-foreground shadow-sm">
+              <Plus className="mr-1 h-4 w-4" />
               {t("common.add")}
             </Button>
           </Link>
@@ -188,8 +188,8 @@ export default function CustomersPage() {
         </Select>
       </div>
 
-      <div className="rounded-md border">
-        <Table>
+      <div className="rounded-md border overflow-x-auto">
+        <Table className="min-w-[600px]">
           <TableHeader>
             <TableRow>
               <TableHead>{t("customers.name")}</TableHead>

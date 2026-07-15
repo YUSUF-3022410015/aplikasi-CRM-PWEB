@@ -1,6 +1,5 @@
 "use client";
 
-import { motion, type HTMLMotionProps, type Variants } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { type ReactNode } from "react";
 
@@ -9,23 +8,18 @@ export function FadeIn({
   children,
   className,
   delay = 0,
-  duration = 0.3,
-  ...props
-}: Omit<HTMLMotionProps<"div">, "children"> & {
+}: {
   children: ReactNode;
+  className?: string;
   delay?: number;
-  duration?: number;
 }) {
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ delay, duration, ease: "easeOut" }}
-      className={className}
-      {...props}
+    <div
+      className={cn("animate-fade-in", className)}
+      style={{ animationDelay: `${delay}s` }}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }
 
@@ -34,23 +28,18 @@ export function SlideUp({
   children,
   className,
   delay = 0,
-  distance = 16,
-  ...props
-}: Omit<HTMLMotionProps<"div">, "children"> & {
+}: {
   children: ReactNode;
+  className?: string;
   delay?: number;
-  distance?: number;
 }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: distance }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay, duration: 0.35, ease: "easeOut" }}
-      className={className}
-      {...props}
+    <div
+      className={cn("animate-slide-up", className)}
+      style={{ animationDelay: `${delay}s` }}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }
 
@@ -59,89 +48,72 @@ export function ScaleIn({
   children,
   className,
   delay = 0,
-  ...props
-}: Omit<HTMLMotionProps<"div">, "children"> & {
+}: {
   children: ReactNode;
+  className?: string;
   delay?: number;
 }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ delay, duration: 0.25, ease: "easeOut" }}
-      className={className}
-      {...props}
+    <div
+      className={cn("animate-scale-in", className)}
+      style={{ animationDelay: `${delay}s` }}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }
 
-/* ─── Stagger Container ─── */
-const staggerContainer: Variants = {
-  hidden: { opacity: 1 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.06 },
-  },
-};
-
-const staggerItem: Variants = {
-  hidden: { opacity: 0, y: 12 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: "easeOut" } },
-};
-
+/* ─── Stagger List ─── */
 export function StaggerList({
   children,
   className,
-  ...props
-}: Omit<HTMLMotionProps<"div">, "children" | "variants"> & {
+}: {
   children: ReactNode;
+  className?: string;
 }) {
   return (
-    <motion.div
-      variants={staggerContainer}
-      initial="hidden"
-      animate="visible"
-      className={className}
-      {...props}
-    >
+    <div className={cn("space-y-2", className)}>
       {children}
-    </motion.div>
+    </div>
   );
 }
 
 export function StaggerItem({
   children,
   className,
-  ...props
-}: Omit<HTMLMotionProps<"div">, "children" | "variants"> & {
+  delay = 0,
+}: {
   children: ReactNode;
+  className?: string;
+  delay?: number;
 }) {
   return (
-    <motion.div variants={staggerItem} className={className} {...props}>
+    <div
+      className={cn("animate-slide-up", className)}
+      style={{ animationDelay: `${delay}s` }}
+    >
       {children}
-    </motion.div>
+    </div>
   );
 }
 
-/* ─── Card Hover ─── */
+/* ─── Hover Card ─── */
 export function HoverCard({
   children,
   className,
-  ...props
-}: Omit<HTMLMotionProps<"div">, "children"> & {
+}: {
   children: ReactNode;
+  className?: string;
 }) {
   return (
-    <motion.div
-      whileHover={{ y: -2, boxShadow: "0 8px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)" }}
-      transition={{ duration: 0.2, ease: "easeOut" }}
-      className={cn("rounded-xl border bg-card text-card-foreground shadow transition-colors", className)}
-      {...props}
+    <div
+      className={cn(
+        "rounded-xl border bg-card text-card-foreground shadow transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg",
+        className
+      )}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }
 
@@ -149,18 +121,13 @@ export function HoverCard({
 export function PressScale({
   children,
   className,
-  ...props
-}: Omit<HTMLMotionProps<"div">, "children"> & {
+}: {
   children: ReactNode;
+  className?: string;
 }) {
   return (
-    <motion.div
-      whileTap={{ scale: 0.97 }}
-      transition={{ duration: 0.1 }}
-      className={cn("inline-flex", className)}
-      {...props}
-    >
+    <div className={cn("inline-flex active:scale-[0.97] transition-transform duration-100", className)}>
       {children}
-    </motion.div>
+    </div>
   );
 }

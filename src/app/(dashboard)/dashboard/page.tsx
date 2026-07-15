@@ -135,21 +135,21 @@ export default function DashboardPage() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
         {statCards.map((stat, index) => (
           <Card
             key={stat.title}
             className="hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 animate-slide-up"
             style={{ animationDelay: `${index * 50}ms` }}
           >
-            <CardContent className="p-5">
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-sm font-medium text-muted-foreground">{stat.title}</span>
-                <div className={`p-2.5 rounded-full ${stat.iconBg}`}>
-                  <stat.icon className={`h-5 w-5 ${stat.iconColor}`} />
+            <CardContent className="p-3 sm:p-5">
+              <div className="flex items-center justify-between mb-3 sm:mb-4">
+                <span className="text-xs sm:text-sm font-medium text-muted-foreground truncate">{stat.title}</span>
+                <div className={`p-1.5 sm:p-2.5 rounded-full ${stat.iconBg} shrink-0`}>
+                  <stat.icon className={`h-4 w-4 sm:h-5 sm:w-5 ${stat.iconColor}`} />
                 </div>
               </div>
-              <div className="text-3xl font-bold text-foreground">{stat.value}</div>
+              <div className="text-xl sm:text-3xl font-bold text-foreground">{stat.value}</div>
             </CardContent>
           </Card>
         ))}

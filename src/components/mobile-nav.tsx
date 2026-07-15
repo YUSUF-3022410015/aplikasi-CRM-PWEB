@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -23,7 +23,6 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/language-provider";
 import { getAccessibleRoutes, type Role } from "@/lib/permissions";
-import { useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 
 const allNavItems = [
@@ -65,6 +64,10 @@ export function MobileNav() {
     fetchRole();
   }, [supabase]);
 
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+
   const navItems = allNavItems.filter((item) => accessibleRoutes.includes(item.href));
 
   return (
@@ -73,13 +76,19 @@ export function MobileNav() {
         <Menu className="h-5 w-5" />
       </Button>
 
-      {open && (
-        <div className="fixed inset-0 z-50 bg-black/50" onClick={() => setOpen(false)} />
-      )}
-
+      {/* Backdrop */}
       <div
         className={cn(
-          "fixed inset-y-0 left-0 z-50 w-64 bg-card border-r border-border transform transition-transform duration-200",
+          "fixed inset-0 z-50 bg-black/50 backdrop-blur-sm transition-opacity duration-200",
+          open ? "opacity-100" : "opacity-0 pointer-events-none"
+        )}
+        onClick={() => setOpen(false)}
+      />
+
+      {/* Sidebar Panel */}
+      <div
+        className={cn(
+          "fixed inset-y-0 left-0 z-50 w-64 bg-card border-r border-border transform transition-all duration-300 ease-out shadow-xl",
           open ? "translate-x-0" : "-translate-x-full"
         )}
       >
@@ -93,28 +102,30 @@ export function MobileNav() {
               <p className="text-xs text-muted-foreground">Enterprise Edition</p>
             </div>
           </div>
-          <Button variant="ghost" size="icon" onClick={() => setOpen(false)}>
+          <Button variant="ghost" size="icon" onClick={() => setOpen(false)} className="active:scale-90 transition-transform">
             <X className="h-5 w-5" />
           </Button>
         </div>
 
         <nav className="space-y-1 p-3">
-          {navItems.map((item) => {
+          {navItems.map((item, index) => {
             const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                onClick={() => setOpen(false)}
                 className={cn(
-                  "flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-all",
+                  "flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 active:scale-[0.98]",
                   isActive
-                    ? "bg-primary text-primary-foreground"
+                    ? "bg-primary text-primary-foreground shadow-sm"
                     : "text-muted-foreground hover:bg-muted hover:text-foreground"
                 )}
+                style={{
+                  animation: open ? `slide-up 0.2s ease-out ${index * 30}ms both` : undefined,
+                }}
               >
-                <item.icon className="h-5 w-5" />
-                <span>{t(item.labelKey)}</span>
+                <item.icon className="h-5 w-5 shrink-0" />
+                <span className="truncate">{t(item.labelKey)}</span>
               </Link>
             );
           })}
