@@ -74,15 +74,15 @@ export function Navbar({ user }: NavbarProps) {
     const results: SearchResult[] = [];
 
     try {
-      // Search customers by name
+      // Search customers by name, company, or email
       const { data: customers, error: custErr } = await supabase
         .from("customers")
         .select("id, name, company, email")
-        .ilike("name", pattern)
+        .or(`name.ilike.${pattern},company.ilike.${pattern},email.ilike.${pattern}`)
         .limit(5);
 
       if (custErr) {
-        console.error("Search customers error:", custErr);
+        console.error("Search customers error:", custErr.message, custErr);
       }
 
       (customers || []).forEach((c) => {
