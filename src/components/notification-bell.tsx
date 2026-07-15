@@ -64,6 +64,22 @@ export function NotificationBell({ userId }: { userId: string }) {
 
   useEffect(() => {
     fetchNotifications();
+
+    // Subscribe to real-time notifications
+    const channel = supabase
+      .channel("notifications-realtime")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "notifications", filter: `user_id=eq.${userId}` },
+        () => {
+          fetchNotifications();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
