@@ -92,6 +92,8 @@ export function CustomerForm({ customer, mode }: CustomerFormProps) {
   });
 
   const onSubmit = async (data: CustomerFormData) => {
+    const { data: { user } } = await supabase.auth.getUser();
+
     if (mode === "create") {
       const { error } = await supabase.from("customers").insert({
         ...data,
@@ -107,6 +109,16 @@ export function CustomerForm({ customer, mode }: CustomerFormProps) {
       if (error) {
         console.error(error);
         return;
+      }
+      // Create notification
+      if (user) {
+        await supabase.from("notifications").insert({
+          user_id: user.id,
+          title: "Pelanggan Baru",
+          message: `Pelanggan ${data.name} berhasil ditambahkan`,
+          type: "activity_added",
+          link: "/customers",
+        });
       }
     } else {
       const { error } = await supabase
@@ -127,6 +139,16 @@ export function CustomerForm({ customer, mode }: CustomerFormProps) {
       if (error) {
         console.error(error);
         return;
+      }
+      // Create notification
+      if (user) {
+        await supabase.from("notifications").insert({
+          user_id: user.id,
+          title: "Pelanggan Diperbarui",
+          message: `Data pelanggan ${data.name} telah diperbarui`,
+          type: "activity_added",
+          link: `/customers/${customer!.id}`,
+        });
       }
     }
     router.push("/customers");

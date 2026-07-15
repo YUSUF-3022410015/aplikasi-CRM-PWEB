@@ -50,6 +50,18 @@ export function AddActivityForm({ customerId }: { customerId: string }) {
       note: note.trim(),
     });
 
+    // Create notification
+    if (user) {
+      const typeLabels: Record<string, string> = { call: "Panggilan", whatsapp: "WhatsApp", email: "Email", meeting: "Meeting", visit: "Kunjungan", demo: "Demo", proposal: "Proposal", closing: "Closing" };
+      await supabase.from("notifications").insert({
+        user_id: user.id,
+        title: "Aktivitas Baru",
+        message: `${typeLabels[type] || type} telah dicatat`,
+        type: "activity_added",
+        link: `/customers/${customerId}`,
+      });
+    }
+
     setNote("");
     setType("call");
     setOpen(false);
