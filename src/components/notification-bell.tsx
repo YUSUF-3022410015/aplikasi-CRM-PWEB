@@ -44,15 +44,24 @@ export function NotificationBell({ userId }: { userId: string }) {
   const router = useRouter();
 
   const fetchNotifications = async () => {
-    const { data } = await supabase
-      .from("notifications")
-      .select("*")
-      .eq("user_id", userId)
-      .order("created_at", { ascending: false })
-      .limit(10);
+    try {
+      const { data, error } = await supabase
+        .from("notifications")
+        .select("*")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false })
+        .limit(10);
 
-    setNotifications(data || []);
-    setUnreadCount((data || []).filter((n) => !n.read).length);
+      if (error) {
+        console.error("Failed to fetch notifications:", error.message);
+        return;
+      }
+
+      setNotifications(data || []);
+      setUnreadCount((data || []).filter((n) => !n.read).length);
+    } catch (err) {
+      console.error("Notification fetch error:", err);
+    }
   };
 
   useEffect(() => {
@@ -60,7 +69,7 @@ export function NotificationBell({ userId }: { userId: string }) {
 
     // Subscribe to real-time notifications
     const channel = supabase
-      .channel("notifications")
+      .channel("notifications-changes")
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "notifications", filter: `user_id=eq.${userId}` },
@@ -68,12 +77,17 @@ export function NotificationBell({ userId }: { userId: string }) {
           fetchNotifications();
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        if (status !== "SUBSCRIBED") {
+          console.warn("Realtime subscription status:", status);
+        }
+      });
 
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [userId, supabase]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId]);
 
   const markAsRead = async (id: string) => {
     await supabase.from("notifications").update({ read: true }).eq("id", id);

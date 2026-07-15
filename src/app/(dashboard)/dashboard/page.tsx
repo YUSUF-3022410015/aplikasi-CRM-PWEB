@@ -87,10 +87,29 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">{t("common.loading")}</p>
+      <div className="space-y-4 animate-fade-in">
+        <div>
+          <div className="h-8 w-48 bg-muted rounded-md animate-pulse-soft" />
+          <div className="h-4 w-64 bg-muted rounded-md animate-pulse-soft mt-2" />
+        </div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="rounded-xl border bg-card p-5 space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="h-4 w-24 bg-muted rounded-md animate-pulse-soft" />
+                <div className="h-10 w-10 rounded-full bg-muted animate-pulse-soft" />
+              </div>
+              <div className="h-8 w-20 bg-muted rounded-md animate-pulse-soft" />
+            </div>
+          ))}
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="rounded-xl border bg-card p-6">
+              <div className="h-4 w-32 bg-muted rounded-md animate-pulse-soft mb-4" />
+              <div className="h-48 w-full bg-muted rounded-lg animate-pulse-soft" />
+            </div>
+          ))}
         </div>
       </div>
     );
@@ -117,8 +136,12 @@ export default function DashboardPage() {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {statCards.map((stat) => (
-          <Card key={stat.title} className="hover:shadow-md transition-shadow">
+        {statCards.map((stat, index) => (
+          <Card
+            key={stat.title}
+            className="hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 animate-slide-up"
+            style={{ animationDelay: `${index * 50}ms` }}
+          >
             <CardContent className="p-5">
               <div className="flex items-center justify-between mb-4">
                 <span className="text-sm font-medium text-muted-foreground">{stat.title}</span>

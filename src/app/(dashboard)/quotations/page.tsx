@@ -128,13 +128,16 @@ export default function QuotationsPage() {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         const customerName = customers.find((c) => c.id === customerId)?.name || t("customers.title");
-        await supabase.from("notifications").insert({
+        const { error: notifError } = await supabase.from("notifications").insert({
           user_id: user.id,
           title: t("quotations.newQuotationNotif"),
           message: `Quotation ${qNumber} untuk ${customerName} telah dibuat`,
           type: "quotation_sent",
           link: "/quotations",
         });
+        if (notifError) {
+          console.error("Failed to create notification:", notifError.message);
+        }
       }
     }
     setDialogOpen(false);
@@ -188,7 +191,7 @@ export default function QuotationsPage() {
       if (users && users.length > 0 && (newStatus === "approved" || newStatus === "rejected")) {
         // Insert notification for each user
         for (const u of users) {
-          await supabase.from("notifications").insert({
+          const { error: notifError } = await supabase.from("notifications").insert({
             user_id: u.id,
             title: newStatus === "approved" ? "Quotation Disetujui" : "Quotation Ditolak",
             message:
@@ -199,6 +202,9 @@ export default function QuotationsPage() {
             link: "/quotations",
             read: false,
           });
+          if (notifError) {
+            console.error("Failed to create notification:", notifError.message);
+          }
         }
       }
     }

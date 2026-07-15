@@ -32,10 +32,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Plus, Search, Edit, Trash2, Eye, Download, Upload } from "lucide-react";
+import { Plus, Search, Edit, Trash2, Eye, Download, Upload, Users } from "lucide-react";
 import { exportCustomersToExcel } from "@/lib/excel";
 import { ImportCustomersDialog } from "@/components/import-customers-dialog";
 import { useLanguage } from "@/components/language-provider";
+import { Skeleton } from "@/components/skeleton";
+import { EmptyState } from "@/components/empty-state";
 import type { Customer } from "@/types/database";
 
 const statusColors: Record<string, "default" | "secondary" | "success" | "warning" | "destructive"> = {
@@ -54,7 +56,9 @@ export default function CustomersPage() {
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
+  const [exporting, setExporting] = useState(false);
   const router = useRouter();
   const supabase = createClient();
   const { t } = useLanguage();
@@ -91,12 +95,15 @@ export default function CustomersPage() {
 
   const handleDelete = async () => {
     if (!deleteId) return;
+    setDeleting(true);
     await supabase.from("customers").delete().eq("id", deleteId);
+    setDeleting(false);
     setDeleteId(null);
     fetchCustomers();
   };
 
   const handleExport = async () => {
+    setExporting(true);
     // Fetch all matching customers (not just current page)
     let query = supabase.from("customers").select("*").order("created_at", { ascending: false });
     if (search) {
@@ -115,12 +122,13 @@ export default function CustomersPage() {
     a.download = `customers_${new Date().toISOString().split("T")[0]}.xlsx`;
     a.click();
     URL.revokeObjectURL(url);
+    setExporting(false);
   };
 
   const totalPages = Math.ceil(total / limit);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -128,9 +136,9 @@ export default function CustomersPage() {
           <p className="text-muted-foreground mt-1">{t("customers.subtitle")}</p>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" onClick={handleExport} className="border-border">
+          <Button variant="outline" onClick={handleExport} disabled={exporting} className="border-border">
             <Download className="mr-2 h-4 w-4" />
-            {t("common.export")}
+            {exporting ? t("common.loading") : t("common.export")}
           </Button>
           <Button variant="outline" onClick={() => setImportOpen(true)} className="border-border">
             <Upload className="mr-2 h-4 w-4" />
@@ -194,20 +202,31 @@ export default function CustomersPage() {
           </TableHeader>
           <TableBody>
             {loading ? (
-              <TableRow>
-                <TableCell colSpan={6} className="h-24 text-center">
-                  {t("common.loading")}
-                </TableCell>
-              </TableRow>
+              Array.from({ length: 5 }).map((_, i) => (
+                <TableRow key={i}>
+                  <TableCell><Skeleton className="h-4 w-32" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-36" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-28" /></TableCell>
+                  <TableCell><Skeleton className="h-5 w-16 rounded-full" /></TableCell>
+                  <TableCell><Skeleton className="h-8 w-20" /></TableCell>
+                </TableRow>
+              ))
             ) : customers.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="h-24 text-center">
-                  {t("common.noData")}
+                <TableCell colSpan={6}>
+                  <EmptyState
+                    icon="users"
+                    title={t("common.noData")}
+                    description={t("customers.searchPlaceholder")}
+                    actionLabel={t("common.add")}
+                    actionHref="/customers/new"
+                  />
                 </TableCell>
               </TableRow>
             ) : (
               customers.map((customer) => (
-                <TableRow key={customer.id}>
+                <TableRow key={customer.id} className="hover:bg-muted/50 transition-colors">
                   <TableCell className="font-medium">{customer.name}</TableCell>
                   <TableCell>{customer.company || "-"}</TableCell>
                   <TableCell>{customer.email || "-"}</TableCell>
@@ -288,8 +307,8 @@ export default function CustomersPage() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-              {t("common.delete")}
+            <AlertDialogAction onClick={handleDelete} disabled={deleting} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              {deleting ? t("common.loading") : t("common.delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
