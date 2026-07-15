@@ -1,8 +1,9 @@
 "use client";
 
+import { useState, useEffect, useCallback, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import { LogOut, User, Shield, Search } from "lucide-react";
+import { LogOut, User, Shield, Search, X, Users, FileText, Phone } from "lucide-react";
 import { NotificationBell } from "@/components/notification-bell";
 import { LanguageToggle } from "@/components/language-toggle";
 import { MobileNav } from "@/components/mobile-nav";
@@ -22,6 +23,14 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { getInitials } from "@/lib/utils";
 import { useLanguage } from "@/components/language-provider";
 
+interface SearchResult {
+  id: string;
+  title: string;
+  subtitle: string;
+  href: string;
+  type: "customer" | "quotation" | "activity";
+}
+
 interface NavbarProps {
   user?: {
     id: string;
@@ -31,10 +40,86 @@ interface NavbarProps {
   } | null;
 }
 
+const typeIcon = {
+  customer: Users,
+  quotation: FileText,
+  activity: Phone,
+};
+
+const typeColor = {
+  customer: "text-primary",
+  quotation: "text-amber-600",
+  activity: "text-emerald-600",
+};
+
 export function Navbar({ user }: NavbarProps) {
   const router = useRouter();
   const supabase = createClient();
   const { t } = useLanguage();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [searching, setSearching] = useState(false);
+  const [showResults, setShowResults] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
+
+  const handleSearch = useCallback(async (q: string) => {
+    if (q.length < 2) {
+      setSearchResults([]);
+      setShowResults(false);
+      return;
+    }
+
+    setSearching(true);
+    const pattern = `%${q}%`;
+
+    const [customersRes, quotationsRes] = await Promise.all([
+      supabase.from("customers").select("id, name, company, email").or(`name.ilike.${pattern},company.ilike.${pattern},email.ilike.${pattern}`).limit(5),
+      supabase.from("quotations").select("id, quotation_number, status").ilike("quotation_number", pattern).limit(3),
+    ]);
+
+    const results: SearchResult[] = [];
+
+    (customersRes.data || []).forEach((c) => {
+      results.push({
+        id: c.id,
+        title: c.name,
+        subtitle: c.company || c.email || "",
+        href: `/customers/${c.id}`,
+        type: "customer",
+      });
+    });
+
+    (quotationsRes.data || []).forEach((q) => {
+      results.push({
+        id: q.id,
+        title: q.quotation_number,
+        subtitle: q.status,
+        href: "/quotations",
+        type: "quotation",
+      });
+    });
+
+    setSearchResults(results);
+    setShowResults(true);
+    setSearching(false);
+  }, [supabase]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      handleSearch(searchQuery);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchQuery, handleSearch]);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setShowResults(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -44,19 +129,61 @@ export function Navbar({ user }: NavbarProps) {
 
   return (
     <header className="no-print sticky top-0 z-40 flex h-14 items-center justify-between border-b border-border bg-card px-3 md:px-6">
-      {/* Mobile menu button */}
       <MobileNav />
 
-      {/* Search Bar */}
-      <div className="flex-1 max-w-md">
+      {/* Search Bar with Results */}
+      <div className="flex-1 max-w-md relative" ref={searchRef}>
         <div className="relative flex items-center w-full rounded-lg bg-muted border border-border px-3 py-1.5 transition-all focus-within:ring-2 focus-within:ring-primary">
           <Search className="h-4 w-4 text-muted-foreground mr-2 shrink-0" />
           <Input
             type="text"
             placeholder={t("common.search") + "..."}
             className="w-full border-0 bg-transparent p-0 text-sm focus-visible:ring-0 focus-visible:ring-offset-0 h-auto"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onFocus={() => searchQuery.length >= 2 && setShowResults(true)}
           />
+          {searchQuery && (
+            <button onClick={() => { setSearchQuery(""); setShowResults(false); }} className="shrink-0">
+              <X className="h-4 w-4 text-muted-foreground hover:text-foreground" />
+            </button>
+          )}
         </div>
+
+        {/* Search Results Dropdown */}
+        {showResults && (
+          <div className="absolute top-full left-0 right-0 mt-2 bg-card border border-border rounded-xl shadow-xl overflow-hidden animate-slide-down z-50">
+            {searching ? (
+              <div className="p-4 text-center text-sm text-muted-foreground">Mencari...</div>
+            ) : searchResults.length === 0 ? (
+              <div className="p-4 text-center text-sm text-muted-foreground">Tidak ada hasil untuk &quot;{searchQuery}&quot;</div>
+            ) : (
+              <div className="max-h-80 overflow-y-auto divide-y divide-border">
+                {searchResults.map((r) => {
+                  const Icon = typeIcon[r.type];
+                  return (
+                    <button
+                      key={`${r.type}-${r.id}`}
+                      className="w-full flex items-center gap-3 px-4 py-3 hover:bg-muted/50 transition-colors text-left"
+                      onClick={() => {
+                        router.push(r.href);
+                        setShowResults(false);
+                        setSearchQuery("");
+                      }}
+                    >
+                      <Icon className={`h-4 w-4 shrink-0 ${typeColor[r.type]}`} />
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-medium truncate">{r.title}</p>
+                        <p className="text-xs text-muted-foreground truncate">{r.subtitle}</p>
+                      </div>
+                      <Badge variant="outline" className="text-[10px] shrink-0">{r.type}</Badge>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Right Actions */}
@@ -76,12 +203,8 @@ export function Navbar({ user }: NavbarProps) {
           <DropdownMenuContent className="w-56" align="end" forceMount>
             <DropdownMenuLabel className="font-normal">
               <div className="flex flex-col space-y-1">
-                <p className="text-sm font-medium leading-none">
-                  {user?.fullname || "User"}
-                </p>
-                <p className="text-xs leading-none text-muted-foreground">
-                  {user?.email || "user@email.com"}
-                </p>
+                <p className="text-sm font-medium leading-none">{user?.fullname || "User"}</p>
+                <p className="text-xs leading-none text-muted-foreground">{user?.email || "user@email.com"}</p>
                 {user?.role && (
                   <Badge variant="outline" className="mt-1 w-fit text-[10px]">
                     <Shield className="mr-1 h-3 w-3" />
