@@ -67,10 +67,10 @@ export function NotificationBell({ userId }: { userId: string }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
-  // Retry when dropdown opens (in case table was just created)
+  // Refresh when dropdown opens
   const handleOpenChange = (isOpen: boolean) => {
     setOpen(isOpen);
-    if (isOpen && !tableReady) {
+    if (isOpen) {
       fetchNotifications();
     }
   };

@@ -112,14 +112,15 @@ export default function FollowUpsPage() {
       if (user) {
         const custName = customers.find((c) => c.id === form.customer_id)?.name || "";
         try {
-          await supabase.from("notifications").insert({
+          const { error: notifErr } = await supabase.from("notifications").insert({
             user_id: user.id,
             title: "Follow-up Baru",
             message: `Follow-up untuk ${custName} dijadwalkan pada ${form.due_date}`,
             type: "followup_reminder",
             link: "/followups",
           });
-        } catch {}
+          if (notifErr) console.error("Notif insert error:", notifErr.message);
+        } catch (e) { console.error("Notif catch:", e); }
       }
     }
 
