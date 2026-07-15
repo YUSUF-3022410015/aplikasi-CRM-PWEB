@@ -54,5 +54,10 @@ CREATE POLICY "notifications_update_own" ON notifications
 CREATE POLICY "notifications_delete_own" ON notifications
   FOR DELETE TO authenticated USING (user_id = auth.uid());
 
--- 6. Enable Realtime (optional)
-ALTER PUBLICATION supabase_realtime ADD TABLE notifications;
+-- 6. Enable Realtime (safe for rerun)
+DO $$
+BEGIN
+  ALTER PUBLICATION supabase_realtime ADD TABLE notifications;
+EXCEPTION WHEN duplicate_object THEN
+  -- already added, ignore
+END $$;
