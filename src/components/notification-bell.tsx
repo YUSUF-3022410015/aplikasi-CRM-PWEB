@@ -32,12 +32,12 @@ export function NotificationBell({ userId }: { userId: string }) {
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [open, setOpen] = useState(false);
-  const [tableExists, setTableExists] = useState(true);
+  const [tableReady, setTableReady] = useState(false);
+  const [tried, setTried] = useState(false);
   const [supabase] = useState(() => createClient());
   const router = useRouter();
 
   const fetchNotifications = async () => {
-    if (!tableExists) return;
     try {
       const { data, error } = await supabase
         .from("notifications")
@@ -47,32 +47,40 @@ export function NotificationBell({ userId }: { userId: string }) {
         .limit(10);
 
       if (error) {
-        if (error.message?.includes("does not exist") || error.code === "42P01" || error.code === "404") {
-          setTableExists(false);
-        }
+        setTableReady(false);
+        setTried(true);
         return;
       }
 
+      setTableReady(true);
+      setTried(true);
       setNotifications(data || []);
       setUnreadCount((data || []).filter((n) => !n.read).length);
     } catch {
-      setTableExists(false);
+      setTableReady(false);
+      setTried(true);
     }
   };
 
   useEffect(() => {
     fetchNotifications();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userId, tableExists]);
+  }, [userId]);
+
+  // Retry when dropdown opens (in case table was just created)
+  const handleOpenChange = (isOpen: boolean) => {
+    setOpen(isOpen);
+    if (isOpen && !tableReady) {
+      fetchNotifications();
+    }
+  };
 
   const markAsRead = async (id: string) => {
-    if (!tableExists) return;
     await supabase.from("notifications").update({ read: true }).eq("id", id);
     fetchNotifications();
   };
 
   const markAllAsRead = async () => {
-    if (!tableExists) return;
     await supabase
       .from("notifications")
       .update({ read: true })
@@ -89,10 +97,8 @@ export function NotificationBell({ userId }: { userId: string }) {
     setOpen(false);
   };
 
-  if (!tableExists) return null;
-
   return (
-    <DropdownMenu open={open} onOpenChange={setOpen}>
+    <DropdownMenu open={open} onOpenChange={handleOpenChange}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="relative h-9 w-9">
           <Bell className="h-4 w-4" />
@@ -117,7 +123,13 @@ export function NotificationBell({ userId }: { userId: string }) {
           )}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {notifications.length === 0 ? (
+        {!tried ? (
+          <div className="py-6 text-center text-sm text-muted-foreground">Loading...</div>
+        ) : !tableReady ? (
+          <div className="py-6 text-center text-sm text-muted-foreground">
+            Tabel notifikasi belum tersedia
+          </div>
+        ) : notifications.length === 0 ? (
           <div className="py-6 text-center text-sm text-muted-foreground">
             {t("notification.empty")}
           </div>
