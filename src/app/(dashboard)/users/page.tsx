@@ -98,7 +98,7 @@ export default function UsersPage() {
     const result = await inviteUser(email, fullname, password, role);
 
     if (!result.success) {
-      alert(`Gagal mengundang user: ${result.error}`);
+      console.error("Gagal mengundang user:", result.error);
     }
 
     setDialogOpen(false);
@@ -117,7 +117,7 @@ export default function UsersPage() {
     const result = await editUserRole(editUser.id, editRole);
 
     if (!result.success) {
-      alert(`Gagal mengubah role: ${result.error}`);
+      console.error("Gagal mengubah role:", result.error);
     }
 
     setEditUser(null);
@@ -136,7 +136,7 @@ export default function UsersPage() {
       setDeleteUserId(null);
       fetchUsers();
     } else {
-      alert(`Gagal menghapus user: ${result.error}`);
+      console.error("Gagal menghapus user:", result.error);
     }
 
     setDeleteLoading(false);
@@ -156,7 +156,7 @@ export default function UsersPage() {
         setResetSuccess(false);
       }, 2000);
     } else {
-      alert(`Gagal: ${result.error}`);
+      console.error("Gagal:", result.error);
     }
 
     setResetLoading(false);

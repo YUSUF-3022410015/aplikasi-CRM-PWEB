@@ -29,8 +29,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Eye, Trash2, FileText, Printer, Mail } from "lucide-react";
-import { formatCurrency, generateQuotationNumber } from "@/lib/utils";
+import { Plus, Eye, Trash2, FileText, Printer, Mail } from "lucide-react";import { formatCurrency, generateQuotationNumber } from "@/lib/utils";
 import { QuotationPrint, printQuotation } from "@/components/quotation-print";
 import { sendQuotationEmailAction } from "@/app/actions/email";
 import { useLanguage } from "@/components/language-provider";
@@ -382,8 +381,8 @@ export default function QuotationsPage() {
                     <SelectContent>
                       <SelectItem value="draft">Draft</SelectItem>
                       <SelectItem value="sent">Sent</SelectItem>
-                      <SelectItem value="approved">Setuju</SelectItem>
-                      <SelectItem value="rejected">Menolak</SelectItem>
+                      <SelectItem value="approved">{t("quotations.approved")}</SelectItem>
+                      <SelectItem value="rejected">{t("quotations.rejected")}</SelectItem>
                       <SelectItem value="expired">Expired</SelectItem>
                     </SelectContent>
                   </Select>

@@ -174,9 +174,9 @@ export function Navbar({ user }: NavbarProps) {
         {showResults && (
           <div className="absolute top-full left-0 right-0 mt-2 bg-card border border-border rounded-xl shadow-xl overflow-hidden animate-slide-down z-50">
             {searching ? (
-              <div className="p-4 text-center text-sm text-muted-foreground">Mencari...</div>
+              <div className="p-4 text-center text-sm text-muted-foreground">{t("common.loading")}</div>
             ) : searchResults.length === 0 ? (
-              <div className="p-4 text-center text-sm text-muted-foreground">Tidak ada hasil untuk &quot;{searchQuery}&quot;</div>
+              <div className="p-4 text-center text-sm text-muted-foreground">{t("common.noData")}</div>
             ) : (
               <div className="max-h-80 overflow-y-auto divide-y divide-border">
                 {searchResults.map((r) => {

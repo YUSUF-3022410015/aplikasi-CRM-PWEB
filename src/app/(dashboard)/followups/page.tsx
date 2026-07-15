@@ -140,7 +140,11 @@ export default function FollowUpsPage() {
 
   const today = new Date().toISOString().split("T")[0];
   const pendingCount = followups.filter((f) => f.status === "pending").length;
-  const overdueCount = followups.filter((f) => f.status === "pending" && f.due_date < today).length;
+  const overdueCount = followups.filter((f) => {
+    if (f.status !== "pending" || !f.due_date) return false;
+    const dueDate = new Date(f.due_date).toISOString().split("T")[0];
+    return dueDate < today;
+  }).length;
   const doneCount = followups.filter((f) => f.status === "done").length;
 
   return (

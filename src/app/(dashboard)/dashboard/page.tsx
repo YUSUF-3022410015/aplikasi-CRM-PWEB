@@ -33,7 +33,11 @@ export default function DashboardPage() {
 
       const newCustomersThisMonth = customers.filter((c) => c.created_at >= monthStart).length;
       const followUpsToday = followups.filter((f) => f.due_date?.startsWith(today) && f.status === "pending").length;
-      const followUpsOverdue = followups.filter((f) => f.due_date < today && f.status === "pending").length;
+      const followUpsOverdue = followups.filter((f) => {
+        if (!f.due_date || f.status !== "pending") return false;
+        const dueDate = new Date(f.due_date).toISOString().split("T")[0];
+        return dueDate < today;
+      }).length;
 
       const dealsWon = quotations.filter((q) => q.status === "approved").length;
       const dealsLost = quotations.filter((q) => q.status === "rejected").length;

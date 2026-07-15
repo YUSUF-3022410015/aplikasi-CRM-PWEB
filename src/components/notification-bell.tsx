@@ -124,10 +124,10 @@ export function NotificationBell({ userId }: { userId: string }) {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         {!tried ? (
-          <div className="py-6 text-center text-sm text-muted-foreground">Loading...</div>
+          <div className="py-6 text-center text-sm text-muted-foreground">{t("common.loading")}</div>
         ) : !tableReady ? (
           <div className="py-6 text-center text-sm text-muted-foreground">
-            Tabel notifikasi belum tersedia
+            {t("notification.empty")}
           </div>
         ) : notifications.length === 0 ? (
           <div className="py-6 text-center text-sm text-muted-foreground">

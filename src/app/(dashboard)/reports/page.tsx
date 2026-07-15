@@ -5,7 +5,7 @@ import { useLanguage } from "@/components/language-provider";
 import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Users, TrendingUp, TrendingDown, DollarSign, CalendarCheck, Activity, BarChart3, Download, FileText } from "lucide-react";
+import { Users, TrendingUp, TrendingDown, DollarSign, CalendarCheck, Activity, Download, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { exportReportToExcel, exportReportToPDF } from "@/lib/export-reports";
 import { formatCurrency } from "@/lib/utils";

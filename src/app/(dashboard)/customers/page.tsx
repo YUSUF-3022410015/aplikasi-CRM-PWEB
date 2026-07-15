@@ -32,7 +32,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Plus, Search, Edit, Trash2, Eye, Download, Upload, Users } from "lucide-react";
+import { Plus, Search, Edit, Trash2, Eye, Download, Upload } from "lucide-react";
 import { exportCustomersToExcel } from "@/lib/excel";
 import { ImportCustomersDialog } from "@/components/import-customers-dialog";
 import { useLanguage } from "@/components/language-provider";
@@ -104,25 +104,27 @@ export default function CustomersPage() {
 
   const handleExport = async () => {
     setExporting(true);
-    // Fetch all matching customers (not just current page)
-    let query = supabase.from("customers").select("*").order("created_at", { ascending: false });
-    if (search) {
-      query = query.or(`name.ilike.%${search}%,company.ilike.%${search}%,email.ilike.%${search}%`);
-    }
-    if (statusFilter !== "all") {
-      query = query.eq("status", statusFilter);
-    }
-    const { data } = await query;
-    if (!data?.length) return;
+    try {
+      let query = supabase.from("customers").select("*").order("created_at", { ascending: false });
+      if (search) {
+        query = query.or(`name.ilike.%${search}%,company.ilike.%${search}%,email.ilike.%${search}%`);
+      }
+      if (statusFilter !== "all") {
+        query = query.eq("status", statusFilter);
+      }
+      const { data } = await query;
+      if (!data?.length) return;
 
-    const blob = exportCustomersToExcel(data);
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `customers_${new Date().toISOString().split("T")[0]}.xlsx`;
-    a.click();
-    URL.revokeObjectURL(url);
-    setExporting(false);
+      const blob = exportCustomersToExcel(data);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `customers_${new Date().toISOString().split("T")[0]}.xlsx`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } finally {
+      setExporting(false);
+    }
   };
 
   const totalPages = Math.ceil(total / limit);
