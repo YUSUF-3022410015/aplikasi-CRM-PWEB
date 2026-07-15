@@ -54,7 +54,7 @@ const typeColor = {
 
 export function Navbar({ user }: NavbarProps) {
   const router = useRouter();
-  const supabase = createClient();
+  const [supabase] = useState(() => createClient());
   const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
@@ -71,33 +71,53 @@ export function Navbar({ user }: NavbarProps) {
 
     setSearching(true);
     const pattern = `%${q}%`;
-
-    const [customersRes, quotationsRes] = await Promise.all([
-      supabase.from("customers").select("id, name, company, email").or(`name.ilike.${pattern},company.ilike.${pattern},email.ilike.${pattern}`).limit(5),
-      supabase.from("quotations").select("id, quotation_number, status").ilike("quotation_number", pattern).limit(3),
-    ]);
-
     const results: SearchResult[] = [];
 
-    (customersRes.data || []).forEach((c) => {
-      results.push({
-        id: c.id,
-        title: c.name,
-        subtitle: c.company || c.email || "",
-        href: `/customers/${c.id}`,
-        type: "customer",
-      });
-    });
+    try {
+      // Search customers by name
+      const { data: customers, error: custErr } = await supabase
+        .from("customers")
+        .select("id, name, company, email")
+        .ilike("name", pattern)
+        .limit(5);
 
-    (quotationsRes.data || []).forEach((q) => {
-      results.push({
-        id: q.id,
-        title: q.quotation_number,
-        subtitle: q.status,
-        href: "/quotations",
-        type: "quotation",
+      if (custErr) {
+        console.error("Search customers error:", custErr);
+      }
+
+      (customers || []).forEach((c) => {
+        results.push({
+          id: c.id,
+          title: c.name,
+          subtitle: c.company || c.email || "",
+          href: `/customers/${c.id}`,
+          type: "customer",
+        });
       });
-    });
+
+      // Search quotations by number
+      const { data: quotations, error: quotErr } = await supabase
+        .from("quotations")
+        .select("id, quotation_number, status")
+        .ilike("quotation_number", pattern)
+        .limit(3);
+
+      if (quotErr) {
+        console.error("Search quotations error:", quotErr);
+      }
+
+      (quotations || []).forEach((q) => {
+        results.push({
+          id: q.id,
+          title: q.quotation_number,
+          subtitle: q.status,
+          href: "/quotations",
+          type: "quotation",
+        });
+      });
+    } catch (err) {
+      console.error("Search failed:", err);
+    }
 
     setSearchResults(results);
     setShowResults(true);

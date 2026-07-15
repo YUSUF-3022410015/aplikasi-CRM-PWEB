@@ -12,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Bell, Check, CheckCheck } from "lucide-react";
+import { Bell, CheckCheck } from "lucide-react";
 import { formatDateTime } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/components/language-provider";
@@ -27,23 +27,17 @@ interface NotificationItem {
   created_at: string;
 }
 
-const typeIcons: Record<string, string> = {
-  followup_reminder: "reminder",
-  quotation_sent: "quotation",
-  quotation_approved: "approved",
-  quotation_rejected: "rejected",
-  activity_added: "activity",
-};
-
 export function NotificationBell({ userId }: { userId: string }) {
   const { t } = useLanguage();
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [open, setOpen] = useState(false);
-  const supabase = createClient();
+  const [tableExists, setTableExists] = useState(true);
+  const [supabase] = useState(() => createClient());
   const router = useRouter();
 
   const fetchNotifications = async () => {
+    if (!tableExists) return;
     try {
       const { data, error } = await supabase
         .from("notifications")
@@ -53,48 +47,32 @@ export function NotificationBell({ userId }: { userId: string }) {
         .limit(10);
 
       if (error) {
-        console.error("Failed to fetch notifications:", error.message);
+        if (error.message?.includes("does not exist") || error.code === "42P01" || error.code === "404") {
+          setTableExists(false);
+        }
         return;
       }
 
       setNotifications(data || []);
       setUnreadCount((data || []).filter((n) => !n.read).length);
-    } catch (err) {
-      console.error("Notification fetch error:", err);
+    } catch {
+      setTableExists(false);
     }
   };
 
   useEffect(() => {
     fetchNotifications();
-
-    // Subscribe to real-time notifications
-    const channel = supabase
-      .channel("notifications-changes")
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "notifications", filter: `user_id=eq.${userId}` },
-        () => {
-          fetchNotifications();
-        }
-      )
-      .subscribe((status) => {
-        if (status !== "SUBSCRIBED") {
-          console.warn("Realtime subscription status:", status);
-        }
-      });
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userId]);
+  }, [userId, tableExists]);
 
   const markAsRead = async (id: string) => {
+    if (!tableExists) return;
     await supabase.from("notifications").update({ read: true }).eq("id", id);
     fetchNotifications();
   };
 
   const markAllAsRead = async () => {
+    if (!tableExists) return;
     await supabase
       .from("notifications")
       .update({ read: true })
@@ -110,6 +88,8 @@ export function NotificationBell({ userId }: { userId: string }) {
     }
     setOpen(false);
   };
+
+  if (!tableExists) return null;
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
@@ -130,12 +110,7 @@ export function NotificationBell({ userId }: { userId: string }) {
         <DropdownMenuLabel className="flex items-center justify-between">
           <span>{t("notification.title")}</span>
           {unreadCount > 0 && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-auto p-0 text-xs"
-              onClick={markAllAsRead}
-            >
+            <Button variant="ghost" size="sm" className="h-auto p-0 text-xs" onClick={markAllAsRead}>
               <CheckCheck className="mr-1 h-3 w-3" />
               {t("notification.markAllRead")}
             </Button>
@@ -150,24 +125,16 @@ export function NotificationBell({ userId }: { userId: string }) {
           notifications.map((notification) => (
             <DropdownMenuItem
               key={notification.id}
-              className={`flex flex-col items-start gap-1 py-3 cursor-pointer ${
-                !notification.read ? "bg-muted/50" : ""
-              }`}
+              className={`flex flex-col items-start gap-1 py-3 cursor-pointer ${!notification.read ? "bg-muted/50" : ""}`}
               onClick={() => handleNotificationClick(notification)}
             >
               <div className="flex w-full items-start justify-between gap-2">
                 <div className="flex-1">
                   <p className="text-sm font-medium">{notification.title}</p>
-                  <p className="text-xs text-muted-foreground line-clamp-2">
-                    {notification.message}
-                  </p>
-                  <p className="mt-1 text-[10px] text-muted-foreground">
-                    {formatDateTime(notification.created_at)}
-                  </p>
+                  <p className="text-xs text-muted-foreground line-clamp-2">{notification.message}</p>
+                  <p className="mt-1 text-[10px] text-muted-foreground">{formatDateTime(notification.created_at)}</p>
                 </div>
-                {!notification.read && (
-                  <div className="h-2 w-2 shrink-0 rounded-full bg-blue-500" />
-                )}
+                {!notification.read && <div className="h-2 w-2 shrink-0 rounded-full bg-blue-500" />}
               </div>
             </DropdownMenuItem>
           ))
