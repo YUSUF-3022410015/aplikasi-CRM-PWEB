@@ -53,13 +53,15 @@ export function AddActivityForm({ customerId }: { customerId: string }) {
     // Create notification (non-blocking)
     if (user) {
       const typeLabels: Record<string, string> = { call: "Panggilan", whatsapp: "WhatsApp", email: "Email", meeting: "Meeting", visit: "Kunjungan", demo: "Demo", proposal: "Proposal", closing: "Closing" };
-      supabase.from("notifications").insert({
-        user_id: user.id,
-        title: "Aktivitas Baru",
-        message: `${typeLabels[type] || type} telah dicatat`,
-        type: "activity_added",
-        link: `/customers/${customerId}`,
-      }).then(() => {}).catch(() => {});
+      try {
+        await supabase.from("notifications").insert({
+          user_id: user.id,
+          title: "Aktivitas Baru",
+          message: `${typeLabels[type] || type} telah dicatat`,
+          type: "activity_added",
+          link: `/customers/${customerId}`,
+        });
+      } catch {}
     }
 
     setNote("");

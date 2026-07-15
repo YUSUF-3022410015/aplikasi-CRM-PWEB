@@ -111,13 +111,15 @@ export default function FollowUpsPage() {
       // Create notification (non-blocking)
       if (user) {
         const custName = customers.find((c) => c.id === form.customer_id)?.name || "";
-        supabase.from("notifications").insert({
-          user_id: user.id,
-          title: "Follow-up Baru",
-          message: `Follow-up untuk ${custName} dijadwalkan pada ${form.due_date}`,
-          type: "followup_reminder",
-          link: "/followups",
-        }).then(() => {}).catch(() => {});
+        try {
+          await supabase.from("notifications").insert({
+            user_id: user.id,
+            title: "Follow-up Baru",
+            message: `Follow-up untuk ${custName} dijadwalkan pada ${form.due_date}`,
+            type: "followup_reminder",
+            link: "/followups",
+          });
+        } catch {}
       }
     }
 
