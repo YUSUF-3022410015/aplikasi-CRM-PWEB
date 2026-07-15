@@ -110,15 +110,15 @@ export function CustomerForm({ customer, mode }: CustomerFormProps) {
         console.error(error);
         return;
       }
-      // Create notification
+      // Create notification (non-blocking)
       if (user) {
-        await supabase.from("notifications").insert({
+        supabase.from("notifications").insert({
           user_id: user.id,
           title: "Pelanggan Baru",
           message: `Pelanggan ${data.name} berhasil ditambahkan`,
           type: "activity_added",
           link: "/customers",
-        });
+        }).then(() => {}).catch(() => {});
       }
     } else {
       const { error } = await supabase
@@ -140,15 +140,15 @@ export function CustomerForm({ customer, mode }: CustomerFormProps) {
         console.error(error);
         return;
       }
-      // Create notification
+      // Create notification (non-blocking)
       if (user) {
-        await supabase.from("notifications").insert({
+        supabase.from("notifications").insert({
           user_id: user.id,
           title: "Pelanggan Diperbarui",
           message: `Data pelanggan ${data.name} telah diperbarui`,
           type: "activity_added",
           link: `/customers/${customer!.id}`,
-        });
+        }).then(() => {}).catch(() => {});
       }
     }
     router.push("/customers");
