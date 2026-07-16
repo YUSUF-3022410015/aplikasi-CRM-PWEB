@@ -215,21 +215,21 @@ export default function UsersPage() {
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-1">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8"
-                        title="Reset Password"
-                        onClick={() => {
-                          setResetUser(u);
-                          setNewPassword("");
-                          setResetSuccess(false);
-                        }}
-                      >
-                        <KeyRound className="h-4 w-4" />
-                      </Button>
                       {canManageUser(u.role) && (
                         <>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            title="Reset Password"
+                            onClick={() => {
+                              setResetUser(u);
+                              setNewPassword("");
+                              setResetSuccess(false);
+                            }}
+                          >
+                            <KeyRound className="h-4 w-4" />
+                          </Button>
                           <Button
                             variant="ghost"
                             size="icon"
