@@ -18,7 +18,7 @@ export default function PipelinePage() {
   const { t } = useLanguage();
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [loading, setLoading] = useState(true);
-  const supabase = createClient();
+  const [supabase] = useState(() => createClient());
 
   const stages = [
     { key: "lead", label: t("pipeline.lead"), color: "bg-slate-100 border-slate-300" },

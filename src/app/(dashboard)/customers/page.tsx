@@ -61,7 +61,7 @@ export default function CustomersPage() {
   const [importOpen, setImportOpen] = useState(false);
   const [exporting, setExporting] = useState(false);
   const router = useRouter();
-  const supabase = createClient();
+  const [supabase] = useState(() => createClient());
   const { t } = useLanguage();
   const limit = 10;
 

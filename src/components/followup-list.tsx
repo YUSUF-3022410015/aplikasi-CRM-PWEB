@@ -49,7 +49,7 @@ export function FollowUpList({
   const [dueDate, setDueDate] = useState("");
   const [status, setStatus] = useState("pending");
   const [loading, setLoading] = useState(false);
-  const supabase = createClient();
+  const [supabase] = useState(() => createClient());
   const router = useRouter();
 
   const statusConfig: Record<string, { label: string; variant: "default" | "success" | "destructive" | "secondary" }> = {

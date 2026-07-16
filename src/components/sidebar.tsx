@@ -30,7 +30,7 @@ export function Sidebar() {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const [accessibleRoutes, setAccessibleRoutes] = useState<string[]>([]);
-  const supabase = createClient();
+  const [supabase] = useState(() => createClient());
   const { t } = useLanguage();
 
   const allNavItems = [
@@ -66,7 +66,7 @@ export function Sidebar() {
     };
 
     fetchRole();
-  }, [supabase]);
+  }, []);
 
   const navItems = allNavItems.filter((item) =>
     accessibleRoutes.includes(item.href)

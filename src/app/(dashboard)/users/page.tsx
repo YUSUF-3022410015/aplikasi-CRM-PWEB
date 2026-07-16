@@ -78,7 +78,7 @@ export default function UsersPage() {
   const [newPassword, setNewPassword] = useState("");
   const [resetLoading, setResetLoading] = useState(false);
   const [resetSuccess, setResetSuccess] = useState(false);
-  const supabase = createClient();
+  const [supabase] = useState(() => createClient());
   const { role: currentRole, isAdmin } = usePermissions();
 
   const canManageUser = (targetRole: string) => {

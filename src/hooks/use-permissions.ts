@@ -14,7 +14,7 @@ interface UserProfile {
 export function usePermissions() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
-  const supabase = createClient();
+  const [supabase] = useState(() => createClient());
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -35,7 +35,7 @@ export function usePermissions() {
     };
 
     fetchProfile();
-  }, [supabase]);
+  }, []);
 
   const checkPermission = (module: string, action: string) => {
     if (!profile) return false;

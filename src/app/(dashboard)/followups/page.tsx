@@ -54,7 +54,7 @@ export default function FollowUpsPage() {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [form, setForm] = useState({ customer_id: "", note: "", due_date: "", status: "pending" });
   const [saving, setSaving] = useState(false);
-  const supabase = createClient();
+  const [supabase] = useState(() => createClient());
 
   const getStatusConfig = (): Record<string, { label: string; variant: "default" | "success" | "destructive" | "secondary" }> => ({
     pending: { label: t("followups.pending"), variant: "default" },

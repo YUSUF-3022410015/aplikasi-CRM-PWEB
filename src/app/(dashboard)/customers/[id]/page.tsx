@@ -49,7 +49,7 @@ export default function CustomerDetailPage() {
   const { t } = useLanguage();
   const params = useParams();
   const id = params.id as string;
-  const supabase = createClient();
+  const [supabase] = useState(() => createClient());
 
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [activities, setActivities] = useState<ActivityType[]>([]);

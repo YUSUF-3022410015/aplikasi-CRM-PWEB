@@ -42,7 +42,7 @@ export default function ProductsPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editProduct, setEditProduct] = useState<Product | null>(null);
   const [form, setForm] = useState({ sku: "", name: "", category: "", price: 0, description: "", status: "active" as "active" | "inactive" });
-  const supabase = createClient();
+  const [supabase] = useState(() => createClient());
 
   const fetchData = useCallback(async () => {
     setLoading(true);

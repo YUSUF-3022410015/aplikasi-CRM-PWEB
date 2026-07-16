@@ -40,7 +40,7 @@ export default function ReportsPage() {
     activitiesByType: [] as { name: string; value: number }[],
   });
   const [loading, setLoading] = useState(true);
-  const supabase = createClient();
+  const [supabase] = useState(() => createClient());
 
   const fetchData = useCallback(async () => {
     setLoading(true);

@@ -61,7 +61,7 @@ export default function QuotationsPage() {
   const [items, setItems] = useState<QuotationItemForm[]>([{ product_id: "", qty: 1, price: 0 }]);
   const [taxRate, setTaxRate] = useState(11);
   const [discount, setDiscount] = useState(0);
-  const supabase = createClient();
+  const [supabase] = useState(() => createClient());
   const { t } = useLanguage();
 
   const fetchData = useCallback(async () => {

@@ -22,7 +22,7 @@ export function AddActivityForm({ customerId }: { customerId: string }) {
   const [note, setNote] = useState("");
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
-  const supabase = createClient();
+  const [supabase] = useState(() => createClient());
   const router = useRouter();
 
   const activityTypes = [
@@ -43,12 +43,18 @@ export function AddActivityForm({ customerId }: { customerId: string }) {
 
     const { data: { user } } = await supabase.auth.getUser();
 
-    await supabase.from("activities").insert({
+    const { error } = await supabase.from("activities").insert({
       customer_id: customerId,
       user_id: user?.id || "",
       type,
       note: note.trim(),
     });
+
+    if (error) {
+      console.error("Activity insert error:", error.message);
+      setLoading(false);
+      return;
+    }
 
     // Create notification (non-blocking)
     if (user) {

@@ -30,7 +30,7 @@ interface CustomerFormProps {
 export function CustomerForm({ customer, mode }: CustomerFormProps) {
   const { t } = useLanguage();
   const router = useRouter();
-  const supabase = createClient();
+  const [supabase] = useState(() => createClient());
   const [salesUsers, setSalesUsers] = useState<{ id: string; fullname: string }[]>([]);
 
   const customerSchema = z.object({
@@ -64,7 +64,7 @@ export function CustomerForm({ customer, mode }: CustomerFormProps) {
     supabase.from("profiles").select("id, fullname").order("fullname").then(({ data }) => {
       setSalesUsers(data || []);
     });
-  }, [supabase]);
+  }, []);
 
   const {
     register,
@@ -105,6 +105,7 @@ export function CustomerForm({ customer, mode }: CustomerFormProps) {
         address: data.address || null,
         website: data.website || null,
         source: data.source || null,
+        assigned_to: data.assigned_to || null,
       });
       if (error) {
         console.error(error);

@@ -48,10 +48,11 @@ export function EmptyState({
         <p className="text-sm text-muted-foreground max-w-sm mb-6">{description}</p>
       )}
       {actionLabel && actionHref && (
-        <Link href={actionHref}>
-          <Button className="bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 active:scale-[0.98] transition-all">
-            {actionLabel}
-          </Button>
+        <Link
+          href={actionHref}
+          className="inline-flex items-center justify-center bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 active:scale-[0.98] transition-all rounded-md px-4 py-2 text-sm font-medium"
+        >
+          {actionLabel}
         </Link>
       )}
       {actionLabel && onAction && (

@@ -23,7 +23,7 @@ export default function ProfilePage() {
   const [changingPassword, setChangingPassword] = useState(false);
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
-  const supabase = createClient();
+  const [supabase] = useState(() => createClient());
   const router = useRouter();
   const { t } = useLanguage();
 

@@ -45,7 +45,7 @@ export function MobileNav() {
   const pathname = usePathname();
   const { t } = useLanguage();
   const [accessibleRoutes, setAccessibleRoutes] = useState<string[]>([]);
-  const supabase = createClient();
+  const [supabase] = useState(() => createClient());
 
   useEffect(() => {
     const fetchRole = async () => {
@@ -62,7 +62,7 @@ export function MobileNav() {
       }
     };
     fetchRole();
-  }, [supabase]);
+  }, []);
 
   useEffect(() => {
     setOpen(false);

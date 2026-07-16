@@ -40,7 +40,7 @@ export function ImportCustomersDialog({
   } | null>(null);
   const [result, setResult] = useState<{ imported: number; errors: number } | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
-  const supabase = createClient();
+  const [supabase] = useState(() => createClient());
 
   const handleDownloadTemplate = () => {
     const blob = downloadTemplate();
@@ -59,15 +59,21 @@ export function ImportCustomersDialog({
     setFile(selected);
     setState("parsing");
 
-    const result = await parseImportExcel(selected);
-    setPreview({
-      total: result.total,
-      success: result.success,
-      failed: result.failed,
-      errors: result.errors,
-      data: result.data as Record<string, unknown>[],
-    });
-    setState("preview");
+    try {
+      const result = await parseImportExcel(selected);
+      setPreview({
+        total: result.total,
+        success: result.success,
+        failed: result.failed,
+        errors: result.errors,
+        data: result.data as Record<string, unknown>[],
+      });
+      setState("preview");
+    } catch (err) {
+      console.error("Excel parse error:", err);
+      setState("idle");
+      setFile(null);
+    }
   };
 
   const handleImport = async () => {
