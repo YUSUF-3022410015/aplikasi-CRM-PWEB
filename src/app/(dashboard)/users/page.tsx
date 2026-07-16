@@ -33,6 +33,7 @@ import { Plus, UserCog, Shield, Pencil, Trash2, Loader2, KeyRound } from "lucide
 import { useLanguage } from "@/components/language-provider";
 import { resetUserPassword, inviteUser, editUserRole } from "@/app/actions/admin";
 import { deleteUser } from "@/app/actions/delete-user";
+import { usePermissions } from "@/hooks/use-permissions";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -78,6 +79,13 @@ export default function UsersPage() {
   const [resetLoading, setResetLoading] = useState(false);
   const [resetSuccess, setResetSuccess] = useState(false);
   const supabase = createClient();
+  const { role: currentRole, isAdmin } = usePermissions();
+
+  const canManageUser = (targetRole: string) => {
+    if (isAdmin) return true;
+    if (currentRole === "manager" && targetRole !== "admin") return true;
+    return false;
+  };
 
   const fetchUsers = useCallback(async () => {
     setLoading(true);
@@ -220,25 +228,29 @@ export default function UsersPage() {
                       >
                         <KeyRound className="h-4 w-4" />
                       </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={() => {
-                          setEditUser(u);
-                          setEditRole(u.role);
-                        }}
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-destructive"
-                        onClick={() => setDeleteUserId(u.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      {canManageUser(u.role) && (
+                        <>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            onClick={() => {
+                              setEditUser(u);
+                              setEditRole(u.role);
+                            }}
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-destructive"
+                            onClick={() => setDeleteUserId(u.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </>
+                      )}
                     </div>
                   </TableCell>
                 </TableRow>
@@ -276,7 +288,7 @@ export default function UsersPage() {
               <Select value={role} onValueChange={setRole}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="admin">{t("auth.admin")}</SelectItem>
+                  {isAdmin && <SelectItem value="admin">{t("auth.admin")}</SelectItem>}
                   <SelectItem value="manager">{t("auth.manager")}</SelectItem>
                   <SelectItem value="sales">{t("auth.sales")}</SelectItem>
                 </SelectContent>
@@ -311,7 +323,7 @@ export default function UsersPage() {
               <Select value={editRole} onValueChange={setEditRole}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="admin">{t("auth.admin")}</SelectItem>
+                  {isAdmin && <SelectItem value="admin">{t("auth.admin")}</SelectItem>}
                   <SelectItem value="manager">{t("auth.manager")}</SelectItem>
                   <SelectItem value="sales">{t("auth.sales")}</SelectItem>
                 </SelectContent>

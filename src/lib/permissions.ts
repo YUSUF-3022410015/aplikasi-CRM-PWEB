@@ -65,10 +65,10 @@ export const permissions = {
   },
   // User Management
   user: {
-    view: ["admin"] as Role[],
-    invite: ["admin"] as Role[],
-    editRole: ["admin"] as Role[],
-    delete: ["admin"] as Role[],
+    view: ["admin", "manager"] as Role[],
+    invite: ["admin", "manager"] as Role[],
+    editRole: ["admin", "manager"] as Role[],
+    delete: ["admin", "manager"] as Role[],
   },
   // Settings
   settings: {
