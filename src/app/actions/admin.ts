@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@supabase/supabase-js";
+import { createClient as createServerClient } from "@/lib/supabase/server";
 
 // Use service role key for admin operations
 const supabaseAdmin = createClient(
@@ -14,7 +15,32 @@ const supabaseAdmin = createClient(
   }
 );
 
+async function checkAdminOrManager(): Promise<string | null> {
+  try {
+    const supabase = await createServerClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return "Unauthorized";
+
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+
+    if (!profile || (profile.role !== "admin" && profile.role !== "manager")) {
+      return "Forbidden: hanya Admin & Manager yang dapat melakukan aksi ini";
+    }
+
+    return null;
+  } catch {
+    return "Unauthorized";
+  }
+}
+
 export async function inviteUser(email: string, fullname: string, password: string, role: string) {
+  const error = await checkAdminOrManager();
+  if (error) return { success: false, error };
+
   try {
     const { data, error } = await supabaseAdmin.auth.admin.createUser({
       email,
@@ -50,6 +76,9 @@ export async function inviteUser(email: string, fullname: string, password: stri
 }
 
 export async function editUserRole(userId: string, newRole: string) {
+  const authError = await checkAdminOrManager();
+  if (authError) return { success: false, error: authError };
+
   try {
     const { error } = await supabaseAdmin
       .from("profiles")
@@ -70,6 +99,9 @@ export async function editUserRole(userId: string, newRole: string) {
 }
 
 export async function resetUserPassword(userId: string, newPassword: string) {
+  const authError = await checkAdminOrManager();
+  if (authError) return { success: false, error: authError };
+
   try {
     const { data, error } = await supabaseAdmin.auth.admin.updateUserById(
       userId,

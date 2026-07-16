@@ -36,6 +36,7 @@ import { Plus, Search, Edit, Trash2, Eye, Download, Upload } from "lucide-react"
 import { exportCustomersToExcel } from "@/lib/excel";
 import { ImportCustomersDialog } from "@/components/import-customers-dialog";
 import { useLanguage } from "@/components/language-provider";
+import { usePermissions } from "@/hooks/use-permissions";
 import { Skeleton } from "@/components/skeleton";
 import { EmptyState } from "@/components/empty-state";
 import type { Customer } from "@/types/database";

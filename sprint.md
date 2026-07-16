@@ -4,7 +4,9 @@
 
 **Tanggal Mulai:** Rabu, 8 Juli 2026
 
-**Durasi:** 3 hari
+**Tanggal Selesai:** Jumat, 11 Juli 2026
+
+**Durasi:** 4 hari
 
 **Tujuan Sprint**
 
@@ -134,7 +136,9 @@ Sprint dinyatakan selesai jika:
 
 **Sprint:** 4
 
-**Tanggal Mulai:** Rabu, 8 Juli 2026
+**Tanggal Mulai:** Senin, 14 Juli 2026
+
+**Tanggal Selesai:** Selasa, 15 Juli 2026
 
 **Durasi:** 2 hari
 
@@ -243,7 +247,9 @@ Sprint dinyatakan selesai jika:
 
 **Sprint:** 5
 
-**Tanggal Mulai:** Rabu, 8 Juli 2026
+**Tanggal Mulai:** Rabu, 16 Juli 2026
+
+**Tanggal Selesai:** Kamis, 17 Juli 2026
 
 **Durasi:** 2 hari
 
@@ -334,9 +340,11 @@ Sprint dinyatakan selesai jika:
 
 **Sprint:** 6
 
-**Tanggal Mulai:** Rabu, 8 Juli 2026
+**Tanggal Mulai:** Jumat, 18 Juli 2026
 
-**Durasi:** 2 hari
+**Tanggal Selesai:** Senin, 21 Juli 2026
+
+**Durasi:** 4 hari
 
 **Tujuan Sprint**
 
@@ -423,7 +431,9 @@ Sprint dinyatakan selesai jika:
 
 **Sprint:** 7
 
-**Tanggal Mulai:** Rabu, 8 Juli 2026
+**Tanggal Mulai:** Selasa, 22 Juli 2026
+
+**Tanggal Selesai:** Rabu, 23 Juli 2026
 
 **Durasi:** 2 hari
 
@@ -507,9 +517,11 @@ Pada akhir sprint:
 
 **Sprint:** 8
 
-**Tanggal Mulai:** Rabu, 8 Juli 2026
+**Tanggal Mulai:** Kamis, 24 Juli 2026
 
-**Durasi:** 3 hari
+**Tanggal Selesai:** Senin, 28 Juli 2026
+
+**Durasi:** 5 hari
 
 **Tujuan Sprint**
 
@@ -625,7 +637,9 @@ Sprint dinyatakan selesai jika:
 
 **Sprint:** 9
 
-**Tanggal Mulai:** Rabu, 8 Juli 2026
+**Tanggal Mulai:** Rabu, 30 Juli 2026
+
+**Tanggal Selesai:** Kamis, 31 Juli 2026
 
 **Durasi:** 2 hari
 
@@ -710,7 +724,9 @@ Sprint dinyatakan selesai jika:
 
 **Sprint:** 10
 
-**Tanggal Mulai:** Rabu, 8 Juli 2026
+**Tanggal Mulai:** Senin, 3 Agustus 2026
+
+**Tanggal Selesai:** Rabu, 5 Agustus 2026
 
 **Durasi:** 3 hari
 
@@ -803,7 +819,9 @@ Sprint dinyatakan selesai jika:
 
 **Sprint:** 11
 
-**Tanggal Mulai:** Rabu, 8 Juli 2026
+**Tanggal Mulai:** Kamis, 6 Agustus 2026
+
+**Tanggal Selesai:** Senin, 10 Agustus 2026
 
 **Durasi:** 3 hari
 
@@ -913,7 +931,9 @@ Sprint dinyatakan selesai jika:
 
 **Sprint:** 12
 
-**Tanggal Mulai:** Rabu, 8 Juli 2026
+**Tanggal Mulai:** Selasa, 11 Agustus 2026
+
+**Tanggal Selesai:** Kamis, 13 Agustus 2026
 
 **Durasi:** 3 hari
 
@@ -1005,7 +1025,9 @@ Sprint dinyatakan selesai jika:
 
 **Sprint:** 13
 
-**Tanggal Mulai:** Rabu, 8 Juli 2026
+**Tanggal Mulai:** Jumat, 14 Agustus 2026
+
+**Tanggal Selesai:** Sabtu, 15 Agustus 2026
 
 **Durasi:** 2 hari
 
@@ -1088,7 +1110,9 @@ Sprint dinyatakan selesai jika:
 
 **Sprint:** 14
 
-**Tanggal Mulai:** Rabu, 8 Juli 2026
+**Tanggal Mulai:** Senin, 18 Agustus 2026
+
+**Tanggal Selesai:** Selasa, 19 Agustus 2026
 
 **Durasi:** 2 hari
 
@@ -1187,7 +1211,9 @@ Sprint dinyatakan selesai jika:
 
 **Sprint:** 15
 
-**Tanggal Mulai:** Rabu, 8 Juli 2026
+**Tanggal Mulai:** Rabu, 20 Agustus 2026
+
+**Tanggal Selesai:** Kamis, 21 Agustus 2026
 
 **Durasi:** 2 hari
 
@@ -1297,7 +1323,9 @@ Sprint dinyatakan selesai jika:
 
 **Sprint:** 16
 
-**Tanggal Mulai:** Rabu, 8 Juli 2026
+**Tanggal Mulai:** Jumat, 22 Agustus 2026
+
+**Tanggal Selesai:** Senin, 25 Agustus 2026
 
 **Durasi:** 2 hari
 

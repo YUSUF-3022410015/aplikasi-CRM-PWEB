@@ -129,39 +129,7 @@ Modul:
 
 # 7. User Flow
 
-Login
-
-↓
-
-Dashboard
-
-↓
-
-Tambah Customer
-
-↓
-
-Tambah Aktivitas
-
-↓
-
-Jadwalkan Follow-up
-
-↓
-
-Update Pipeline
-
-↓
-
-Buat Quotation
-
-↓
-
-Deal
-
-↓
-
-Laporan
+Login → Dashboard → Tambah Customer → Tambah Aktivitas → Jadwalkan Follow-up → Update Pipeline → Buat Quotation → Deal → Laporan
 
 ---
 
@@ -268,7 +236,7 @@ Status:
 
 * Pending
 * Done
-* Cancel
+* Cancelled
 
 ---
 
@@ -276,35 +244,7 @@ Status:
 
 Tahapan:
 
-Lead
-
-↓
-
-Qualified
-
-↓
-
-Contacted
-
-↓
-
-Meeting
-
-↓
-
-Proposal
-
-↓
-
-Negotiation
-
-↓
-
-Won
-
-↓
-
-Lost
+Lead → Qualified → Contacted → Meeting → Proposal → Negotiation → Won / Lost
 
 Fitur:
 
@@ -350,21 +290,14 @@ Output:
 
 Laporan:
 
-Customer
-
-Sales
-
-Activity
-
-Follow-up
-
-Deal
-
-Lost
-
-Revenue
-
-Pipeline
+* Customer
+* Sales
+* Activity
+* Follow-up
+* Deal
+* Lost
+* Revenue
+* Pipeline
 
 Export:
 
@@ -432,12 +365,14 @@ Accessibility
 
 # 10. Database
 
-users
+profiles (terhubung ke auth.users)
 
-* id
+* id (UUID, FK ke auth.users)
 * fullname
 * email
-* role
+* role (admin, manager, sales)
+* created_at
+* updated_at
 
 customers
 
@@ -452,16 +387,18 @@ customers
 * address
 * website
 * source
-* assigned_to
-* status
+* assigned_to (FK ke profiles)
+* status (lead, prospect, active, inactive, archived)
+* pipeline_stage (lead, qualified, contacted, meeting, proposal, negotiation, won, lost)
 * created_at
+* updated_at
 
 activities
 
 * id
-* customer_id
-* user_id
-* type
+* customer_id (FK ke customers)
+* user_id (FK ke profiles)
+* type (call, whatsapp, meeting, email, visit, demo, proposal, closing)
 * note
 * attachment
 * created_at
@@ -469,11 +406,13 @@ activities
 followups
 
 * id
-* customer_id
-* assigned_to
+* customer_id (FK ke customers)
+* assigned_to (FK ke profiles)
 * due_date
 * reminder
-* status
+* note
+* status (pending, done, cancelled)
+* created_at
 
 products
 
@@ -482,25 +421,48 @@ products
 * name
 * category
 * price
+* description
+* status (active, inactive)
+* created_at
 
 quotations
 
 * id
-* customer_id
+* customer_id (FK ke customers)
 * quotation_number
 * subtotal
 * tax
 * discount
 * total
-* status
+* status (draft, sent, approved, rejected, expired)
+* notes
+* created_at
 
 quotation_items
 
 * id
-* quotation_id
-* product_id
+* quotation_id (FK ke quotations)
+* product_id (FK ke products)
 * qty
 * price
+
+settings
+
+* id
+* key (unique)
+* value
+* created_at
+
+notifications
+
+* id
+* user_id (FK ke profiles)
+* title
+* message
+* type (followup_reminder, quotation_sent, quotation_approved, quotation_rejected, activity_added)
+* read (boolean)
+* link
+* created_at
 
 ---
 
@@ -593,23 +555,18 @@ Repository
 
 # 14. Struktur Folder
 
-app/
-(auth)/
-(dashboard)/
-
-components/
-
-features/
-
-lib/
-
-hooks/
-
-services/
-
-types/
-
-utils/
+src/
+  app/
+    (auth)/
+    (dashboard)/
+    actions/
+  components/
+    ui/
+  hooks/
+  lib/
+    supabase/
+  types/
+  utils/
 
 supabase/
 

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { hasPermission, getAccessibleRoutes, type Role } from "@/lib/permissions";
+import { hasPermission, getAccessibleRoutes, permissions, type Role } from "@/lib/permissions";
 
 interface UserProfile {
   id: string;
@@ -39,7 +39,7 @@ export function usePermissions() {
 
   const checkPermission = (module: string, action: string) => {
     if (!profile) return false;
-    return hasPermission(profile.role, module as keyof typeof import("@/lib/permissions").permissions, action);
+    return hasPermission(profile.role, module as keyof typeof permissions, action);
   };
 
   const canAccess = (route: string) => {
