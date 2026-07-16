@@ -1094,7 +1094,7 @@ Sprint dinyatakan selesai jika:
 
 **Tujuan Sprint**
 
-Meng-enhance halaman User Management sehingga admin dapat mengedit role dan menghapus user.
+Meng-enhance halaman User Management sehingga Admin dan Manager dapat mengelola user. Manager terbatas hanya untuk user dengan role Sales & Manager, tidak bisa mengubah/menghapus Admin.
 
 ---
 
@@ -1103,7 +1103,9 @@ Meng-enhance halaman User Management sehingga admin dapat mengedit role dan meng
 Pada akhir sprint:
 
 * Admin dapat mengedit role user (admin/manager/sales).
-* Admin dapat menghapus user.
+* Admin dapat menghapus user (semua role).
+* Manager dapat mengedit role user (sales/manager saja, tidak bisa admin).
+* Manager dapat menghapus user (hanya role sales/manager).
 * Dialog konfirmasi untuk hapus user.
 * Loading state untuk setiap aksi.
 
@@ -1115,13 +1117,14 @@ Pada akhir sprint:
 
 ### US-025
 
-Sebagai Admin, saya dapat mengedit role user.
+Sebagai Admin & Manager, saya dapat mengedit role user.
 
 Acceptance Criteria:
 
 * Tombol Edit tersedia di tabel user.
 * Dialog edit role muncul.
-* Pilih role: admin, manager, sales.
+* Admin: pilih role admin, manager, sales.
+* Manager: pilih role manager atau sales saja (admin tidak muncul).
 * Role tersimpan ke database.
 
 Story Point:
@@ -1132,12 +1135,14 @@ Story Point:
 
 ### US-026
 
-Sebagai Admin, saya dapat menghapus user.
+Sebagai Admin & Manager, saya dapat menghapus user.
 
 Acceptance Criteria:
 
 * Tombol Hapus tersedia di tabel user.
 * Dialog konfirmasi muncul.
+* Admin: dapat hapus semua role.
+* Manager: hanya dapat hapus user dengan role sales/manager (admin tidak bisa dihapus).
 * User terhapus dari profiles.
 * Loading state saat menghapus.
 
@@ -1154,7 +1159,8 @@ Story Point:
 * Update `src/app/(dashboard)/users/page.tsx`:
   * Tambah state edit & delete
   * Tambah fungsi handleEditRole & handleDeleteUser
-  * Tambah tombol Edit & Hapus di tabel
+  * Tambah pengecekan role: jika manager, filter opsi role & target user
+  * Tambah tombol Edit & Hapus di tabel (sembunyikan untuk admin jika user adalah manager)
   * Tambah Edit Role Dialog
   * Tambah Delete User AlertDialog
 
@@ -1164,8 +1170,8 @@ Story Point:
 
 Sprint dinyatakan selesai jika:
 
-* Edit role berfungsi.
-* Hapus user berfungsi.
+* Edit role berfungsi (dengan batasan role masing-masing).
+* Hapus user berfungsi (dengan batasan role masing-masing).
 * Dialog konfirmasi berfungsi.
 * Tidak ada error kritis.
 
@@ -1401,6 +1407,7 @@ Membatasi akses fitur berdasarkan role pengguna (Admin, Manager, Sales).
 - Edit customer dan follow-up
 - Kelola product dan quotation
 - Akses activity log
+- Kelola user dengan role Sales & Manager (tidak bisa mengubah/menghapus Admin)
 
 ## Sales (Karyawan)
 - Kelola customer sendiri
@@ -1430,11 +1437,13 @@ Membatasi akses fitur berdasarkan role pengguna (Admin, Manager, Sales).
 | Quotation View All | ✅ | ✅ | ❌ |
 | Quotation Create | ✅ | ✅ | ✅ |
 | Report View | ✅ | ✅ | ❌ |
-| User Management | ✅ | ❌ | ❌ |
+| User Management | ✅ | ✅* | ❌ |
 | Settings | ✅ | ❌ | ❌ |
 | Activity Log | ✅ | ✅ | ❌ |
 
 ---
+
+\* Manager hanya dapat mengelola user dengan role Sales & Manager, tidak dapat mengubah/menghapus user dengan role Admin.
 
 # Task Breakdown
 
