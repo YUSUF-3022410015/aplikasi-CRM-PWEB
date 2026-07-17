@@ -20,6 +20,7 @@ export function cva<T extends Variants>(base: string, config: {
   };
 }
 
-export type VariantProps<T extends (...args: any[]) => any> = T extends (props?: infer P) => any
-  ? P extends Record<string, unknown> ? P : {}
-  : Record<string, unknown>;
+export type VariantProps<T extends (...args: any[]) => any> = 
+  T extends (props?: infer P) => any
+    ? { [K in keyof NonNullable<P>]: NonNullable<P>[K] }
+    : Record<string, unknown>;
