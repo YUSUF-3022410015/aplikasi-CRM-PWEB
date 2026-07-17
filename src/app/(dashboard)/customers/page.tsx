@@ -37,6 +37,7 @@ import { exportCustomersToExcel } from "@/lib/excel";
 import { ImportCustomersDialog } from "@/components/import-customers-dialog";
 import { useLanguage } from "@/components/language-provider";
 import { usePermissions } from "@/hooks/use-permissions";
+import { logAudit } from "@/lib/audit";
 import { Skeleton } from "@/components/skeleton";
 import { EmptyState } from "@/components/empty-state";
 import type { Customer } from "@/types/database";
@@ -63,6 +64,7 @@ export default function CustomersPage() {
   const router = useRouter();
   const [supabase] = useState(() => createClient());
   const { t } = useLanguage();
+  const { isManager } = usePermissions();
   const limit = 10;
 
   const fetchCustomers = useCallback(async () => {
@@ -99,7 +101,11 @@ export default function CustomersPage() {
   const handleDelete = async () => {
     if (!deleteId) return;
     setDeleting(true);
+    const customer = customers.find(c => c.id === deleteId);
     await supabase.from("customers").update({ deleted_at: new Date().toISOString() }).eq("id", deleteId);
+    if (customer) {
+      logAudit("delete", "customers", deleteId, customer as unknown as Record<string, unknown>, null);
+    }
     setDeleting(false);
     setDeleteId(null);
     fetchCustomers();
@@ -150,12 +156,14 @@ export default function CustomersPage() {
             <Upload className="mr-1 h-4 w-4" />
             {t("common.import")}
           </Button>
-          <Link href="/customers/new">
-            <Button size="sm" className="bg-primary text-primary-foreground shadow-sm">
-              <Plus className="mr-1 h-4 w-4" />
-              {t("common.add")}
-            </Button>
-          </Link>
+          {!isManager && (
+            <Link href="/customers/new">
+              <Button size="sm" className="bg-primary text-primary-foreground shadow-sm">
+                <Plus className="mr-1 h-4 w-4" />
+                {t("common.add")}
+              </Button>
+            </Link>
+          )}
         </div>
       </div>
 
@@ -252,22 +260,26 @@ export default function CustomersPage() {
                       >
                         <Eye className="h-4 w-4" />
                       </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={() => router.push(`/customers/${customer.id}/edit`)}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-destructive"
-                        onClick={() => setDeleteId(customer.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      {!isManager && (
+                        <>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            onClick={() => router.push(`/customers/${customer.id}/edit`)}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-destructive"
+                            onClick={() => setDeleteId(customer.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </>
+                      )}
                     </div>
                   </TableCell>
                 </TableRow>

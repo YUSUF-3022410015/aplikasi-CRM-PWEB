@@ -13,7 +13,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import Link from "next/link";
 import { Eye, EyeOff, Loader2, Mail, Lock } from "lucide-react";
 import { useLanguage } from "@/components/language-provider";
 
@@ -125,20 +124,8 @@ export default function LoginPage() {
             </Button>
           </div>
 
-          <div className="text-center animate-slide-up" style={{ animationDelay: "0.35s" }}>
-            <Link href="/forgot-password" className="text-sm text-primary/80 hover:text-primary transition-colors">
-              {t("auth.forgotPassword")}
-            </Link>
-          </div>
         </form>
       </CardContent>
-
-      <div className="px-6 pb-6 text-center text-sm text-muted-foreground animate-slide-up" style={{ animationDelay: "0.4s" }}>
-        {t("auth.noAccount")}{" "}
-        <Link href="/signup" className="font-medium text-primary hover:text-primary/80 transition-colors">
-          {t("auth.signup")}
-        </Link>
-      </div>
     </Card>
   );
 }

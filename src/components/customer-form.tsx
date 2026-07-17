@@ -20,6 +20,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 import { useLanguage } from "@/components/language-provider";
+import { logAudit } from "@/lib/audit";
 import type { Customer } from "@/types/database";
 
 interface CustomerFormProps {
@@ -95,7 +96,7 @@ export function CustomerForm({ customer, mode }: CustomerFormProps) {
     const { data: { user } } = await supabase.auth.getUser();
 
     if (mode === "create") {
-      const { error } = await supabase.from("customers").insert({
+      const { data: inserted, error } = await supabase.from("customers").insert({
         ...data,
         email: data.email || null,
         phone: data.phone || null,
@@ -106,12 +107,12 @@ export function CustomerForm({ customer, mode }: CustomerFormProps) {
         website: data.website || null,
         source: data.source || null,
         assigned_to: data.assigned_to || null,
-      });
+      }).select("id").single();
       if (error) {
         console.error(error);
         return;
       }
-      // Create notification (non-blocking)
+      logAudit("create", "customers", inserted.id, null, data as unknown as Record<string, unknown>);
       if (user) {
         try {
           const { error: notifErr } = await supabase.from("notifications").insert({
@@ -125,6 +126,7 @@ export function CustomerForm({ customer, mode }: CustomerFormProps) {
         } catch (e) { console.error("Notif catch:", e); }
       }
     } else {
+      const oldData = { ...customer };
       const { error } = await supabase
         .from("customers")
         .update({
@@ -147,7 +149,7 @@ export function CustomerForm({ customer, mode }: CustomerFormProps) {
         console.error(error);
         return;
       }
-      // Create notification (non-blocking)
+      logAudit("update", "customers", customer!.id, oldData as unknown as Record<string, unknown>, data as unknown as Record<string, unknown>);
       if (user) {
         try {
           const { error: notifErr } = await supabase.from("notifications").insert({

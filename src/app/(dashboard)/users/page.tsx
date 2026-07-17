@@ -32,7 +32,7 @@ import {
 import { Plus, UserCog, Shield, Pencil, Trash2, Loader2, KeyRound } from "lucide-react";
 import { useLanguage } from "@/components/language-provider";
 import { resetUserPassword, inviteUser, editUserRole } from "@/app/actions/admin";
-import { deleteUser } from "@/app/actions/delete-user";
+import { deactivateUser } from "@/app/actions/delete-user";
 import { usePermissions } from "@/hooks/use-permissions";
 import {
   AlertDialog,
@@ -72,8 +72,8 @@ export default function UsersPage() {
   const [editRole, setEditRole] = useState("");
   const [editLoading, setEditLoading] = useState(false);
   const { t } = useLanguage();
-  const [deleteUserId, setDeleteUserId] = useState<string | null>(null);
-  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deactivateUserId, setDeactivateUserId] = useState<string | null>(null);
+  const [deactivateLoading, setDeactivateLoading] = useState(false);
   const [resetUser, setResetUser] = useState<UserProfile | null>(null);
   const [newPassword, setNewPassword] = useState("");
   const [resetLoading, setResetLoading] = useState(false);
@@ -133,20 +133,20 @@ export default function UsersPage() {
     fetchUsers();
   };
 
-  const handleDeleteUser = async () => {
-    if (!deleteUserId) return;
-    setDeleteLoading(true);
+  const handleDeactivateUser = async () => {
+    if (!deactivateUserId) return;
+    setDeactivateLoading(true);
 
-    const result = await deleteUser(deleteUserId);
+    const result = await deactivateUser(deactivateUserId);
 
     if (result.success) {
-      setDeleteUserId(null);
+      setDeactivateUserId(null);
       fetchUsers();
     } else {
-      console.error("Gagal menghapus user:", result.error);
+      console.error("Gagal menonaktifkan user:", result.error);
     }
 
-    setDeleteLoading(false);
+    setDeactivateLoading(false);
   };
 
   const handleResetPassword = async () => {
@@ -244,9 +244,9 @@ export default function UsersPage() {
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8 text-destructive"
-                            onClick={() => setDeleteUserId(u.id)}
+                            onClick={() => setDeactivateUserId(u.id)}
                             disabled={isManager && u.role === "admin"}
-                            title={isManager && u.role === "admin" ? "Manager tidak dapat menghapus Admin" : ""}
+                            title={isManager && u.role === "admin" ? "Manager tidak dapat menonaktifkan Admin" : ""}
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -354,24 +354,24 @@ export default function UsersPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Delete User Dialog */}
-      <AlertDialog open={!!deleteUserId} onOpenChange={(open) => { if (!open && !deleteLoading) setDeleteUserId(null); }}>
+      {/* Deactivate User Dialog — PRD §3.4: nonaktifkan, bukan hard delete */}
+      <AlertDialog open={!!deactivateUserId} onOpenChange={(open) => { if (!open && !deactivateLoading) setDeactivateUserId(null); }}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{t("users.deleteUser")}?</AlertDialogTitle>
+            <AlertDialogTitle>Nonaktifkan Pengguna?</AlertDialogTitle>
             <AlertDialogDescription>
-              {t("customers.deleteDescription")}
+              Pengguna tidak akan bisa login lagi. Data pelanggan dan deal miliknya tetap tersimpan.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={deleteLoading}>{t("common.cancel")}</AlertDialogCancel>
+            <AlertDialogCancel disabled={deactivateLoading}>{t("common.cancel")}</AlertDialogCancel>
             <Button
-              onClick={handleDeleteUser}
+              onClick={handleDeactivateUser}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              disabled={deleteLoading}
+              disabled={deactivateLoading}
             >
-              {deleteLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {t("common.delete")}
+              {deactivateLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Nonaktifkan
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>

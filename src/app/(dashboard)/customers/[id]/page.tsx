@@ -17,6 +17,7 @@ import { FollowUpList } from "@/components/followup-list";
 import { CustomerPrint, printCustomer } from "@/components/customer-print";
 import { WhatsAppButton } from "@/components/whatsapp-button";
 import { useLanguage } from "@/components/language-provider";
+import { usePermissions } from "@/hooks/use-permissions";
 import type { Activity as ActivityType, FollowUp as FollowUpType } from "@/types/database";
 
 const statusColors: Record<string, "default" | "secondary" | "success" | "warning" | "destructive"> = {
@@ -51,6 +52,7 @@ export default function CustomerDetailPage() {
   const id = params.id as string;
   const [supabase] = useState(() => createClient());
 
+  const { isManager } = usePermissions();
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [activities, setActivities] = useState<ActivityType[]>([]);
   const [followups, setFollowups] = useState<FollowUpType[]>([]);
@@ -126,12 +128,14 @@ export default function CustomerDetailPage() {
             <Printer className="mr-2 h-4 w-4" />
             {t("customers.printPdf")}
           </Button>
-          <Link href={`/customers/${customer.id}/edit`}>
-            <Button>
-              <Pencil className="mr-2 h-4 w-4" />
-              {t("common.edit")}
-            </Button>
-          </Link>
+          {!isManager && (
+            <Link href={`/customers/${customer.id}/edit`}>
+              <Button>
+                <Pencil className="mr-2 h-4 w-4" />
+                {t("common.edit")}
+              </Button>
+            </Link>
+          )}
         </div>
       </div>
 
@@ -249,7 +253,7 @@ export default function CustomerDetailPage() {
           <TabsTrigger value="followups">{t("customers.followupsTab")}</TabsTrigger>
         </TabsList>
         <TabsContent value="activities" className="space-y-4">
-          <AddActivityForm customerId={customer.id} />
+          {!isManager && <AddActivityForm customerId={customer.id} />}
           <ActivityTimeline activities={activities} />
         </TabsContent>
         <TabsContent value="followups" className="space-y-4">

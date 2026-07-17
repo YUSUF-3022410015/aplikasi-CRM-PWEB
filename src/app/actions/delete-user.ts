@@ -36,45 +36,27 @@ async function checkAdminOnly(): Promise<string | null> {
   }
 }
 
-export async function deleteUser(userId: string) {
+export async function deactivateUser(userId: string) {
   const authError = await checkAdminOnly();
   if (authError) return { success: false, error: authError };
 
   try {
-    // 1. Nullify foreign key references first (bypass RLS with service role)
-    await supabaseAdmin
-      .from("customers")
-      .update({ assigned_to: null })
-      .eq("assigned_to", userId);
+    // PRD §3.4: Nonaktifkan user (is_active = false) — bukan hard delete
+    // User tidak bisa login lagi, tapi data pelanggan/deal miliknya tetap tersimpan
+    const { error } = await supabaseAdmin
+      .from("profiles")
+      .update({ is_active: false })
+      .eq("id", userId);
 
-    await supabaseAdmin
-      .from("activities")
-      .update({ user_id: null })
-      .eq("user_id", userId);
-
-    await supabaseAdmin
-      .from("followups")
-      .update({ assigned_to: null })
-      .eq("assigned_to", userId);
-
-    // 2. Delete notifications that reference this user
-    await supabaseAdmin
-      .from("notifications")
-      .delete()
-      .eq("user_id", userId);
-
-    // 3. Delete from auth.users (profiles cascades automatically via ON DELETE CASCADE)
-    const { error: authError } = await supabaseAdmin.auth.admin.deleteUser(userId);
-
-    if (authError) {
-      return { success: false, error: authError.message };
+    if (error) {
+      return { success: false, error: error.message };
     }
 
     return { success: true };
   } catch (err) {
     return {
       success: false,
-      error: err instanceof Error ? err.message : "Gagal menghapus user",
+      error: err instanceof Error ? err.message : "Gagal menonaktifkan user",
     };
   }
 }
