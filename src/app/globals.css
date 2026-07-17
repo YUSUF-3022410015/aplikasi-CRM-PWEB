@@ -63,6 +63,7 @@
   --animate-scale-in: scale-in 0.2s ease-out;
   --animate-pulse-soft: pulse-soft 2s ease-in-out infinite;
   --animate-shimmer: shimmer 1.5s ease-in-out infinite;
+  --animate-rotate-scale-up: rotate-scale-up 0.65s linear both;
 }
 
 :root {
@@ -211,6 +212,12 @@
 @keyframes shimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
+}
+
+@keyframes rotate-scale-up {
+  0% { transform: scale(1) rotateZ(0deg); }
+  50% { transform: scale(1.5) rotateZ(180deg); }
+  100% { transform: scale(1) rotateZ(360deg); }
 }
 
 body {
