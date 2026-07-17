@@ -79,7 +79,7 @@ export default function UsersPage() {
   const [resetLoading, setResetLoading] = useState(false);
   const [resetSuccess, setResetSuccess] = useState(false);
   const [supabase] = useState(() => createClient());
-  const { role: currentRole, isAdmin } = usePermissions();
+  const { role: currentRole, isAdmin, isManager } = usePermissions();
 
   // PRD §3.3: Hanya Admin yang bisa kelola user
   const canManageUser = (targetRole: string) => {
