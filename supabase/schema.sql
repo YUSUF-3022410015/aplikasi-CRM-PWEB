@@ -215,6 +215,8 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- ============================================
 -- Indexes
 -- ============================================
+DROP INDEX IF EXISTS idx_customers_owner;
+DROP INDEX IF EXISTS idx_deals_owner;
 CREATE INDEX IF NOT EXISTS idx_customers_assigned ON customers(assigned_to);
 CREATE INDEX IF NOT EXISTS idx_customers_status ON customers(status);
 CREATE INDEX IF NOT EXISTS idx_customers_deleted ON customers(deleted_at);
@@ -230,6 +232,16 @@ CREATE INDEX IF NOT EXISTS idx_notifications_user ON notifications(user_id);
 CREATE INDEX IF NOT EXISTS idx_notifications_read ON notifications(user_id, read);
 CREATE INDEX IF NOT EXISTS idx_audit_logs_user ON audit_logs(user_id);
 CREATE INDEX IF NOT EXISTS idx_audit_logs_table ON audit_logs(table_name);
+
+-- ============================================
+-- Ensure all columns exist (safe re-run)
+-- ============================================
+ALTER TABLE customers ADD COLUMN IF NOT EXISTS assigned_to UUID REFERENCES profiles(id);
+ALTER TABLE customers ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;
+ALTER TABLE deals ADD COLUMN IF NOT EXISTS assigned_to UUID REFERENCES profiles(id);
+ALTER TABLE deals ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;
+ALTER TABLE quotations ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW();
+ALTER TABLE quotations ADD COLUMN IF NOT EXISTS notes TEXT;
 
 -- ============================================
 -- Row Level Security (RLS) — Sesuai PRD §3.3
