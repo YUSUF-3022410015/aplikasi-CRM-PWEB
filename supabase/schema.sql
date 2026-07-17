@@ -176,18 +176,22 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS update_profiles_updated_at ON profiles;
 CREATE TRIGGER update_profiles_updated_at
   BEFORE UPDATE ON profiles
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
+DROP TRIGGER IF EXISTS update_customers_updated_at ON customers;
 CREATE TRIGGER update_customers_updated_at
   BEFORE UPDATE ON customers
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
+DROP TRIGGER IF EXISTS update_deals_updated_at ON deals;
 CREATE TRIGGER update_deals_updated_at
   BEFORE UPDATE ON deals
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
+DROP TRIGGER IF EXISTS update_quotations_updated_at ON quotations;
 CREATE TRIGGER update_quotations_updated_at
   BEFORE UPDATE ON quotations
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
@@ -254,50 +258,61 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER STABLE;
 
 -- Profiles: user bisa baca semua
+DROP POLICY IF EXISTS "Profiles: read all" ON profiles;
 CREATE POLICY "Profiles: read all" ON profiles FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Profiles: update own" ON profiles;
 CREATE POLICY "Profiles: update own" ON profiles FOR UPDATE USING (auth.uid() = id);
 
 -- Customers: soft delete, role-based access
+DROP POLICY IF EXISTS "Customers: read" ON customers;
 CREATE POLICY "Customers: read" ON customers FOR SELECT USING (
   auth.uid() IS NOT NULL AND deleted_at IS NULL AND (
     public.get_user_role() IN ('admin', 'manager')
     OR assigned_to = auth.uid()
   )
 );
+DROP POLICY IF EXISTS "Customers: insert" ON customers;
 CREATE POLICY "Customers: insert" ON customers FOR INSERT WITH CHECK (
   auth.uid() IS NOT NULL AND public.get_user_role() IN ('admin', 'sales')
 );
+DROP POLICY IF EXISTS "Customers: update" ON customers;
 CREATE POLICY "Customers: update" ON customers FOR UPDATE USING (
   auth.uid() IS NOT NULL AND (
     public.get_user_role() = 'admin'
     OR (public.get_user_role() = 'sales' AND assigned_to = auth.uid())
   )
 );
+DROP POLICY IF EXISTS "Customers: delete" ON customers;
 CREATE POLICY "Customers: delete" ON customers FOR DELETE USING (
   auth.uid() IS NOT NULL AND public.get_user_role() = 'admin'
 );
 
 -- Deals: soft delete, role-based access
+DROP POLICY IF EXISTS "Deals: read" ON deals;
 CREATE POLICY "Deals: read" ON deals FOR SELECT USING (
   auth.uid() IS NOT NULL AND deleted_at IS NULL AND (
     public.get_user_role() IN ('admin', 'manager')
     OR assigned_to = auth.uid()
   )
 );
+DROP POLICY IF EXISTS "Deals: insert" ON deals;
 CREATE POLICY "Deals: insert" ON deals FOR INSERT WITH CHECK (
   auth.uid() IS NOT NULL AND public.get_user_role() IN ('admin', 'sales')
 );
+DROP POLICY IF EXISTS "Deals: update" ON deals;
 CREATE POLICY "Deals: update" ON deals FOR UPDATE USING (
   auth.uid() IS NOT NULL AND (
     public.get_user_role() = 'admin'
     OR (public.get_user_role() = 'sales' AND assigned_to = auth.uid())
   )
 );
+DROP POLICY IF EXISTS "Deals: delete" ON deals;
 CREATE POLICY "Deals: delete" ON deals FOR DELETE USING (
   auth.uid() IS NOT NULL AND public.get_user_role() = 'admin'
 );
 
 -- Activities: role-based access
+DROP POLICY IF EXISTS "Activities: read" ON activities;
 CREATE POLICY "Activities: read" ON activities FOR SELECT USING (
   auth.uid() IS NOT NULL AND (
     public.get_user_role() IN ('admin', 'manager')
@@ -305,90 +320,118 @@ CREATE POLICY "Activities: read" ON activities FOR SELECT USING (
     OR customer_id IN (SELECT id FROM customers WHERE assigned_to = auth.uid())
   )
 );
+DROP POLICY IF EXISTS "Activities: insert" ON activities;
 CREATE POLICY "Activities: insert" ON activities FOR INSERT WITH CHECK (
   auth.uid() IS NOT NULL AND public.get_user_role() IN ('admin', 'sales')
 );
+DROP POLICY IF EXISTS "Activities: update" ON activities;
 CREATE POLICY "Activities: update" ON activities FOR UPDATE USING (
   auth.uid() IS NOT NULL AND (
     public.get_user_role() = 'admin'
     OR user_id = auth.uid()
   )
 );
+DROP POLICY IF EXISTS "Activities: delete" ON activities;
 CREATE POLICY "Activities: delete" ON activities FOR DELETE USING (
   auth.uid() IS NOT NULL AND public.get_user_role() = 'admin'
 );
 
 -- Follow-ups: role-based access
+DROP POLICY IF EXISTS "Followups: read" ON followups;
 CREATE POLICY "Followups: read" ON followups FOR SELECT USING (
   auth.uid() IS NOT NULL AND (
     public.get_user_role() IN ('admin', 'manager')
     OR assigned_to = auth.uid()
   )
 );
+DROP POLICY IF EXISTS "Followups: insert" ON followups;
 CREATE POLICY "Followups: insert" ON followups FOR INSERT WITH CHECK (
   auth.uid() IS NOT NULL AND public.get_user_role() IN ('admin', 'sales')
 );
+DROP POLICY IF EXISTS "Followups: update" ON followups;
 CREATE POLICY "Followups: update" ON followups FOR UPDATE USING (
   auth.uid() IS NOT NULL AND (
     public.get_user_role() = 'admin'
     OR assigned_to = auth.uid()
   )
 );
+DROP POLICY IF EXISTS "Followups: delete" ON followups;
 CREATE POLICY "Followups: delete" ON followups FOR DELETE USING (
   auth.uid() IS NOT NULL AND public.get_user_role() = 'admin'
 );
 
 -- Products: role-based access
+DROP POLICY IF EXISTS "Products: read" ON products;
 CREATE POLICY "Products: read" ON products FOR SELECT USING (auth.uid() IS NOT NULL);
+DROP POLICY IF EXISTS "Products: insert" ON products;
 CREATE POLICY "Products: insert" ON products FOR INSERT WITH CHECK (
   auth.uid() IS NOT NULL AND public.get_user_role() = 'admin'
 );
+DROP POLICY IF EXISTS "Products: update" ON products;
 CREATE POLICY "Products: update" ON products FOR UPDATE USING (
   auth.uid() IS NOT NULL AND public.get_user_role() = 'admin'
 );
+DROP POLICY IF EXISTS "Products: delete" ON products;
 CREATE POLICY "Products: delete" ON products FOR DELETE USING (
   auth.uid() IS NOT NULL AND public.get_user_role() = 'admin'
 );
 
 -- Quotations: role-based access
+DROP POLICY IF EXISTS "Quotations: read" ON quotations;
 CREATE POLICY "Quotations: read" ON quotations FOR SELECT USING (
   auth.uid() IS NOT NULL AND (
     public.get_user_role() IN ('admin', 'manager')
     OR customer_id IN (SELECT id FROM customers WHERE assigned_to = auth.uid())
   )
 );
+DROP POLICY IF EXISTS "Quotations: insert" ON quotations;
 CREATE POLICY "Quotations: insert" ON quotations FOR INSERT WITH CHECK (
   auth.uid() IS NOT NULL AND public.get_user_role() IN ('admin', 'sales')
 );
+DROP POLICY IF EXISTS "Quotations: update" ON quotations;
 CREATE POLICY "Quotations: update" ON quotations FOR UPDATE USING (auth.uid() IS NOT NULL);
+DROP POLICY IF EXISTS "Quotations: delete" ON quotations;
 CREATE POLICY "Quotations: delete" ON quotations FOR DELETE USING (
   auth.uid() IS NOT NULL AND public.get_user_role() = 'admin'
 );
 
 -- Quotation Items
+DROP POLICY IF EXISTS "Quotation Items: read" ON quotation_items;
 CREATE POLICY "Quotation Items: read" ON quotation_items FOR SELECT USING (auth.uid() IS NOT NULL);
+DROP POLICY IF EXISTS "Quotation Items: insert" ON quotation_items;
 CREATE POLICY "Quotation Items: insert" ON quotation_items FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
+DROP POLICY IF EXISTS "Quotation Items: update" ON quotation_items;
 CREATE POLICY "Quotation Items: update" ON quotation_items FOR UPDATE USING (auth.uid() IS NOT NULL);
+DROP POLICY IF EXISTS "Quotation Items: delete" ON quotation_items;
 CREATE POLICY "Quotation Items: delete" ON quotation_items FOR DELETE USING (auth.uid() IS NOT NULL);
 
 -- Settings: Admin only for write
+DROP POLICY IF EXISTS "Settings: read" ON settings;
 CREATE POLICY "Settings: read" ON settings FOR SELECT USING (auth.uid() IS NOT NULL);
+DROP POLICY IF EXISTS "Settings: insert" ON settings;
 CREATE POLICY "Settings: insert" ON settings FOR INSERT WITH CHECK (
   auth.uid() IS NOT NULL AND public.get_user_role() = 'admin'
 );
+DROP POLICY IF EXISTS "Settings: update" ON settings;
 CREATE POLICY "Settings: update" ON settings FOR UPDATE USING (
   auth.uid() IS NOT NULL AND public.get_user_role() = 'admin'
 );
 
 -- Notifications: user only sees own
+DROP POLICY IF EXISTS "Notifications: read own" ON notifications;
 CREATE POLICY "Notifications: read own" ON notifications FOR SELECT USING (auth.uid() = user_id);
+DROP POLICY IF EXISTS "Notifications: insert" ON notifications;
 CREATE POLICY "Notifications: insert" ON notifications FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
+DROP POLICY IF EXISTS "Notifications: update own" ON notifications;
 CREATE POLICY "Notifications: update own" ON notifications FOR UPDATE USING (auth.uid() = user_id);
+DROP POLICY IF EXISTS "Notifications: delete own" ON notifications;
 CREATE POLICY "Notifications: delete own" ON notifications FOR DELETE USING (auth.uid() = user_id);
 
 -- Audit Logs: immutable - hanya Admin bisa baca, semua bisa insert, TIDAK ADA delete
+DROP POLICY IF EXISTS "Audit Logs: admin read" ON audit_logs;
 CREATE POLICY "Audit Logs: admin read" ON audit_logs FOR SELECT USING (
   EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
 );
+DROP POLICY IF EXISTS "Audit Logs: insert" ON audit_logs;
 CREATE POLICY "Audit Logs: insert" ON audit_logs FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
 -- TIDAK ADA policy delete atau update!
