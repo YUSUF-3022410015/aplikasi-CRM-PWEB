@@ -1,5 +1,6 @@
 // Email Automation Utility
 // Uses Resend API (https://resend.com)
+// Development mode: log email to server console instead of sending
 
 interface EmailConfig {
   apiKey: string;
@@ -24,8 +25,17 @@ const getEmailConfig = (): EmailConfig => ({
 export async function sendEmail(params: SendEmailParams): Promise<{ success: boolean; error?: string }> {
   const config = getEmailConfig();
 
-  if (!config.apiKey) {
-    return { success: false, error: "RESEND_API_KEY not configured" };
+  const key = config.apiKey;
+  const isDummyKey = !key || key === "re_your_api_key_here" || key.includes("your_api_key");
+
+  // Development mode: log email instead of sending
+  if (!key || isDummyKey) {
+    console.log("=== EMAIL (DEV MODE) ===");
+    console.log("To:", params.to);
+    console.log("Subject:", params.subject);
+    console.log("Body:", params.html.substring(0, 200) + "...");
+    console.log("=========================");
+    return { success: true };
   }
 
   try {
