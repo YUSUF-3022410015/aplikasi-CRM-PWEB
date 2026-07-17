@@ -174,7 +174,7 @@ export default function ProductsPage() {
             </div>
             <div className="space-y-2">
               <Label>{t("products.price")} (IDR)</Label>
-              <Input type="number" value={form.price} onChange={(e) => setForm({ ...form, price: Number(e.target.value) })} />
+              <Input type="text" inputMode="numeric" value={form.price === 0 ? "" : form.price} onChange={(e) => { const val = e.target.value.replace(/[^0-9]/g, ""); setForm({ ...form, price: val ? Number(val) : 0 }); }} />
             </div>
             <div className="space-y-2">
               <Label>{t("products.description")}</Label>
