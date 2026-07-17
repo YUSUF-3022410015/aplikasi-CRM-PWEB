@@ -71,17 +71,47 @@ export default function ProductsPage() {
   };
 
   const handleSave = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
     if (editProduct) {
       await supabase.from("products").update(form).eq("id", editProduct.id);
+      if (user) {
+        await supabase.from("notifications").insert({
+          user_id: user.id,
+          title: "Produk Diperbarui",
+          message: `Produk ${form.name} telah diperbarui`,
+          type: "activity_added",
+          link: "/products",
+        }).maybeSingle();
+      }
     } else {
       await supabase.from("products").insert(form);
+      if (user) {
+        await supabase.from("notifications").insert({
+          user_id: user.id,
+          title: "Produk Baru",
+          message: `Produk ${form.name} berhasil ditambahkan`,
+          type: "activity_added",
+          link: "/products",
+        }).maybeSingle();
+      }
     }
     setDialogOpen(false);
     fetchData();
   };
 
   const handleDelete = async (id: string) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    const product = products.find((p) => p.id === id);
     await supabase.from("products").delete().eq("id", id);
+    if (user && product) {
+      await supabase.from("notifications").insert({
+        user_id: user.id,
+        title: "Produk Dihapus",
+        message: `Produk ${product.name} telah dihapus`,
+        type: "activity_added",
+        link: "/products",
+      }).maybeSingle();
+    }
     fetchData();
   };
 
