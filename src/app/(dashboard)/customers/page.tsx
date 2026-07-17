@@ -70,10 +70,12 @@ export default function CustomersPage() {
     let query = supabase
       .from("customers")
       .select("*", { count: "exact" })
+      .is("deleted_at", null)
       .order("created_at", { ascending: false });
 
     if (search) {
-      query = query.or(`name.ilike.%${search}%,company.ilike.%${search}%,email.ilike.%${search}%`);
+      const safeSearch = search.replace(/[%_]/g, (m) => `\\${m}`);
+      query = query.or(`name.ilike.%${safeSearch}%,company.ilike.%${safeSearch}%,email.ilike.%${safeSearch}%`);
     }
 
     if (statusFilter !== "all") {
@@ -97,7 +99,7 @@ export default function CustomersPage() {
   const handleDelete = async () => {
     if (!deleteId) return;
     setDeleting(true);
-    await supabase.from("customers").delete().eq("id", deleteId);
+    await supabase.from("customers").update({ deleted_at: new Date().toISOString() }).eq("id", deleteId);
     setDeleting(false);
     setDeleteId(null);
     fetchCustomers();
@@ -106,9 +108,10 @@ export default function CustomersPage() {
   const handleExport = async () => {
     setExporting(true);
     try {
-      let query = supabase.from("customers").select("*").order("created_at", { ascending: false });
+      let query = supabase.from("customers").select("*").is("deleted_at", null).order("created_at", { ascending: false });
       if (search) {
-        query = query.or(`name.ilike.%${search}%,company.ilike.%${search}%,email.ilike.%${search}%`);
+        const safeSearch = search.replace(/[%_]/g, (m) => `\\${m}`);
+        query = query.or(`name.ilike.%${safeSearch}%,company.ilike.%${safeSearch}%,email.ilike.%${safeSearch}%`);
       }
       if (statusFilter !== "all") {
         query = query.eq("status", statusFilter);

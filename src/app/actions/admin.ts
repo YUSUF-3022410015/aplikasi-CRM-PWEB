@@ -15,7 +15,7 @@ const supabaseAdmin = createClient(
   }
 );
 
-async function checkAdminOrManager(): Promise<string | null> {
+async function checkAdminOnly(): Promise<string | null> {
   try {
     const supabase = await createServerClient();
     const { data: { user } } = await supabase.auth.getUser();
@@ -27,8 +27,8 @@ async function checkAdminOrManager(): Promise<string | null> {
       .eq("id", user.id)
       .single();
 
-    if (!profile || (profile.role !== "admin" && profile.role !== "manager")) {
-      return "Forbidden: hanya Admin & Manager yang dapat melakukan aksi ini";
+    if (!profile || profile.role !== "admin") {
+      return "Forbidden: hanya Admin yang dapat melakukan aksi ini";
     }
 
     return null;
@@ -38,7 +38,7 @@ async function checkAdminOrManager(): Promise<string | null> {
 }
 
 export async function inviteUser(email: string, fullname: string, password: string, role: string) {
-  const error = await checkAdminOrManager();
+  const error = await checkAdminOnly();
   if (error) return { success: false, error };
 
   try {
@@ -76,7 +76,7 @@ export async function inviteUser(email: string, fullname: string, password: stri
 }
 
 export async function editUserRole(userId: string, newRole: string) {
-  const authError = await checkAdminOrManager();
+  const authError = await checkAdminOnly();
   if (authError) return { success: false, error: authError };
 
   try {
@@ -99,7 +99,7 @@ export async function editUserRole(userId: string, newRole: string) {
 }
 
 export async function resetUserPassword(userId: string, newPassword: string) {
-  const authError = await checkAdminOrManager();
+  const authError = await checkAdminOnly();
   if (authError) return { success: false, error: authError };
 
   try {

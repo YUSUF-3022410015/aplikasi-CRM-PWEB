@@ -81,10 +81,9 @@ export default function UsersPage() {
   const [supabase] = useState(() => createClient());
   const { role: currentRole, isAdmin } = usePermissions();
 
+  // PRD §3.3: Hanya Admin yang bisa kelola user
   const canManageUser = (targetRole: string) => {
-    if (isAdmin) return true;
-    if (currentRole === "manager" && targetRole !== "admin") return true;
-    return false;
+    return isAdmin;
   };
 
   const fetchUsers = useCallback(async () => {
@@ -246,6 +245,8 @@ export default function UsersPage() {
                             size="icon"
                             className="h-8 w-8 text-destructive"
                             onClick={() => setDeleteUserId(u.id)}
+                            disabled={isManager && u.role === "admin"}
+                            title={isManager && u.role === "admin" ? "Manager tidak dapat menghapus Admin" : ""}
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -293,6 +294,9 @@ export default function UsersPage() {
                   <SelectItem value="sales">{t("auth.sales")}</SelectItem>
                 </SelectContent>
               </Select>
+              {isManager && (
+                <p className="text-xs text-muted-foreground">Manager tidak dapat membuat akun Admin</p>
+              )}
             </div>
           </div>
           <DialogFooter>
@@ -317,10 +321,17 @@ export default function UsersPage() {
             <div>
               <p className="text-sm text-muted-foreground">{t("nav.users")}</p>
               <p className="font-medium">{editUser?.fullname} ({editUser?.email})</p>
+              {isManager && editUser?.role === "admin" && (
+                <p className="text-xs text-destructive mt-1">Manager tidak dapat mengubah role Admin</p>
+              )}
             </div>
             <div className="space-y-2">
               <Label>{t("auth.role")}</Label>
-              <Select value={editRole} onValueChange={setEditRole}>
+              <Select
+                value={editRole}
+                onValueChange={setEditRole}
+                disabled={isManager && editUser?.role === "admin"}
+              >
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {isAdmin && <SelectItem value="admin">{t("auth.admin")}</SelectItem>}
@@ -332,7 +343,10 @@ export default function UsersPage() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditUser(null)}>{t("common.cancel")}</Button>
-            <Button onClick={handleEditRole} disabled={editLoading || !editRole}>
+            <Button
+              onClick={handleEditRole}
+              disabled={editLoading || !editRole || (isManager && editUser?.role === "admin")}
+            >
               {editLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {t("common.save")}
             </Button>

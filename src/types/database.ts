@@ -59,6 +59,7 @@ export interface Customer {
   source?: string;
   assigned_to?: string;
   status: CustomerStatus;
+  deleted_at?: string;
   pipeline_stage: PipelineStage;
   created_at: string;
   updated_at: string;

@@ -72,6 +72,7 @@ export default function SettingsPage() {
     const { data: existing } = await supabase.from("settings").select("key");
     const existingKeys = new Set((existing || []).map((s) => s.key));
 
+    // Save company + general settings
     for (const s of settingKeys) {
       const val = values[s.key] || "";
       if (existingKeys.has(s.key)) {
@@ -79,7 +80,17 @@ export default function SettingsPage() {
       }
     }
 
-    const toInsert = settingKeys
+    // Save email template settings
+    for (const s of emailTemplateKeys) {
+      const val = values[s.key] || "";
+      if (existingKeys.has(s.key)) {
+        await supabase.from("settings").update({ value: val }).eq("key", s.key);
+      }
+    }
+
+    // Insert new keys (company + email templates)
+    const allKeys = [...settingKeys, ...emailTemplateKeys];
+    const toInsert = allKeys
       .filter((s) => !existingKeys.has(s.key))
       .map((s) => ({ key: s.key, value: values[s.key] || "" }));
 

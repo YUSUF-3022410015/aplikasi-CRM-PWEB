@@ -1,83 +1,75 @@
 // Role-Based Access Control (RBAC) Utility
+// Sesuai PRD §3.3: Manager = READ-ONLY (hanya memantau, bukan mengedit)
 
 export type Role = "admin" | "manager" | "sales";
 
-// Permission definitions
+// Permission definitions - sesuai PRD §3.3 Role & Permission Matrix
 export const permissions = {
-  // Customer
+  // Customer - Manager hanya lihat, tidak bisa CRUD
   customer: {
     viewAll: ["admin", "manager"] as Role[],
     viewOwn: ["admin", "manager", "sales"] as Role[],
-    create: ["admin", "manager", "sales"] as Role[],
-    edit: ["admin", "manager"] as Role[],
-    delete: ["admin"] as Role[],
-    import: ["admin", "manager"] as Role[],
-    export: ["admin", "manager", "sales"] as Role[],
-    print: ["admin", "manager", "sales"] as Role[],
-    whatsapp: ["admin", "manager", "sales"] as Role[],
+    create: ["admin", "sales"] as Role[],      // Manager TIDAK boleh buat
+    edit: ["admin", "sales"] as Role[],         // Manager TIDAK boleh edit
+    delete: ["admin"] as Role[],                // Hanya Admin
   },
-  // Activity
+  // Activity - Manager hanya lihat
   activity: {
     viewAll: ["admin", "manager"] as Role[],
     viewOwn: ["admin", "manager", "sales"] as Role[],
-    create: ["admin", "manager", "sales"] as Role[],
-    edit: ["admin", "manager"] as Role[],
-    delete: ["admin"] as Role[],
+    create: ["admin", "sales"] as Role[],       // Manager TIDAK boleh buat
+    edit: ["admin", "sales"] as Role[],         // Manager TIDAK boleh edit
+    delete: ["admin"] as Role[],                // Hanya Admin
   },
-  // Follow-up
+  // Follow-up - Manager hanya lihat
   followup: {
     viewAll: ["admin", "manager"] as Role[],
     viewOwn: ["admin", "manager", "sales"] as Role[],
-    create: ["admin", "manager", "sales"] as Role[],
-    edit: ["admin", "manager", "sales"] as Role[],
-    delete: ["admin", "manager"] as Role[],
+    create: ["admin", "sales"] as Role[],       // Manager TIDAK boleh buat
+    edit: ["admin", "sales"] as Role[],         // Manager TIDAK boleh edit
+    delete: ["admin"] as Role[],                // Hanya Admin
   },
-  // Pipeline
+  // Pipeline - Manager hanya lihat
   pipeline: {
     view: ["admin", "manager", "sales"] as Role[],
-    edit: ["admin", "manager", "sales"] as Role[],
+    edit: ["admin", "sales"] as Role[],         // Manager TIDAK boleh edit
   },
-  // Product
+  // Product - Manager hanya lihat
   product: {
     view: ["admin", "manager", "sales"] as Role[],
-    create: ["admin", "manager"] as Role[],
-    edit: ["admin", "manager"] as Role[],
-    delete: ["admin"] as Role[],
+    create: ["admin"] as Role[],                // Manager TIDAK boleh buat
+    edit: ["admin"] as Role[],                  // Manager TIDAK boleh edit
+    delete: ["admin"] as Role[],                // Hanya Admin
   },
-  // Quotation
+  // Quotation - Manager hanya lihat
   quotation: {
     viewAll: ["admin", "manager"] as Role[],
     viewOwn: ["admin", "manager", "sales"] as Role[],
-    create: ["admin", "manager", "sales"] as Role[],
-    edit: ["admin", "manager", "sales"] as Role[],
-    delete: ["admin", "manager"] as Role[],
+    create: ["admin", "sales"] as Role[],       // Manager TIDAK boleh buat
+    edit: ["admin", "sales"] as Role[],         // Manager TIDAK boleh edit
+    delete: ["admin"] as Role[],                // Hanya Admin
     print: ["admin", "manager", "sales"] as Role[],
-    sendEmail: ["admin", "manager", "sales"] as Role[],
   },
   // Report
   report: {
     view: ["admin", "manager"] as Role[],
     export: ["admin", "manager"] as Role[],
   },
-  // Notification
-  notification: {
-    view: ["admin", "manager", "sales"] as Role[],
-  },
-  // User Management
+  // User Management - Hanya Admin (PRD §3.3)
   user: {
-    view: ["admin", "manager"] as Role[],
-    invite: ["admin", "manager"] as Role[],
-    editRole: ["admin", "manager"] as Role[],
-    delete: ["admin", "manager"] as Role[],
+    view: ["admin"] as Role[],                  // Manager TIDAK boleh kelola user
+    invite: ["admin"] as Role[],
+    editRole: ["admin"] as Role[],
+    deactivate: ["admin"] as Role[],
   },
-  // Settings
+  // Settings - Hanya Admin
   settings: {
     view: ["admin"] as Role[],
     edit: ["admin"] as Role[],
   },
-  // Activity Log
+  // Activity Log - Hanya Admin (PRD §3.3)
   activityLog: {
-    view: ["admin", "manager"] as Role[],
+    view: ["admin"] as Role[],                  // Manager TIDAK boleh lihat audit log
   },
   // Calendar
   calendar: {
@@ -103,15 +95,6 @@ export function getAccessibleRoutes(role: Role): string[] {
   if (hasPermission(role, "customer", "viewAll") || hasPermission(role, "customer", "viewOwn")) {
     routes.push("/customers");
   }
-  if (hasPermission(role, "activity", "viewAll") || hasPermission(role, "activity", "viewOwn")) {
-    routes.push("/activities");
-  }
-  if (hasPermission(role, "followup", "viewAll") || hasPermission(role, "followup", "viewOwn")) {
-    routes.push("/followups");
-  }
-  if (hasPermission(role, "calendar", "view")) {
-    routes.push("/calendar");
-  }
   if (hasPermission(role, "pipeline", "view")) {
     routes.push("/pipeline");
   }
@@ -121,17 +104,8 @@ export function getAccessibleRoutes(role: Role): string[] {
   if (hasPermission(role, "quotation", "viewAll") || hasPermission(role, "quotation", "viewOwn")) {
     routes.push("/quotations");
   }
-  if (hasPermission(role, "activityLog", "view")) {
-    routes.push("/activity-log");
-  }
-  if (hasPermission(role, "report", "view")) {
-    routes.push("/reports");
-  }
   if (hasPermission(role, "user", "view")) {
     routes.push("/users");
-  }
-  if (hasPermission(role, "settings", "view")) {
-    routes.push("/settings");
   }
   routes.push("/profile");
 
@@ -145,26 +119,25 @@ export const roleNames: Record<Role, string> = {
   sales: "Sales",
 };
 
-// Role descriptions
+// Role descriptions - sesuai PRD §1.3 & §3.3
 export const roleDescriptions: Record<Role, string[]> = {
   admin: [
     "Akses penuh ke semua fitur",
-    "Kelola user (invite, edit, hapus)",
+    "Kelola user (invite, nonaktifkan)",
     "Kelola pengaturan sistem",
-    "Lihat semua data dan laporan",
+    "Hapus data (soft delete)",
+    "Lihat audit log",
   ],
   manager: [
-    "Lihat semua data customer",
-    "Lihat semua laporan",
-    "Edit customer dan follow-up",
-    "Kelola product dan quotation",
-    "Akses activity log",
+    "Lihat semua data customer & deal (read-only)",
+    "Lihat dashboard performa tim",
+    "Tidak bisa mengubah/menghapus data",
   ],
   sales: [
-    "Kelola customer sendiri",
-    "Buat dan edit aktivitas",
-    "Buat dan edit follow-up",
+    "Kelola customer sendiri (CRUD)",
+    "Buat & edit aktivitas",
+    "Buat & edit follow-up",
     "Buat quotation",
-    "Kirim WhatsApp dan email",
+    "Gunakan pipeline (drag & drop)",
   ],
 };

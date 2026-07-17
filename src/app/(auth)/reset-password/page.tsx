@@ -30,13 +30,27 @@ export default function ResetPasswordPage() {
   const supabase = createClient();
 
   useEffect(() => {
+    // Supabase reset password sends tokens in URL hash fragment
+    // We need to listen for the PASSWORD_RECOVERY event
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === "PASSWORD_RECOVERY" && session) {
+        setValidToken(true);
+      }
+    });
+
+    // Also check for hash tokens (initial page load from email link)
     const hash = window.location.hash;
-    if (hash && hash.includes("access_token")) {
+    if (hash && hash.includes("type=recovery")) {
+      setValidToken(true);
+    } else if (hash && hash.includes("access_token")) {
       setValidToken(true);
     } else {
+      // No valid token found
       setValidToken(false);
     }
-  }, []);
+
+    return () => subscription.unsubscribe();
+  }, [supabase]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

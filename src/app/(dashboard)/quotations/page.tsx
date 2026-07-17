@@ -29,7 +29,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Eye, Trash2, FileText, Printer, Mail } from "lucide-react";import { formatCurrency, generateQuotationNumber } from "@/lib/utils";
+import { Plus, Eye, Trash2, FileText, Printer, Mail } from "lucide-react";
+import { formatCurrency, generateQuotationNumber } from "@/lib/utils";
 import { QuotationPrint, printQuotation } from "@/components/quotation-print";
 import { sendQuotationEmailAction } from "@/app/actions/email";
 import { useLanguage } from "@/components/language-provider";
@@ -81,7 +82,7 @@ export default function QuotationsPage() {
 
   const subtotal = items.reduce((sum, item) => sum + item.qty * item.price, 0);
   const tax = subtotal * (taxRate / 100);
-  const total = subtotal + tax - discount;
+  const total = Math.max(0, subtotal + tax - discount);
 
   const addItem = () => setItems([...items, { product_id: "", qty: 1, price: 0 }]);
   const removeItem = (i: number) => setItems(items.filter((_, idx) => idx !== i));

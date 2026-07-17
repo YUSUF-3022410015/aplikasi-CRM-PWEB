@@ -70,7 +70,8 @@ export function Navbar({ user }: NavbarProps) {
     }
 
     setSearching(true);
-    const pattern = `%${q}%`;
+    const safeSearch = q.replace(/[%_]/g, (m) => `\\${m}`);
+    const pattern = `%${safeSearch}%`;
     const results: SearchResult[] = [];
 
     try {
