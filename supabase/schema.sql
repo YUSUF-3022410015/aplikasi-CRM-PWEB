@@ -449,3 +449,10 @@ CREATE POLICY "Audit Logs: admin read" ON audit_logs FOR SELECT USING (
 DROP POLICY IF EXISTS "Audit Logs: insert" ON audit_logs;
 CREATE POLICY "Audit Logs: insert" ON audit_logs FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
 -- TIDAK ADA policy delete atau update!
+
+-- ============================================
+-- Enable Realtime untuk tabel notifications
+-- Dipakai oleh NotificationBell component untuk
+-- real-time update notifikasi tanpa polling
+-- ============================================
+ALTER PUBLICATION supabase_realtime ADD TABLE notifications;

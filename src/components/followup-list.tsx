@@ -95,6 +95,19 @@ export function FollowUpList({
         due_date: dueDate,
         status: "pending",
       });
+
+      // Create notification
+      if (user) {
+        try {
+          await supabase.from("notifications").insert({
+            user_id: user.id,
+            title: "Follow-up Baru",
+            message: `Follow-up dijadwalkan pada ${dueDate}`,
+            type: "followup_reminder",
+            link: `/customers/${customerId}`,
+          });
+        } catch (e) { console.error("Notif catch:", e); }
+      }
     }
 
     setNote("");

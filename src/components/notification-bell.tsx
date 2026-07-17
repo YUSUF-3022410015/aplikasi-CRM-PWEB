@@ -57,23 +57,31 @@ export function NotificationBell({ userId }: { userId: string }) {
   useEffect(() => {
     fetchNotifications();
 
-    // Realtime subscription
+    // Realtime subscription - requires Realtime enabled on notifications table in Supabase dashboard
     const channel = supabase
       .channel("notifications-realtime")
       .on(
         "postgres_changes",
-        { event: "INSERT", schema: "public", table: "notifications" },
-        (payload) => {
-          // Only refresh if notification belongs to this user
-          if ((payload.new as NotificationItem)?.user_id === userId) {
-            fetchNotifications();
-          }
+        { event: "INSERT", schema: "public", table: "notifications", filter: `user_id=eq.${userId}` },
+        () => {
+          fetchNotifications();
         }
       )
-      .subscribe();
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "notifications", filter: `user_id=eq.${userId}` },
+        () => {
+          fetchNotifications();
+        }
+      )
+      .subscribe((status) => {
+        if (status !== "SUBSCRIBED") {
+          console.warn("Notif realtime status:", status);
+        }
+      });
 
-    // Polling fallback - refresh every 15 seconds
-    const interval = setInterval(fetchNotifications, 15000);
+    // Polling fallback - refresh every 10 seconds
+    const interval = setInterval(fetchNotifications, 10000);
 
     return () => {
       supabase.removeChannel(channel);

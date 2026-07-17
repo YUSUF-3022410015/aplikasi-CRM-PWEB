@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
@@ -30,6 +31,7 @@ export function Sidebar() {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const [accessibleRoutes, setAccessibleRoutes] = useState<string[]>([]);
+  const [followUpCount, setFollowUpCount] = useState(0);
   const [supabase] = useState(() => createClient());
   const { t } = useLanguage();
 
@@ -67,6 +69,23 @@ export function Sidebar() {
 
     fetchRole();
   }, []);
+
+  // Fetch follow-up count (FR5: badge reminder di sidebar)
+  useEffect(() => {
+    const fetchFollowUpCount = async () => {
+      const today = new Date().toISOString().split("T")[0];
+      const { count } = await supabase
+        .from("followups")
+        .select("*", { count: "exact", head: true })
+        .eq("status", "pending")
+        .lte("due_date", today);
+      setFollowUpCount(count || 0);
+    };
+
+    fetchFollowUpCount();
+    const interval = setInterval(fetchFollowUpCount, 30000);
+    return () => clearInterval(interval);
+  }, [supabase]);
 
   const navItems = allNavItems.filter((item) =>
     accessibleRoutes.includes(item.href)
@@ -115,6 +134,7 @@ export function Sidebar() {
                 href={item.href}
                 className={cn(
                   "flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 hover:shadow-sm active:scale-[0.98]",
+                  collapsed && "relative justify-center",
                   isActive
                     ? "bg-primary text-primary-foreground shadow-sm"
                     : "text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -122,6 +142,16 @@ export function Sidebar() {
               >
                 <item.icon className="h-5 w-5 shrink-0" />
                 {!collapsed && <span className="truncate">{item.label}</span>}
+                {!collapsed && item.href === "/followups" && followUpCount > 0 && (
+                  <Badge variant="destructive" className="ml-auto h-5 min-w-5 px-1 flex items-center justify-center text-[10px]">
+                    {followUpCount > 9 ? "9+" : followUpCount}
+                  </Badge>
+                )}
+                {collapsed && item.href === "/followups" && followUpCount > 0 && (
+                  <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-destructive text-[8px] text-destructive-foreground">
+                    {followUpCount > 9 ? "9+" : followUpCount}
+                  </span>
+                )}
               </Link>
             );
           })}
