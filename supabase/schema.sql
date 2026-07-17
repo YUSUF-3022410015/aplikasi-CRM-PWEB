@@ -29,7 +29,6 @@ CREATE TABLE IF NOT EXISTS customers (
   address TEXT,
   website TEXT,
   source TEXT,
-  owner_id UUID REFERENCES profiles(id),
   status TEXT NOT NULL DEFAULT 'lead' CHECK (status IN ('lead', 'prospect', 'active', 'inactive', 'archived')),
   assigned_to UUID REFERENCES profiles(id),
   deleted_at TIMESTAMPTZ,
@@ -44,7 +43,7 @@ CREATE TABLE IF NOT EXISTS deals (
   customer_id UUID REFERENCES customers(id),
   name TEXT NOT NULL,
   value NUMERIC DEFAULT 0,
-  pipeline_stage TEXT NOT NULL DEFAULT 'lead' CHECK (pipeline_stage IN ('lead', 'contacted', 'meeting', 'proposal', 'won', 'lost')),
+  pipeline_stage TEXT NOT NULL DEFAULT 'lead' CHECK (pipeline_stage IN ('lead', 'qualified', 'contacted', 'meeting', 'proposal', 'negotiation', 'won', 'lost')),
   status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'won', 'lost')),
   assigned_to UUID REFERENCES profiles(id),
   deleted_at TIMESTAMPTZ,
@@ -213,6 +212,19 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- ============================================
+-- Ensure all columns exist (safe re-run)
+-- ============================================
+ALTER TABLE customers ADD COLUMN IF NOT EXISTS assigned_to UUID REFERENCES profiles(id);
+ALTER TABLE customers ADD COLUMN IF NOT EXISTS pipeline_stage TEXT NOT NULL DEFAULT 'lead' CHECK (pipeline_stage IN ('lead', 'qualified', 'contacted', 'meeting', 'proposal', 'negotiation', 'won', 'lost'));
+ALTER TABLE customers ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;
+ALTER TABLE deals ADD COLUMN IF NOT EXISTS assigned_to UUID REFERENCES profiles(id);
+ALTER TABLE deals ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;
+ALTER TABLE deals DROP CONSTRAINT IF EXISTS deals_pipeline_stage_check;
+ALTER TABLE deals ADD CONSTRAINT deals_pipeline_stage_check CHECK (pipeline_stage IN ('lead', 'qualified', 'contacted', 'meeting', 'proposal', 'negotiation', 'won', 'lost'));
+ALTER TABLE quotations ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW();
+ALTER TABLE quotations ADD COLUMN IF NOT EXISTS notes TEXT;
+
+-- ============================================
 -- Indexes
 -- ============================================
 DROP INDEX IF EXISTS idx_customers_owner;
@@ -232,16 +244,6 @@ CREATE INDEX IF NOT EXISTS idx_notifications_user ON notifications(user_id);
 CREATE INDEX IF NOT EXISTS idx_notifications_read ON notifications(user_id, read);
 CREATE INDEX IF NOT EXISTS idx_audit_logs_user ON audit_logs(user_id);
 CREATE INDEX IF NOT EXISTS idx_audit_logs_table ON audit_logs(table_name);
-
--- ============================================
--- Ensure all columns exist (safe re-run)
--- ============================================
-ALTER TABLE customers ADD COLUMN IF NOT EXISTS assigned_to UUID REFERENCES profiles(id);
-ALTER TABLE customers ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;
-ALTER TABLE deals ADD COLUMN IF NOT EXISTS assigned_to UUID REFERENCES profiles(id);
-ALTER TABLE deals ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;
-ALTER TABLE quotations ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW();
-ALTER TABLE quotations ADD COLUMN IF NOT EXISTS notes TEXT;
 
 -- ============================================
 -- Row Level Security (RLS) — Sesuai PRD §3.3
