@@ -94,38 +94,41 @@ export function Sidebar() {
   return (
     <aside
       className={cn(
-        "no-print flex h-screen flex-col border-r border-border bg-card transition-all duration-300 shadow-sm",
+        "no-print flex h-screen flex-col border-r border-border bg-sidebar transition-all duration-300",
         collapsed ? "w-16" : "w-64"
       )}
     >
       {/* Logo */}
-      <div className="flex h-16 items-center border-b border-border px-4 gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-lg shrink-0">
+      <div className={cn(
+        "flex h-16 items-center border-b border-sidebar-border gap-3",
+        collapsed ? "justify-center px-2" : "px-4"
+      )}>
+        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-blue-600 text-primary-foreground font-bold text-base shrink-0 shadow-sm">
           N
         </div>
         {!collapsed && (
-          <div className="min-w-0">
-            <h1 className="text-base font-bold text-primary truncate">Nexus CRM</h1>
-            <p className="text-xs text-muted-foreground truncate">Enterprise Edition</p>
+          <div className="min-w-0 flex-1">
+            <h1 className="text-sm font-bold text-sidebar-foreground truncate">Nexus CRM</h1>
+            <p className="text-[10px] text-sidebar-foreground/50 truncate font-medium">Enterprise Edition</p>
           </div>
         )}
         <Button
           variant="ghost"
           size="icon"
-          className={cn("ml-auto h-8 w-8 shrink-0", collapsed && "mx-auto")}
+          className={cn("h-7 w-7 shrink-0 text-sidebar-foreground/40 hover:text-sidebar-foreground hover:bg-sidebar-accent", collapsed && "mx-auto")}
           onClick={() => setCollapsed(!collapsed)}
         >
           {collapsed ? (
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="h-3.5 w-3.5" />
           ) : (
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft className="h-3.5 w-3.5" />
           )}
         </Button>
       </div>
 
       {/* Navigation */}
-      <ScrollArea className="flex-1 py-3">
-        <nav className="space-y-1 px-3">
+      <ScrollArea className="flex-1 py-4">
+        <nav className={cn("space-y-1", collapsed ? "px-2" : "px-3")}>
           {navItems.map((item) => {
             const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
             return (
@@ -133,22 +136,22 @@ export function Sidebar() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 hover:shadow-sm active:scale-[0.98]",
-                  collapsed && "relative justify-center",
+                  "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 active:scale-[0.97]",
+                  collapsed && "relative justify-center px-2 py-2.5",
                   isActive
-                    ? "bg-primary text-primary-foreground shadow-sm"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    ? "bg-sidebar-primary/10 text-sidebar-primary shadow-sm"
+                    : "text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-foreground"
                 )}
               >
-                <item.icon className="h-5 w-5 shrink-0" />
+                <item.icon className={cn("h-5 w-5 shrink-0", isActive && "text-sidebar-primary")} />
                 {!collapsed && <span className="truncate">{item.label}</span>}
                 {!collapsed && item.href === "/followups" && followUpCount > 0 && (
-                  <Badge variant="destructive" className="ml-auto h-5 min-w-5 px-1 flex items-center justify-center text-[10px]">
+                  <Badge className="ml-auto h-5 min-w-5 px-1.5 flex items-center justify-center text-[10px] font-bold bg-sidebar-primary text-sidebar-primary-foreground">
                     {followUpCount > 9 ? "9+" : followUpCount}
                   </Badge>
                 )}
                 {collapsed && item.href === "/followups" && followUpCount > 0 && (
-                  <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-destructive text-[8px] text-destructive-foreground">
+                  <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-destructive text-[8px] font-bold text-destructive-foreground shadow-sm">
                     {followUpCount > 9 ? "9+" : followUpCount}
                   </span>
                 )}
