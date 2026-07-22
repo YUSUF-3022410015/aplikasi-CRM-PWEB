@@ -71,44 +71,54 @@ export function MobileNav() {
   const navItems = allNavItems.filter((item) => accessibleRoutes.includes(item.href));
 
   return (
-    <div className="md:hidden">
-      <Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => setOpen(true)}>
+    <div style={{ display: undefined }} className="md:hidden">
+      {/* Hamburger Button */}
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="inline-flex items-center justify-center rounded-md p-2 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+      >
         <Menu className="h-5 w-5" />
-      </Button>
+      </button>
 
       {/* Backdrop */}
-      <div
-        className={cn(
-          "fixed inset-0 z-50 bg-black/50 backdrop-blur-sm transition-opacity duration-200",
-          open ? "opacity-100" : "opacity-0 pointer-events-none"
-        )}
-        onClick={() => setOpen(false)}
-      />
+      {open && (
+        <div
+          className="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm"
+          onClick={() => setOpen(false)}
+        />
+      )}
 
       {/* Sidebar Panel */}
       <div
         className={cn(
-          "fixed inset-y-0 left-0 z-50 w-64 bg-card border-r border-border transform transition-all duration-300 ease-out shadow-xl flex flex-col",
-          open ? "translate-x-0" : "-translate-x-full"
+          "fixed inset-y-0 left-0 z-[70] w-64 bg-card border-r border-border shadow-xl transition-transform duration-300 ease-out"
         )}
+        style={{ transform: open ? "translateX(0)" : "translateX(-100%)" }}
       >
-        <div className="flex h-16 items-center justify-between border-b border-border px-4 shrink-0">
+        {/* Header */}
+        <div className="flex h-16 items-center justify-between border-b border-border px-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-lg">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-blue-600 text-primary-foreground font-bold text-lg">
               N
             </div>
             <div>
-              <h1 className="text-base font-bold text-primary">Nexus CRM</h1>
+              <h1 className="text-base font-bold text-foreground">Nexus CRM</h1>
               <p className="text-xs text-muted-foreground">Enterprise Edition</p>
             </div>
           </div>
-          <Button variant="ghost" size="icon" onClick={() => setOpen(false)} className="active:scale-90 transition-transform">
+          <button
+            type="button"
+            onClick={() => setOpen(false)}
+            className="inline-flex items-center justify-center rounded-md p-2 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+          >
             <X className="h-5 w-5" />
-          </Button>
+          </button>
         </div>
 
-        <nav className="flex-1 overflow-y-auto space-y-1 p-3">
-          {navItems.map((item, index) => {
+        {/* Navigation */}
+        <nav className="flex-1 overflow-y-auto p-3 space-y-1">
+          {navItems.map((item) => {
             const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
             return (
               <Link
@@ -120,9 +130,6 @@ export function MobileNav() {
                     ? "bg-primary text-primary-foreground shadow-sm"
                     : "text-muted-foreground hover:bg-muted hover:text-foreground"
                 )}
-                style={{
-                  animation: open ? `slide-up 0.2s ease-out ${index * 30}ms both` : undefined,
-                }}
               >
                 <item.icon className="h-5 w-5 shrink-0" />
                 <span className="truncate">{t(item.labelKey)}</span>
