@@ -223,7 +223,7 @@ export function Navbar({ user }: NavbarProps) {
               </Avatar>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56" align="end" forceMount>
+          <DropdownMenuContent className="w-56" align="end">
             <DropdownMenuLabel className="font-normal">
               <div className="flex flex-col space-y-1.5">
                 <p className="text-sm font-bold leading-none">{user?.fullname || "User"}</p>
