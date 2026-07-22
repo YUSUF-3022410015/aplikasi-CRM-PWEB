@@ -19,7 +19,6 @@ import {
   UserCog,
   Activity,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/language-provider";
 import { getAccessibleRoutes, type Role } from "@/lib/permissions";
@@ -68,56 +67,74 @@ export function MobileNav() {
     setOpen(false);
   }, [pathname]);
 
+  // Prevent body scroll when sidebar is open
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [open]);
+
   const navItems = allNavItems.filter((item) => accessibleRoutes.includes(item.href));
 
   return (
-    <div style={{ display: undefined }} className="md:hidden">
+    <div className="md:hidden">
       {/* Hamburger Button */}
       <button
         type="button"
         onClick={() => setOpen(true)}
         className="inline-flex items-center justify-center rounded-md p-2 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+        aria-label="Open menu"
       >
         <Menu className="h-5 w-5" />
       </button>
 
-      {/* Backdrop */}
-      {open && (
-        <div
-          className="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm"
-          onClick={() => setOpen(false)}
-        />
-      )}
+      {/* Full-screen Backdrop */}
+      <div
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm"
+        style={{
+          zIndex: 9998,
+          opacity: open ? 1 : 0,
+          pointerEvents: open ? "auto" : "none",
+          transition: "opacity 0.2s ease-out",
+        }}
+        onClick={() => setOpen(false)}
+      />
 
       {/* Sidebar Panel */}
       <div
-        className={cn(
-          "fixed inset-y-0 left-0 z-[70] w-64 bg-card border-r border-border shadow-xl transition-transform duration-300 ease-out"
-        )}
-        style={{ transform: open ? "translateX(0)" : "translateX(-100%)" }}
+        className="fixed top-0 left-0 bottom-0 w-[280px] bg-white dark:bg-slate-900 border-r border-border shadow-2xl overflow-y-auto"
+        style={{
+          zIndex: 9999,
+          transform: open ? "translateX(0)" : "translateX(-100%)",
+          transition: "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+        }}
       >
         {/* Header */}
-        <div className="flex h-16 items-center justify-between border-b border-border px-4">
+        <div className="flex h-14 items-center justify-between border-b border-border px-4 sticky top-0 bg-white dark:bg-slate-900 z-10">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-blue-600 text-primary-foreground font-bold text-lg">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-blue-700 text-white font-bold text-sm">
               N
             </div>
             <div>
-              <h1 className="text-base font-bold text-foreground">Nexus CRM</h1>
-              <p className="text-xs text-muted-foreground">Enterprise Edition</p>
+              <h1 className="text-sm font-bold text-foreground">Nexus CRM</h1>
+              <p className="text-[10px] text-muted-foreground">Enterprise Edition</p>
             </div>
           </div>
           <button
             type="button"
             onClick={() => setOpen(false)}
-            className="inline-flex items-center justify-center rounded-md p-2 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            className="inline-flex items-center justify-center rounded-lg p-2 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            aria-label="Close menu"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
-        {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto p-3 space-y-1">
+        {/* Navigation Items */}
+        <div className="p-3 space-y-1">
           {navItems.map((item) => {
             const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
             return (
@@ -125,18 +142,18 @@ export function MobileNav() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 active:scale-[0.98]",
+                  "flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-150",
                   isActive
-                    ? "bg-primary text-primary-foreground shadow-sm"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    ? "bg-blue-600 text-white shadow-md shadow-blue-600/25"
+                    : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-foreground"
                 )}
               >
-                <item.icon className="h-5 w-5 shrink-0" />
+                <item.icon className={cn("h-5 w-5 shrink-0", isActive && "text-white")} />
                 <span className="truncate">{t(item.labelKey)}</span>
               </Link>
             );
           })}
-        </nav>
+        </div>
       </div>
     </div>
   );
