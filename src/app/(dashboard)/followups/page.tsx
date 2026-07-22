@@ -54,6 +54,7 @@ export default function FollowUpsPage() {
   const [editItem, setEditItem] = useState<FollowUp | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [form, setForm] = useState({ customer_id: "", note: "", due_date: "", status: "pending" });
+  const [formError, setFormError] = useState("");
   const [saving, setSaving] = useState(false);
   const [supabase] = useState(() => createClient());
   const { isAdmin } = usePermissions();
@@ -80,17 +81,25 @@ export default function FollowUpsPage() {
   const openCreate = () => {
     setEditItem(null);
     setForm({ customer_id: "", note: "", due_date: "", status: "pending" });
+    setFormError("");
     setDialogOpen(true);
   };
 
   const openEdit = (f: FollowUp) => {
     setEditItem(f);
     setForm({ customer_id: f.customer_id, note: f.note || "", due_date: f.due_date?.split("T")[0] || "", status: f.status });
+    setFormError("");
     setDialogOpen(true);
   };
 
   const handleSave = async () => {
     if (!form.customer_id || !form.due_date) return;
+    const today = new Date().toISOString().split("T")[0];
+    if (form.due_date < today) {
+      setFormError(t("followups.pastDateError"));
+      return;
+    }
+    setFormError("");
     setSaving(true);
 
     const { data: { user } } = await supabase.auth.getUser();
@@ -267,6 +276,9 @@ export default function FollowUpsPage() {
             <DialogTitle className="text-lg">{editItem ? t("followups.editFollowup") : t("followups.addFollowup")}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
+            {formError && (
+              <div className="rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">{formError}</div>
+            )}
             <div className="space-y-2">
               <Label className="text-sm font-semibold">{t("followups.customer")} *</Label>
               <Select value={form.customer_id} onValueChange={(v) => setForm({ ...form, customer_id: v })}>

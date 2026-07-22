@@ -220,6 +220,7 @@ export const translations = {
     completed: { id: "Selesai", en: "Completed" },
     allFollowups: { id: "Semua Tindak Lanjut", en: "All Follow-ups" },
     subtitle2: { id: "Jadwal tindak lanjut dan pengingat pelanggan", en: "Follow-up schedules and customer reminders" },
+    pastDateError: { id: "Tanggal tidak boleh kurang dari hari ini", en: "Date cannot be in the past" },
   },
   // Quotations
   quotations: {
