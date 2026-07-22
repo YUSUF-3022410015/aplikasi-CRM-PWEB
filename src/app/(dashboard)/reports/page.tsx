@@ -35,6 +35,7 @@ export default function ReportsPage() {
     totalActivities: 0,
     followUpsPending: 0,
     followUpsDone: 0,
+    pipelineValue: 0,
     customersByStatus: [] as { name: string; value: number }[],
     revenueByMonth: [] as { name: string; revenue: number }[],
     activitiesByType: [] as { name: string; value: number }[],
@@ -44,32 +45,39 @@ export default function ReportsPage() {
 
   const fetchData = useCallback(async () => {
     setLoading(true);
-    const [custRes, quotRes, actRes, fuRes] = await Promise.all([
+    const [custRes, quotRes, actRes, fuRes, dealsRes] = await Promise.all([
       supabase.from("customers").select("id, status"),
       supabase.from("quotations").select("id, total, status, created_at"),
       supabase.from("activities").select("id, type"),
       supabase.from("followups").select("id, status"),
+      supabase.from("deals").select("id, value, pipeline_stage, status"),
     ]);
 
     const customers = custRes.data || [];
     const quotations = quotRes.data || [];
     const activities = actRes.data || [];
     const followups = fuRes.data || [];
+    const deals = dealsRes.data || [];
 
-    const won = quotations.filter((q) => q.status === "approved");
-    const lost = quotations.filter((q) => q.status === "rejected");
-    const totalRevenue = won.reduce((s, q) => s + (q.total || 0), 0);
+    const wonQuotations = quotations.filter((q) => q.status === "approved");
+    const lostQuotations = quotations.filter((q) => q.status === "rejected");
+    const dealsWon = deals.filter((d) => d.status === "won").length;
+    const dealsLost = deals.filter((d) => d.status === "lost").length;
+    const totalRevenue = wonQuotations.reduce((s, q) => s + (q.total || 0), 0);
+    const pipelineValue = deals
+      .filter((d) => d.pipeline_stage !== "won" && d.pipeline_stage !== "lost" && d.status === "active")
+      .reduce((sum, d) => sum + (d.value || 0), 0);
 
     // Customers by status
     const statusMap: Record<string, number> = {};
     customers.forEach((c) => { statusMap[c.status] = (statusMap[c.status] || 0) + 1; });
     const customersByStatus = Object.entries(statusMap).map(([name, value]) => ({ name, value }));
 
-    // Revenue by month
+    // Revenue by month (from quotations)
     const monthShort = tArray("common.monthShort").length > 0 ? tArray("common.monthShort") : ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
     const year = new Date().getFullYear();
     const revenueByMonth = monthShort.map((m, i) => {
-      const rev = won.filter((q) => { const d = new Date(q.created_at); return d.getFullYear() === year && d.getMonth() === i; })
+      const rev = wonQuotations.filter((q) => { const d = new Date(q.created_at); return d.getFullYear() === year && d.getMonth() === i; })
         .reduce((s, q) => s + (q.total || 0), 0);
       return { name: m, revenue: rev };
     });
@@ -82,11 +90,12 @@ export default function ReportsPage() {
     setStats({
       totalCustomers: customers.length,
       totalRevenue,
-      dealsWon: won.length,
-      dealsLost: lost.length,
+      dealsWon: dealsWon + wonQuotations.length,
+      dealsLost: dealsLost + lostQuotations.length,
       totalActivities: activities.length,
       followUpsPending: followups.filter((f) => f.status === "pending").length,
       followUpsDone: followups.filter((f) => f.status === "done").length,
+      pipelineValue,
       customersByStatus,
       revenueByMonth,
       activitiesByType,

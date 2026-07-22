@@ -142,7 +142,7 @@ export const translations = {
     filterStatus: { id: "Filter Status", en: "Filter Status" },
     allStatus: { id: "Semua Status", en: "All Status" },
     deleteConfirm: { id: "Hapus Pelanggan?", en: "Delete Customer?" },
-    deleteDescription: { id: "Tindakan ini tidak dapat dibatalkan. Data pelanggan akan dihapus permanen.", en: "This action cannot be undone. Customer data will be permanently deleted." },
+    deleteDescription: { id: "Data pelanggan akan disembunyikan dan tidak muncul di daftar. Data masih tersimpan di database untuk keperluan audit.", en: "Customer data will be hidden and no longer appear in listings. Data remains stored in the database for audit purposes." },
     detail: { id: "Detail", en: "Detail" },
     info: { id: "Informasi Pelanggan", en: "Customer Information" },
     activities: { id: "Aktivitas", en: "Activities" },
