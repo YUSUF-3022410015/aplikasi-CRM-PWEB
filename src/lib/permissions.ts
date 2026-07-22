@@ -95,6 +95,15 @@ export function getAccessibleRoutes(role: Role): string[] {
   if (hasPermission(role, "customer", "viewAll") || hasPermission(role, "customer", "viewOwn")) {
     routes.push("/customers");
   }
+  if (hasPermission(role, "activity", "viewAll") || hasPermission(role, "activity", "viewOwn")) {
+    routes.push("/activities");
+  }
+  if (hasPermission(role, "followup", "viewAll") || hasPermission(role, "followup", "viewOwn")) {
+    routes.push("/followups");
+  }
+  if (hasPermission(role, "calendar", "view")) {
+    routes.push("/calendar");
+  }
   if (hasPermission(role, "pipeline", "view")) {
     routes.push("/pipeline");
   }
@@ -104,8 +113,17 @@ export function getAccessibleRoutes(role: Role): string[] {
   if (hasPermission(role, "quotation", "viewAll") || hasPermission(role, "quotation", "viewOwn")) {
     routes.push("/quotations");
   }
+  if (hasPermission(role, "activityLog", "view")) {
+    routes.push("/activity-log");
+  }
+  if (hasPermission(role, "report", "view")) {
+    routes.push("/reports");
+  }
   if (hasPermission(role, "user", "view")) {
     routes.push("/users");
+  }
+  if (hasPermission(role, "settings", "view")) {
+    routes.push("/settings");
   }
   routes.push("/profile");
 

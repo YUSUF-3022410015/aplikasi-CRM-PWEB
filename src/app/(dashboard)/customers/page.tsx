@@ -64,7 +64,7 @@ export default function CustomersPage() {
   const router = useRouter();
   const [supabase] = useState(() => createClient());
   const { t } = useLanguage();
-  const { isManager } = usePermissions();
+  const { isManager, isAdmin } = usePermissions();
   const limit = 10;
 
   const fetchCustomers = useCallback(async () => {
@@ -270,14 +270,16 @@ export default function CustomersPage() {
                           >
                             <Edit className="h-4 w-4" />
                           </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive"
-                            onClick={() => setDeleteId(customer.id)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
+                          {isAdmin && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive"
+                              onClick={() => setDeleteId(customer.id)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          )}
                         </>
                       )}
                     </div>

@@ -7,6 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Eye, EyeOff, Loader2, Mail, Lock, ArrowRight } from "lucide-react";
 import { useLanguage } from "@/components/language-provider";
+import { z } from "zod";
+
+const loginSchema = z.object({
+  email: z.string().email("Format email tidak valid"),
+  password: z.string().min(6, "Password minimal 6 karakter"),
+});
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -14,14 +20,28 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<{ email?: string; password?: string }>({});
   const router = useRouter();
   const supabase = createClient();
-  const { t, locale, setLocale } = useLanguage();
+  const { t } = useLanguage();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     setError("");
+    setFieldErrors({});
+
+    const result = loginSchema.safeParse({ email, password });
+    if (!result.success) {
+      const fieldErrorsMap: Record<string, string> = {};
+      result.error.errors.forEach((err) => {
+        const field = err.path[0] as string;
+        fieldErrorsMap[field] = err.message;
+      });
+      setFieldErrors(fieldErrorsMap);
+      return;
+    }
+
+    setLoading(true);
 
     const { error: authError } = await supabase.auth.signInWithPassword({
       email,
@@ -49,18 +69,9 @@ export default function LoginPage() {
       </div>
 
       <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl shadow-black/15 p-8 animate-slide-up">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h2 className="text-lg font-semibold text-gray-900">{t("auth.login")}</h2>
-            <p className="text-sm text-gray-500 mt-1">Selamat datang kembali</p>
-          </div>
-          <button
-            type="button"
-            className="text-xs font-semibold text-gray-400 hover:text-gray-900 px-2.5 py-1.5 rounded-lg hover:bg-gray-100 transition-all duration-200"
-            onClick={() => setLocale(locale === "id" ? "en" : "id")}
-          >
-            {locale === "id" ? "EN" : "ID"}
-          </button>
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold text-gray-900">{t("auth.login")}</h2>
+          <p className="text-sm text-gray-500 mt-1">Selamat datang kembali</p>
         </div>
 
         {error && (
@@ -89,11 +100,14 @@ export default function LoginPage() {
                 placeholder="nama@perusahaan.com"
                 className="pl-10 h-11 text-sm bg-gray-50 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all rounded-xl"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => { setEmail(e.target.value); setFieldErrors({}); }}
                 autoComplete="email"
                 required
               />
             </div>
+            {fieldErrors.email && (
+              <p className="text-xs text-red-600 font-medium mt-1">{fieldErrors.email}</p>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -112,7 +126,7 @@ export default function LoginPage() {
                 placeholder="Masukkan kata sandi"
                 className="pl-10 pr-12 h-11 text-sm bg-gray-50 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all rounded-xl"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => { setPassword(e.target.value); setFieldErrors({}); }}
                 autoComplete="current-password"
                 required
               />
@@ -129,6 +143,9 @@ export default function LoginPage() {
                 )}
               </button>
             </div>
+            {fieldErrors.password && (
+              <p className="text-xs text-red-600 font-medium mt-1">{fieldErrors.password}</p>
+            )}
           </div>
 
           <Button type="submit" className="w-full h-11 rounded-xl text-sm font-semibold shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all duration-200" disabled={loading}>

@@ -34,15 +34,27 @@ import { formatCurrency, generateQuotationNumber } from "@/lib/utils";
 import { QuotationPrint, printQuotation } from "@/components/quotation-print";
 import { sendQuotationEmailAction } from "@/app/actions/email";
 import { useLanguage } from "@/components/language-provider";
+import { usePermissions } from "@/hooks/use-permissions";
 import type { Quotation, Customer, Product } from "@/types/database";
 
-const statusColors: Record<string, "default" | "secondary" | "success" | "destructive" | "warning"> = {
-  draft: "secondary",
-  sent: "warning",
-  approved: "success",
-  rejected: "destructive",
-  expired: "default",
-};
+  const statusColors: Record<string, "default" | "secondary" | "success" | "destructive" | "warning"> = {
+    draft: "secondary",
+    sent: "warning",
+    approved: "success",
+    rejected: "destructive",
+    expired: "default",
+  };
+
+  const getStatusBadge = (s: string) => {
+    const map: Record<string, { label: string; variant: "default" | "secondary" | "success" | "destructive" | "warning" }> = {
+      draft: { label: "Draft", variant: "secondary" },
+      sent: { label: "Sent", variant: "warning" },
+      approved: { label: "Approved", variant: "success" },
+      rejected: { label: "Rejected", variant: "destructive" },
+      expired: { label: "Expired", variant: "default" },
+    };
+    return map[s] || map.draft;
+  };
 
 interface QuotationItemForm {
   product_id: string;
@@ -64,6 +76,7 @@ export default function QuotationsPage() {
   const [discount, setDiscount] = useState(0);
   const [supabase] = useState(() => createClient());
   const { t } = useLanguage();
+  const { isAdmin } = usePermissions();
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -263,9 +276,11 @@ export default function QuotationsPage() {
                       <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openDetail(q)}>
                         <Eye className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => handleDelete(q.id)}>
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      {isAdmin && (
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => handleDelete(q.id)}>
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      )}
                     </div>
                   </TableCell>
                 </TableRow>

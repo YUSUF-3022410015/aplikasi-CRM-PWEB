@@ -34,6 +34,7 @@ import {
 import { formatDate } from "@/lib/utils";
 import { CalendarCheck, Plus, Pencil, Trash2, Loader2 } from "lucide-react";
 import { useLanguage } from "@/components/language-provider";
+import { usePermissions } from "@/hooks/use-permissions";
 
 interface FollowUp {
   id: string;
@@ -55,6 +56,7 @@ export default function FollowUpsPage() {
   const [form, setForm] = useState({ customer_id: "", note: "", due_date: "", status: "pending" });
   const [saving, setSaving] = useState(false);
   const [supabase] = useState(() => createClient());
+  const { isAdmin } = usePermissions();
 
   const getStatusConfig = (): Record<string, { label: string; variant: "default" | "success" | "destructive" | "secondary" }> => ({
     pending: { label: t("followups.pending"), variant: "default" },
@@ -175,7 +177,7 @@ export default function FollowUpsPage() {
             <CardContent className="p-5 relative">
               <div className="flex items-center justify-between mb-4">
                 <span className="text-sm font-semibold text-muted-foreground/80 uppercase tracking-wider">{s.label}</span>
-                <div className="p-2.5 rounded-xl bg-gradient-to-br ${s.gradient} group-hover:scale-110 transition-transform duration-300">
+                <div className={`p-2.5 rounded-xl bg-gradient-to-br ${s.gradient} group-hover:scale-110 transition-transform duration-300`}>
                   <CalendarCheck className={`h-5 w-5 ${s.iconColor}`} />
                 </div>
               </div>
@@ -241,9 +243,11 @@ export default function FollowUpsPage() {
                             <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-primary/10 hover:text-primary" onClick={() => openEdit(f)}>
                               <Pencil className="h-4 w-4" />
                             </Button>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive" onClick={() => setDeleteId(f.id)}>
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
+                            {isAdmin && (
+                              <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive" onClick={() => setDeleteId(f.id)}>
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            )}
                           </div>
                         </TableCell>
                       </TableRow>

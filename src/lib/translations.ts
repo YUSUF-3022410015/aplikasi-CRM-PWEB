@@ -172,6 +172,7 @@ export const translations = {
     negotiation: { id: "Negosiasi", en: "Negotiation" },
     won: { id: "Setuju", en: "Agreed" },
     lost: { id: "Menolak", en: "Rejected" },
+    nameMinLength: { id: "Nama minimal 3 karakter", en: "Name must be at least 3 characters" },
   },
   // Activities
   activities: {
@@ -417,6 +418,11 @@ export const translations = {
     negotiation: { id: "Negosiasi", en: "Negotiation" },
     won: { id: "Setuju", en: "Agreed" },
     lost: { id: "Menolak", en: "Rejected" },
+    addDeal: { id: "Tambah Deal", en: "Add Deal" },
+    customer: { id: "Pelanggan", en: "Customer" },
+    dealName: { id: "Nama Deal", en: "Deal Name" },
+    dealNamePlaceholder: { id: "Contoh: Project A", en: "Example: Project A" },
+    dealValue: { id: "Nilai Deal", en: "Deal Value" },
   },
 } as const;
 

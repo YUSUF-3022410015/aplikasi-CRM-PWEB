@@ -35,7 +35,7 @@ export function CustomerForm({ customer, mode }: CustomerFormProps) {
   const [salesUsers, setSalesUsers] = useState<{ id: string; fullname: string }[]>([]);
 
   const customerSchema = z.object({
-    name: z.string().min(1, t("common.required")),
+    name: z.string().min(3, t("customers.nameMinLength")),
     company: z.string().optional(),
     email: z.string().email(t("common.invalidEmail")).optional().or(z.literal("")),
     phone: z.string().optional(),

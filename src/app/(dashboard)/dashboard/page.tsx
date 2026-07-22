@@ -16,17 +16,17 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const fetchStats = async () => {
-      const [customersRes, activitiesRes, followupsRes, quotationsRes] = await Promise.all([
+      const [customersRes, activitiesRes, followupsRes, dealsRes] = await Promise.all([
         supabase.from("customers").select("id, status, created_at", { count: "exact" }),
         supabase.from("activities").select("id, type, created_at"),
         supabase.from("followups").select("id, status, due_date"),
-        supabase.from("quotations").select("id, total, status, created_at"),
+        supabase.from("deals").select("id, value, pipeline_stage, status, created_at"),
       ]);
 
       const customers = customersRes.data || [];
       const activities = activitiesRes.data || [];
       const followups = followupsRes.data || [];
-      const quotations = quotationsRes.data || [];
+      const deals = dealsRes.data || [];
 
       const today = new Date().toISOString().split("T")[0];
       const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString();
@@ -39,14 +39,14 @@ export default function DashboardPage() {
         return dueDate < today;
       }).length;
 
-      const dealsWon = quotations.filter((q) => q.status === "approved").length;
-      const dealsLost = quotations.filter((q) => q.status === "rejected").length;
-      const totalRevenue = quotations
-        .filter((q) => q.status === "approved")
-        .reduce((sum, q) => sum + (q.total || 0), 0);
-      const pipelineValue = quotations
-        .filter((q) => q.status === "draft" || q.status === "sent")
-        .reduce((sum, q) => sum + (q.total || 0), 0);
+      const dealsWon = deals.filter((d) => d.status === "won").length;
+      const dealsLost = deals.filter((d) => d.status === "lost").length;
+      const totalRevenue = deals
+        .filter((d) => d.status === "won")
+        .reduce((sum, d) => sum + (d.value || 0), 0);
+      const pipelineValue = deals
+        .filter((d) => d.pipeline_stage !== "won" && d.pipeline_stage !== "lost" && d.status === "active")
+        .reduce((sum, d) => sum + (d.value || 0), 0);
 
       const activityTypeMap: Record<string, number> = {};
       activities.forEach((a) => { activityTypeMap[a.type] = (activityTypeMap[a.type] || 0) + 1; });
@@ -59,14 +59,14 @@ export default function DashboardPage() {
       const monthShort = tArray("common.monthShort").length > 0 ? tArray("common.monthShort") : ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
       const currentYear = new Date().getFullYear();
       const monthlyData = monthShort.map((month, i) => {
-        const monthQuotations = quotations.filter((q) => {
-          const d = new Date(q.created_at);
-          return d.getFullYear() === currentYear && d.getMonth() === i;
+        const monthDeals = deals.filter((d) => {
+          const dt = new Date(d.created_at);
+          return dt.getFullYear() === currentYear && dt.getMonth() === i;
         });
         return {
           name: month,
-          revenue: monthQuotations.filter((q) => q.status === "approved").reduce((sum, q) => sum + (q.total || 0), 0),
-          deals: monthQuotations.filter((q) => q.status === "approved").length,
+          revenue: monthDeals.filter((d) => d.status === "won").reduce((sum, d) => sum + (d.value || 0), 0),
+          deals: monthDeals.filter((d) => d.status === "won").length,
         };
       });
 

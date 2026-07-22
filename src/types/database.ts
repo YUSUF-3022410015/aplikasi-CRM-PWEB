@@ -130,6 +130,20 @@ export interface QuotationItem {
   product?: Product;
 }
 
+export interface Deal {
+  id: string;
+  customer_id: string;
+  name: string;
+  value: number;
+  pipeline_stage: PipelineStage;
+  status: "active" | "won" | "lost";
+  assigned_to: string;
+  deleted_at?: string;
+  created_at: string;
+  updated_at: string;
+  customer?: Customer;
+}
+
 export interface DashboardStats {
   totalCustomers: number;
   newCustomers: number;

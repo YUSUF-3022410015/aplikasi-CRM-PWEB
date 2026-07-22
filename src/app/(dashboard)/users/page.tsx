@@ -177,10 +177,12 @@ export default function UsersPage() {
           <h1 className="text-2xl font-bold text-foreground md:text-3xl tracking-tight">{t("users.title")}</h1>
           <p className="text-muted-foreground mt-1.5">{t("users.subtitle")}</p>
         </div>
-        <Button onClick={() => setDialogOpen(true)} className="shadow-sm">
-          <Plus className="mr-2 h-4 w-4" />
-          {t("users.inviteUser")}
-        </Button>
+        {isAdmin && (
+          <Button onClick={() => setDialogOpen(true)} className="shadow-sm">
+            <Plus className="mr-2 h-4 w-4" />
+            {t("users.inviteUser")}
+          </Button>
+        )}
       </div>
 
       {/* Table Card */}

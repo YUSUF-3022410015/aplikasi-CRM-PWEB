@@ -33,10 +33,12 @@ import {
 } from "@/components/ui/select";
 import { Plus, Edit, Trash2 } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
+import { usePermissions } from "@/hooks/use-permissions";
 import type { Product } from "@/types/database";
 
 export default function ProductsPage() {
   const { t } = useLanguage();
+  const { isAdmin } = usePermissions();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -123,10 +125,12 @@ export default function ProductsPage() {
           <h1 className="text-2xl font-bold text-foreground md:text-3xl tracking-tight">{t("products.title")}</h1>
           <p className="text-muted-foreground mt-1.5">{t("products.subtitle")}</p>
         </div>
-        <Button onClick={openCreate} className="shadow-sm">
-          <Plus className="mr-2 h-4 w-4" />
-          {t("products.addProduct")}
-        </Button>
+        {isAdmin && (
+          <Button onClick={openCreate} className="shadow-sm">
+            <Plus className="mr-2 h-4 w-4" />
+            {t("products.addProduct")}
+          </Button>
+        )}
       </div>
 
       {/* Table Card */}
@@ -167,12 +171,16 @@ export default function ProductsPage() {
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
-                      <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-primary/10 hover:text-primary" onClick={() => openEdit(p)}>
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive" onClick={() => handleDelete(p.id)}>
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      {isAdmin && (
+                        <>
+                          <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-primary/10 hover:text-primary" onClick={() => openEdit(p)}>
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive" onClick={() => handleDelete(p.id)}>
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </>
+                      )}
                     </div>
                   </TableCell>
                 </TableRow>
