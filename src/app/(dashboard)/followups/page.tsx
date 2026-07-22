@@ -10,6 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -228,7 +229,13 @@ export default function FollowUpsPage() {
                     return (
                       <TableRow key={f.id} className="hover:bg-muted/30 transition-colors group">
                         <TableCell className="font-medium max-w-[250px] truncate">{f.note || "-"}</TableCell>
-                        <TableCell className="text-muted-foreground">{f.customer?.name || "-"}</TableCell>
+                        <TableCell className="text-muted-foreground">
+                          {f.customer?.name ? (
+                            <Link href={`/customers/${f.customer_id}`} className="hover:text-primary transition-colors">
+                              {f.customer.name}
+                            </Link>
+                          ) : "-"}
+                        </TableCell>
                         <TableCell>
                           <span className={isOverdue ? "text-red-600 font-semibold" : "text-muted-foreground"}>
                             {isOverdue && <span className="inline-block h-2 w-2 rounded-full bg-red-500 mr-1.5 animate-pulse-soft" />}

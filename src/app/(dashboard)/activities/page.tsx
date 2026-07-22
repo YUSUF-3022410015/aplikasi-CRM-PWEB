@@ -10,6 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Phone, MessageSquare, Mail, MapPin, Monitor, Presentation, FileText, CheckCircle } from "lucide-react";
@@ -18,6 +19,7 @@ import { useLanguage } from "@/components/language-provider";
 
 interface Activity {
   id: string;
+  customer_id: string;
   type: string;
   note: string;
   created_at: string;
@@ -101,7 +103,13 @@ export default function ActivitiesPage() {
                             {cfg.label}
                           </Badge>
                         </TableCell>
-                        <TableCell className="font-medium">{a.customer?.name || "-"}</TableCell>
+                        <TableCell className="font-medium">
+                          {a.customer?.name ? (
+                            <Link href={`/customers/${(a as any).customer_id}`} className="hover:text-primary transition-colors">
+                              {a.customer.name}
+                            </Link>
+                          ) : "-"}
+                        </TableCell>
                         <TableCell className="max-w-[280px] truncate text-muted-foreground">{a.note}</TableCell>
                         <TableCell className="text-muted-foreground">{a.user?.fullname || "-"}</TableCell>
                         <TableCell className="text-muted-foreground text-sm">

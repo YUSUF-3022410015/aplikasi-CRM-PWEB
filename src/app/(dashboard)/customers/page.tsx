@@ -240,8 +240,16 @@ export default function CustomersPage() {
               </TableRow>
             ) : (
               customers.map((customer) => (
-                <TableRow key={customer.id} className="hover:bg-muted/30 transition-colors group">
-                  <TableCell className="font-semibold">{customer.name}</TableCell>
+                <TableRow
+                  key={customer.id}
+                  className="hover:bg-muted/30 transition-colors group cursor-pointer"
+                  onClick={() => router.push(`/customers/${customer.id}`)}
+                >
+                  <TableCell className="font-semibold">
+                    <Link href={`/customers/${customer.id}`} className="hover:text-primary transition-colors">
+                      {customer.name}
+                    </Link>
+                  </TableCell>
                   <TableCell className="text-muted-foreground">{customer.company || "-"}</TableCell>
                   <TableCell className="text-muted-foreground">{customer.email || "-"}</TableCell>
                   <TableCell className="text-muted-foreground">{customer.phone || "-"}</TableCell>
@@ -251,15 +259,7 @@ export default function CustomersPage() {
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <div className="flex gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 hover:bg-primary/10 hover:text-primary"
-                        onClick={() => router.push(`/customers/${customer.id}`)}
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
+                    <div className="flex gap-1 opacity-70 group-hover:opacity-100 transition-opacity" onClick={(e) => e.stopPropagation()}>
                       {!isManager && (
                         <>
                           <Button
