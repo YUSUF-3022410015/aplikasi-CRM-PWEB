@@ -21,7 +21,6 @@ import {
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { getAccessibleRoutes, type Role } from "@/lib/permissions";
@@ -127,7 +126,7 @@ export function Sidebar() {
       </div>
 
       {/* Navigation */}
-      <ScrollArea className="flex-1 py-4">
+      <div className="flex-1 overflow-y-auto py-4">
         <nav className={cn("space-y-1", collapsed ? "px-2" : "px-3")}>
           {navItems.map((item) => {
             const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
@@ -159,7 +158,7 @@ export function Sidebar() {
             );
           })}
         </nav>
-      </ScrollArea>
+      </div>
     </aside>
   );
 }
