@@ -9,7 +9,6 @@ import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -47,45 +46,42 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="relative">
-      <Button
-        type="button"
-        variant="ghost"
-        size="sm"
-        className="absolute -top-14 right-0 gap-2 text-muted-foreground"
-        onClick={() => setLocale(locale === "id" ? "en" : "id")}
-      >
-        <Languages className="h-4 w-4" />
-        {locale === "id" ? "EN" : "ID"}
-      </Button>
+    <>
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-xl font-semibold tracking-tight">{t("auth.login")}</h2>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          className="gap-1.5 text-muted-foreground h-8 px-2"
+          onClick={() => setLocale(locale === "id" ? "en" : "id")}
+        >
+          <Languages className="h-3.5 w-3.5" />
+          {locale === "id" ? "EN" : "ID"}
+        </Button>
+      </div>
 
-      <Card className="w-full border-border/50 shadow-2xl shadow-primary/10">
-        <CardHeader className="space-y-1 text-center pb-2">
-          <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-blue-600 text-primary-foreground font-bold text-2xl shadow-lg shadow-primary/30">
-            N
-          </div>
-          <CardTitle className="text-2xl font-bold tracking-tight">Nexus CRM</CardTitle>
-          <CardDescription>
-            {t("auth.login")}
-          </CardDescription>
+      <Card className="w-full border-border/50 shadow-lg">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg">Masuk ke akun Anda</CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleLogin} className="space-y-5">
+          <form onSubmit={handleLogin} className="space-y-4">
             {error && (
-              <div className="rounded-lg bg-destructive/10 border border-destructive/20 p-3 text-sm text-destructive">
+              <div className="rounded-lg bg-destructive/10 border border-destructive/20 p-3 text-sm text-destructive leading-relaxed">
                 {error}
               </div>
             )}
 
-            <div className="space-y-2">
-              <Label htmlFor="email">{t("auth.email")}</Label>
+            <div className="space-y-1.5">
+              <Label htmlFor="email" className="text-sm">{t("auth.email")}</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground pointer-events-none" />
                 <Input
                   id="email"
                   type="email"
                   placeholder="nama@perusahaan.com"
-                  className="pl-10 h-10"
+                  className="pl-10 h-10 text-sm"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   autoComplete="email"
@@ -94,15 +90,15 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="password">{t("auth.password")}</Label>
+            <div className="space-y-1.5">
+              <Label htmlFor="password" className="text-sm">{t("auth.password")}</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground pointer-events-none" />
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
-                  className="pl-10 pr-10 h-10"
+                  className="pl-10 pr-10 h-10 text-sm"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   autoComplete="current-password"
@@ -125,7 +121,7 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <Button type="submit" className="w-full h-10" disabled={loading}>
+            <Button type="submit" className="w-full h-10 mt-2" disabled={loading}>
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -139,6 +135,6 @@ export default function LoginPage() {
           </form>
         </CardContent>
       </Card>
-    </div>
+    </>
   );
 }
