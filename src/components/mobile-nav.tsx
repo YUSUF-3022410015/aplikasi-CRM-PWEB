@@ -24,6 +24,9 @@ import { useLanguage } from "@/components/language-provider";
 import { getAccessibleRoutes, type Role } from "@/lib/permissions";
 import { createClient } from "@/lib/supabase/client";
 
+// Semua route tersedia sebagai default
+const ALL_ROUTES = ["/dashboard", "/customers", "/activities", "/followups", "/calendar", "/pipeline", "/products", "/quotations", "/activity-log", "/reports", "/users", "/settings"];
+
 const allNavItems = [
   { href: "/dashboard", icon: LayoutDashboard, labelKey: "nav.dashboard" },
   { href: "/customers", icon: Users, labelKey: "nav.customers" },
@@ -43,21 +46,27 @@ export function MobileNav() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const { t } = useLanguage();
-  const [accessibleRoutes, setAccessibleRoutes] = useState<string[]>([]);
+  // Default ke ALL_ROUTES agar menu selalu tampil
+  const [accessibleRoutes, setAccessibleRoutes] = useState<string[]>(ALL_ROUTES);
   const [supabase] = useState(() => createClient());
 
   useEffect(() => {
     const fetchRole = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("role")
-        .eq("id", user.id)
-        .single();
-      if (profile) {
-        const routes = getAccessibleRoutes(profile.role as Role);
-        setAccessibleRoutes(routes);
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("role")
+          .eq("id", user.id)
+          .single();
+        if (profile) {
+          const routes = getAccessibleRoutes(profile.role as Role);
+          setAccessibleRoutes(routes);
+        }
+      } catch (error) {
+        // Jika gagal, tetap gunakan ALL_ROUTES
+        console.error("MobileNav: Failed to fetch role:", error);
       }
     };
     fetchRole();
