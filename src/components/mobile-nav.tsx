@@ -88,11 +88,11 @@ export function MobileNav() {
       {/* Sidebar Panel */}
       <div
         className={cn(
-          "fixed inset-y-0 left-0 z-50 w-64 bg-card border-r border-border transform transition-all duration-300 ease-out shadow-xl",
+          "fixed inset-y-0 left-0 z-50 w-64 bg-card border-r border-border transform transition-all duration-300 ease-out shadow-xl flex flex-col",
           open ? "translate-x-0" : "-translate-x-full"
         )}
       >
-        <div className="flex h-16 items-center justify-between border-b border-border px-4">
+        <div className="flex h-16 items-center justify-between border-b border-border px-4 shrink-0">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-lg">
               N
@@ -107,7 +107,7 @@ export function MobileNav() {
           </Button>
         </div>
 
-        <nav className="space-y-1 p-3">
+        <nav className="flex-1 overflow-y-auto space-y-1 p-3">
           {navItems.map((item, index) => {
             const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
             return (
