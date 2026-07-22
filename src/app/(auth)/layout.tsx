@@ -5,24 +5,28 @@ export default function AuthLayout({
 }) {
   return (
     <div className="flex min-h-svh">
-      <div className="hidden md:flex md:w-1/2 bg-gradient-to-br from-primary via-blue-700 to-indigo-900 items-center justify-center p-12 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-50" />
+      <div className="hidden md:flex md:w-[45%] bg-gradient-to-br from-primary/90 via-primary to-[#003d8a] items-center justify-center p-12 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:3rem_3rem]" />
+        <div className="absolute top-0 -left-40 w-[500px] h-[500px] rounded-full bg-white/5 blur-[120px]" />
+        <div className="absolute -bottom-40 -right-40 w-[500px] h-[500px] rounded-full bg-blue-300/5 blur-[120px]" />
         <div className="relative z-10 text-center">
-          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-white/15 backdrop-blur-sm text-white font-bold text-3xl shadow-2xl">
-            N
+          <div className="mx-auto mb-8 flex h-16 w-16 items-center justify-center rounded-2xl bg-white/15 backdrop-blur-sm text-white shadow-2xl">
+            <span className="text-2xl font-bold">N</span>
           </div>
-          <h1 className="text-4xl font-bold text-white mb-3 tracking-tight">Nexus CRM</h1>
-          <p className="text-lg text-white/70 max-w-sm">Kelola pelanggan, prospek, dan penjualan dalam satu platform terpadu</p>
+          <h2 className="text-white text-[1.75rem] font-bold tracking-tight mb-4">Nexus CRM</h2>
+          <p className="text-white/60 text-[0.9rem] leading-relaxed max-w-[280px] mx-auto">
+            Kelola pelanggan, prospek, dan penjualan tim Anda dalam satu platform.
+          </p>
         </div>
       </div>
 
-      <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-primary/[0.03] via-background to-primary/[0.05] md:bg-background min-h-svh px-4 py-8">
+      <div className="flex-1 flex items-center justify-center bg-[#f9fafb] min-h-svh px-6 md:px-10 py-8">
         <div className="w-full max-w-sm">
-          <div className="md:hidden text-center mb-8">
-            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-blue-600 text-white font-bold text-xl shadow-lg">
+          <div className="md:hidden flex items-center gap-3 mb-10">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-white text-sm font-bold">
               N
             </div>
-            <h1 className="text-xl font-bold tracking-tight">Nexus CRM</h1>
+            <span className="text-[0.95rem] font-semibold tracking-tight text-[#111827]">Nexus CRM</span>
           </div>
           {children}
         </div>
