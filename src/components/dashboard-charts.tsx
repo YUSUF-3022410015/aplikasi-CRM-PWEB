@@ -34,12 +34,13 @@ interface CustomerByStatus {
   value: number;
 }
 
-const COLORS = ["#0058be", "#006947", "#4edea3", "#ba1a1a", "#8b5cf6", "#06b6d4"];
+const COLORS = ["#2563eb", "#059669", "#34d399", "#dc2626", "#8b5cf6", "#06b6d4"];
 
 const tooltipStyle = {
-  backgroundColor: "#ffffff",
-  border: "1px solid #c2c6d6",
-  borderRadius: "8px",
+  backgroundColor: "var(--card)",
+  border: "1px solid var(--border)",
+  borderRadius: "0.75rem",
+  boxShadow: "0 10px 30px -10px rgba(0,0,0,0.1)",
 };
 
 interface DashboardChartsProps {
@@ -66,42 +67,44 @@ export function DashboardCharts({ data, activitiesByType = [], customersByStatus
   const { t } = useLanguage();
 
   return (
-    <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2">
+    <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
       {/* Revenue Chart */}
-      <Card className="md:col-span-2 border-border/50 shadow-sm">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-base sm:text-lg font-semibold">{t("dashboard.monthlyRevenue")}</CardTitle>
+      <Card className="md:col-span-2 border-border/50 shadow-sm overflow-hidden">
+        <CardHeader className="pb-3 border-b border-border/50">
+          <CardTitle className="text-base sm:text-lg font-bold">{t("dashboard.monthlyRevenue")}</CardTitle>
         </CardHeader>
-        <CardContent className="px-2 sm:px-6">
-          <ResponsiveContainer width="100%" height={250}>
+        <CardContent className="px-2 sm:px-6 pt-4">
+          <ResponsiveContainer width="100%" height={280}>
             <BarChart data={data} margin={{ top: 5, right: 10, left: -10, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5eeff" />
-              <XAxis dataKey="name" fontSize={11} stroke="#424754" tick={{ fontSize: 11 }} />
-              <YAxis fontSize={11} stroke="#424754" tick={{ fontSize: 11 }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" strokeOpacity={0.5} />
+              <XAxis dataKey="name" fontSize={12} stroke="var(--muted-foreground)" tick={{ fontSize: 12 }} />
+              <YAxis fontSize={12} stroke="var(--muted-foreground)" tick={{ fontSize: 12 }} />
               <Tooltip contentStyle={tooltipStyle} />
-              <Bar dataKey="revenue" fill="#0058be" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="revenue" fill="var(--chart-1)" radius={[6, 6, 0, 0]} maxBarSize={40} />
             </BarChart>
           </ResponsiveContainer>
         </CardContent>
       </Card>
 
       {/* Deals Chart */}
-      <Card className="md:col-span-2 border-border/50 shadow-sm">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-base sm:text-lg font-semibold">{t("dashboard.monthlyDeals")}</CardTitle>
+      <Card className="md:col-span-2 border-border/50 shadow-sm overflow-hidden">
+        <CardHeader className="pb-3 border-b border-border/50">
+          <CardTitle className="text-base sm:text-lg font-bold">{t("dashboard.monthlyDeals")}</CardTitle>
         </CardHeader>
-        <CardContent className="px-2 sm:px-6">
-          <ResponsiveContainer width="100%" height={250}>
+        <CardContent className="px-2 sm:px-6 pt-4">
+          <ResponsiveContainer width="100%" height={280}>
             <LineChart data={data} margin={{ top: 5, right: 10, left: -10, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5eeff" />
-              <XAxis dataKey="name" fontSize={11} stroke="#424754" tick={{ fontSize: 11 }} />
-              <YAxis fontSize={11} stroke="#424754" tick={{ fontSize: 11 }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" strokeOpacity={0.5} />
+              <XAxis dataKey="name" fontSize={12} stroke="var(--muted-foreground)" tick={{ fontSize: 12 }} />
+              <YAxis fontSize={12} stroke="var(--muted-foreground)" tick={{ fontSize: 12 }} />
               <Tooltip contentStyle={tooltipStyle} />
               <Line
                 type="monotone"
                 dataKey="deals"
-                stroke="#006947"
-                strokeWidth={2}
+                stroke="var(--chart-2)"
+                strokeWidth={2.5}
+                dot={{ fill: "var(--chart-2)", strokeWidth: 2, r: 4 }}
+                activeDot={{ r: 6, strokeWidth: 2 }}
                 name={t("common.dealsWon")}
               />
               <Legend content={<CustomLegend />} />
@@ -112,12 +115,12 @@ export function DashboardCharts({ data, activitiesByType = [], customersByStatus
 
       {/* Activities by Type */}
       {activitiesByType.length > 0 && (
-        <Card className="border-border/50 shadow-sm">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base sm:text-lg font-semibold">{t("dashboard.activitiesByType")}</CardTitle>
+        <Card className="border-border/50 shadow-sm overflow-hidden">
+          <CardHeader className="pb-3 border-b border-border/50">
+            <CardTitle className="text-base sm:text-lg font-bold">{t("dashboard.activitiesByType")}</CardTitle>
           </CardHeader>
-          <CardContent className="px-2 sm:px-6">
-            <ResponsiveContainer width="100%" height={220}>
+          <CardContent className="px-2 sm:px-6 pt-4">
+            <ResponsiveContainer width="100%" height={240}>
               <PieChart>
                 <Pie
                   data={activitiesByType}
@@ -125,9 +128,10 @@ export function DashboardCharts({ data, activitiesByType = [], customersByStatus
                   nameKey="name"
                   cx="50%"
                   cy="45%"
-                  outerRadius="70%"
-                  innerRadius="35%"
-                  paddingAngle={2}
+                  outerRadius={80}
+                  innerRadius={40}
+                  paddingAngle={3}
+                  strokeWidth={0}
                 >
                   {activitiesByType.map((_, i) => (
                     <Cell key={i} fill={COLORS[i % COLORS.length]} />
@@ -143,12 +147,12 @@ export function DashboardCharts({ data, activitiesByType = [], customersByStatus
 
       {/* Customer by Status */}
       {customersByStatus.length > 0 && (
-        <Card className="border-border/50 shadow-sm">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base sm:text-lg font-semibold">{t("dashboard.customersByStatus")}</CardTitle>
+        <Card className="border-border/50 shadow-sm overflow-hidden">
+          <CardHeader className="pb-3 border-b border-border/50">
+            <CardTitle className="text-base sm:text-lg font-bold">{t("dashboard.customersByStatus")}</CardTitle>
           </CardHeader>
-          <CardContent className="px-2 sm:px-6">
-            <ResponsiveContainer width="100%" height={220}>
+          <CardContent className="px-2 sm:px-6 pt-4">
+            <ResponsiveContainer width="100%" height={240}>
               <PieChart>
                 <Pie
                   data={customersByStatus}
@@ -156,9 +160,10 @@ export function DashboardCharts({ data, activitiesByType = [], customersByStatus
                   nameKey="name"
                   cx="50%"
                   cy="45%"
-                  outerRadius="70%"
-                  innerRadius="35%"
-                  paddingAngle={2}
+                  outerRadius={80}
+                  innerRadius={40}
+                  paddingAngle={3}
+                  strokeWidth={0}
                 >
                   {customersByStatus.map((_, i) => (
                     <Cell key={i} fill={COLORS[i % COLORS.length]} />

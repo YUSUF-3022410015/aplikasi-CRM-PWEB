@@ -91,27 +91,27 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="space-y-4 animate-fade-in">
+      <div className="space-y-6 animate-fade-in">
         <div>
-          <div className="h-8 w-48 bg-muted rounded-md animate-pulse-soft" />
-          <div className="h-4 w-64 bg-muted rounded-md animate-pulse-soft mt-2" />
+          <div className="h-8 w-48 bg-gradient-to-r from-muted to-muted/50 rounded-lg animate-pulse-soft" />
+          <div className="h-4 w-64 bg-gradient-to-r from-muted to-muted/50 rounded-lg animate-pulse-soft mt-2" />
         </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="rounded-xl border bg-card p-5 space-y-4">
+            <div key={i} className="rounded-xl border bg-card p-5 space-y-4 shadow-sm">
               <div className="flex items-center justify-between">
-                <div className="h-4 w-24 bg-muted rounded-md animate-pulse-soft" />
-                <div className="h-10 w-10 rounded-full bg-muted animate-pulse-soft" />
+                <div className="h-4 w-24 bg-gradient-to-r from-muted to-muted/50 rounded-md animate-pulse-soft" />
+                <div className="h-10 w-10 rounded-xl bg-gradient-to-r from-muted to-muted/50 animate-pulse-soft" />
               </div>
-              <div className="h-8 w-20 bg-muted rounded-md animate-pulse-soft" />
+              <div className="h-8 w-20 bg-gradient-to-r from-muted to-muted/50 rounded-md animate-pulse-soft" />
             </div>
           ))}
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="rounded-xl border bg-card p-6">
-              <div className="h-4 w-32 bg-muted rounded-md animate-pulse-soft mb-4" />
-              <div className="h-48 w-full bg-muted rounded-lg animate-pulse-soft" />
+            <div key={i} className="rounded-xl border bg-card p-6 shadow-sm">
+              <div className="h-4 w-32 bg-gradient-to-r from-muted to-muted/50 rounded-md animate-pulse-soft mb-4" />
+              <div className="h-48 w-full bg-gradient-to-r from-muted to-muted/50 rounded-lg animate-pulse-soft" />
             </div>
           ))}
         </div>
@@ -120,22 +120,22 @@ export default function DashboardPage() {
   }
 
   const statCards = [
-    { title: t("dashboard.totalCustomers"), value: stats.totalCustomers, icon: Users, iconBg: "bg-primary/10", iconColor: "text-primary" },
-    { title: t("dashboard.newCustomers"), value: stats.newCustomers, icon: UserPlus, iconBg: "bg-tertiary/10", iconColor: "text-tertiary" },
-    { title: t("dashboard.revenue"), value: formatCurrency(stats.totalRevenue), icon: DollarSign, iconBg: "bg-primary/10", iconColor: "text-primary" },
-    { title: t("dashboard.dealsWon"), value: stats.dealsWon, icon: TrendingUp, iconBg: "bg-tertiary/10", iconColor: "text-tertiary" },
-    { title: t("dashboard.dealsLost"), value: stats.dealsLost, icon: TrendingDown, iconBg: "bg-destructive/10", iconColor: "text-destructive" },
-    { title: t("dashboard.followUpsToday"), value: stats.followUpsToday, icon: CalendarCheck, iconBg: "bg-tertiary/10", iconColor: "text-tertiary" },
-    { title: t("dashboard.followUpsOverdue"), value: stats.followUpsOverdue, icon: AlertTriangle, iconBg: "bg-destructive/10", iconColor: "text-destructive" },
-    { title: t("dashboard.pipelineValue"), value: formatCurrency(stats.pipelineValue), icon: Package, iconBg: "bg-primary/10", iconColor: "text-primary" },
+    { title: t("dashboard.totalCustomers"), value: stats.totalCustomers, icon: Users, gradient: "from-blue-500/10 to-blue-500/5", iconColor: "text-blue-600" },
+    { title: t("dashboard.newCustomers"), value: stats.newCustomers, icon: UserPlus, gradient: "from-emerald-500/10 to-emerald-500/5", iconColor: "text-emerald-600" },
+    { title: t("dashboard.revenue"), value: formatCurrency(stats.totalRevenue), icon: DollarSign, gradient: "from-violet-500/10 to-violet-500/5", iconColor: "text-violet-600" },
+    { title: t("dashboard.dealsWon"), value: stats.dealsWon, icon: TrendingUp, gradient: "from-emerald-500/10 to-emerald-500/5", iconColor: "text-emerald-600" },
+    { title: t("dashboard.dealsLost"), value: stats.dealsLost, icon: TrendingDown, gradient: "from-red-500/10 to-red-500/5", iconColor: "text-red-600" },
+    { title: t("dashboard.followUpsToday"), value: stats.followUpsToday, icon: CalendarCheck, gradient: "from-amber-500/10 to-amber-500/5", iconColor: "text-amber-600" },
+    { title: t("dashboard.followUpsOverdue"), value: stats.followUpsOverdue, icon: AlertTriangle, gradient: "from-red-500/10 to-red-500/5", iconColor: "text-red-600" },
+    { title: t("dashboard.pipelineValue"), value: formatCurrency(stats.pipelineValue), icon: Package, gradient: "from-blue-500/10 to-blue-500/5", iconColor: "text-blue-600" },
   ];
 
   return (
-    <div className="space-y-3 md:space-y-4">
+    <div className="space-y-6">
       {/* Page Header */}
-      <div>
+      <div className="animate-fade-in">
         <h1 className="text-2xl font-bold text-foreground md:text-3xl">{t("dashboard.title")}</h1>
-        <p className="text-muted-foreground mt-1">{t("dashboard.subtitle")}</p>
+        <p className="text-muted-foreground mt-1.5">{t("dashboard.subtitle")}</p>
       </div>
 
       {/* Stats Grid */}
@@ -143,17 +143,18 @@ export default function DashboardPage() {
         {statCards.map((stat, index) => (
           <Card
             key={stat.title}
-            className="hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 animate-slide-up"
-            style={{ animationDelay: `${index * 50}ms` }}
+            className="group hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 animate-slide-up border-border/50 overflow-hidden"
+            style={{ animationDelay: `${index * 60}ms` }}
           >
-            <CardContent className="p-3 sm:p-5">
+            <div className={`absolute inset-0 bg-gradient-to-br ${stat.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
+            <CardContent className="p-3 sm:p-5 relative">
               <div className="flex items-center justify-between mb-3 sm:mb-4">
-                <span className="text-xs sm:text-sm font-medium text-muted-foreground truncate">{stat.title}</span>
-                <div className={`p-1.5 sm:p-2.5 rounded-full ${stat.iconBg} shrink-0`}>
+                <span className="text-xs sm:text-sm font-semibold text-muted-foreground/80 truncate uppercase tracking-wider">{stat.title}</span>
+                <div className={`p-2 sm:p-2.5 rounded-xl bg-gradient-to-br ${stat.gradient} shrink-0 group-hover:scale-110 transition-transform duration-300`}>
                   <stat.icon className={`h-4 w-4 sm:h-5 sm:w-5 ${stat.iconColor}`} />
                 </div>
               </div>
-              <div className="text-xl sm:text-3xl font-bold text-foreground">{stat.value}</div>
+              <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground tracking-tight">{stat.value}</div>
             </CardContent>
           </Card>
         ))}
