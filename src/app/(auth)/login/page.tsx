@@ -39,116 +39,98 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="w-full max-w-sm mx-auto">
-      <div className="md:hidden text-center mb-10">
-        <div className="inline-flex items-center justify-center h-12 w-12 rounded-xl bg-primary text-primary-foreground font-bold text-lg mb-4">
+    <div>
+      <div className="lg:hidden flex flex-col items-center text-center mb-10">
+        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground font-bold text-lg shadow-md shadow-primary/20 mb-4">
           N
         </div>
         <h1 className="text-xl font-semibold tracking-tight text-foreground">Nexus CRM</h1>
       </div>
 
-      <div className="hidden md:flex items-center justify-center mb-12">
-        <div className="flex items-center gap-4">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground font-bold text-lg shadow-md shadow-primary/20">
-            N
-          </div>
-          <div>
-            <h1 className="text-xl font-semibold tracking-tight text-foreground">Nexus CRM</h1>
-            <p className="text-sm text-muted-foreground">Customer Relationship Management</p>
-          </div>
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h2 className="text-xl font-semibold tracking-tight text-foreground">{t("auth.login")}</h2>
+          <p className="text-sm text-muted-foreground mt-1">Selamat datang kembali</p>
         </div>
+        <button
+          type="button"
+          className="text-xs font-medium text-muted-foreground hover:text-foreground px-2 py-1.5 rounded-md hover:bg-accent transition-colors"
+          onClick={() => setLocale(locale === "id" ? "en" : "id")}
+        >
+          {locale === "id" ? "EN" : "ID"}
+        </button>
       </div>
 
-      <div className="bg-card border border-border rounded-xl shadow-sm">
-        <div className="p-6 pb-4 border-b border-border">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-base font-semibold text-foreground">{t("auth.login")}</h2>
-              <p className="text-sm text-muted-foreground mt-0.5">Selamat datang kembali</p>
-            </div>
+      {error && (
+        <div className="mb-6 rounded-lg bg-destructive/10 border border-destructive/20 px-4 py-3 text-sm text-destructive leading-relaxed">
+          {error}
+        </div>
+      )}
+
+      <form className="space-y-5">
+        <div className="space-y-1.5">
+          <label htmlFor="email" className="text-sm font-medium text-foreground">
+            {t("auth.email")}
+          </label>
+          <div className="relative">
+            <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+            <Input
+              id="email"
+              type="email"
+              placeholder="nama@perusahaan.com"
+              className="pl-9 h-11 text-sm bg-background border-border focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all rounded-lg"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              autoComplete="email"
+              required
+            />
+          </div>
+        </div>
+
+        <div className="space-y-1.5">
+          <label htmlFor="password" className="text-sm font-medium text-foreground">
+            {t("auth.password")}
+          </label>
+          <div className="relative">
+            <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+            <Input
+              id="password"
+              type={showPassword ? "text" : "password"}
+              placeholder="Masukkan kata sandi"
+              className="pl-9 pr-11 h-11 text-sm bg-background border-border focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all rounded-lg"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoComplete="current-password"
+              required
+            />
             <button
               type="button"
-              className="text-xs font-medium text-muted-foreground hover:text-foreground px-2 py-1.5 rounded-md hover:bg-muted transition-colors"
-              onClick={() => setLocale(locale === "id" ? "en" : "id")}
+              className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 flex items-center justify-center text-muted-foreground hover:text-foreground rounded-md hover:bg-accent transition-colors"
+              onClick={() => setShowPassword(!showPassword)}
+              tabIndex={-1}
             >
-              {locale === "id" ? "EN" : "ID"}
+              {showPassword ? (
+                <EyeOff className="h-4 w-4" />
+              ) : (
+                <Eye className="h-4 w-4" />
+              )}
             </button>
           </div>
         </div>
 
-        <div className="p-6">
-          {error && (
-            <div className="mb-5 rounded-lg bg-destructive/10 border border-destructive/20 px-3.5 py-2.5 text-sm text-destructive leading-relaxed">
-              {error}
-            </div>
+        <Button type="submit" className="w-full h-11 rounded-lg text-sm font-medium shadow-sm" disabled={loading}>
+          {loading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              {t("common.loading")}
+            </>
+          ) : (
+            t("auth.login")
           )}
+        </Button>
+      </form>
 
-          <form onSubmit={handleLogin} className="space-y-4">
-            <div className="space-y-1.5">
-              <label htmlFor="email" className="text-sm font-medium text-foreground">
-                {t("auth.email")}
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground pointer-events-none" />
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="nama@perusahaan.com"
-                  className="pl-9 h-10 text-sm bg-background border-border focus:border-primary focus:ring-1 focus:ring-primary/20 transition-colors"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  autoComplete="email"
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="space-y-1.5">
-              <label htmlFor="password" className="text-sm font-medium text-foreground">
-                {t("auth.password")}
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground pointer-events-none" />
-                <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Masukkan kata sandi"
-                  className="pl-9 pr-10 h-10 text-sm bg-background border-border focus:border-primary focus:ring-1 focus:ring-primary/20 transition-colors"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  autoComplete="current-password"
-                  required
-                />
-                <button
-                  type="button"
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1 rounded-md hover:bg-muted transition-colors"
-                  onClick={() => setShowPassword(!showPassword)}
-                  tabIndex={-1}
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
-                </button>
-              </div>
-            </div>
-
-            <Button type="submit" className="w-full h-10 text-sm font-medium" disabled={loading}>
-              {loading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {t("common.loading")}
-                </>
-              ) : (
-                t("auth.login")
-              )}
-            </Button>
-          </form>
-        </div>
-      </div>
-
-      <p className="text-center text-xs text-muted-foreground mt-8">
+      <p className="text-center text-xs text-muted-foreground mt-10">
         &copy; {new Date().getFullYear()} Nexus CRM
       </p>
     </div>
