@@ -58,7 +58,7 @@ export default function PipelinePage() {
         .select("*, customer:customers(name)")
         .is("deleted_at", null)
         .order("created_at", { ascending: false }),
-      supabase.from("customers").select("id, name").is("deleted_at", null).order("name"),
+      supabase.from("customers").select("*").is("deleted_at", null).order("name"),
     ]);
     setDeals(dRes.data || []);
     setCustomers(cRes.data || []);
