@@ -50,6 +50,13 @@ export default function ActivityLogPage() {
         .order("created_at", { ascending: false })
         .limit(50);
 
+      // Fetch audit logs (FR7)
+      const { data: auditLogs } = await supabase
+        .from("audit_logs")
+        .select("*, user:profiles(fullname)")
+        .order("created_at", { ascending: false })
+        .limit(50);
+
       // Combine and format all activities
       const combined = [
         // Activities
@@ -95,6 +102,18 @@ export default function ActivityLogPage() {
           user: "",
           created_at: n.created_at,
         })),
+        // Audit Logs (FR7)
+        ...(auditLogs || []).map((a) => {
+          const usr = (a.user ?? null) as unknown as { fullname: string } | null;
+          return {
+            id: `audit-${a.id}`,
+            type: `audit_${a.action}`,
+            description: `${a.action} ${a.table_name} - ID: ${a.record_id || "-"}`,
+            module: "audit",
+            user: usr?.fullname || "",
+            created_at: a.created_at,
+          };
+        }),
       ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
       setAllActivities(combined);
