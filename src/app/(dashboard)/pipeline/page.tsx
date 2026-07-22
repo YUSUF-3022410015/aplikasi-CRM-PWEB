@@ -52,17 +52,22 @@ export default function PipelinePage() {
 
   const fetchData = useCallback(async () => {
     setLoading(true);
-    const [dRes, cRes] = await Promise.all([
-      supabase
-        .from("deals")
-        .select("*, customer:customers(name)")
-        .is("deleted_at", null)
-        .order("created_at", { ascending: false }),
-      supabase.from("customers").select("*").is("deleted_at", null).order("name"),
-    ]);
-    setDeals(dRes.data || []);
-    setCustomers(cRes.data || []);
-    setLoading(false);
+    try {
+      const [dRes, cRes] = await Promise.all([
+        supabase
+          .from("deals")
+          .select("*, customer:customers(name)")
+          .is("deleted_at", null)
+          .order("created_at", { ascending: false }),
+        supabase.from("customers").select("*").is("deleted_at", null).order("name"),
+      ]);
+      setDeals(dRes.data || []);
+      setCustomers(cRes.data || []);
+    } catch (error) {
+      console.error("Failed to fetch pipeline data:", error);
+    } finally {
+      setLoading(false);
+    }
   }, [supabase]);
 
   useEffect(() => {

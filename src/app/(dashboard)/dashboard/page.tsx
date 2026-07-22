@@ -16,12 +16,13 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const fetchStats = async () => {
-      const [customersRes, activitiesRes, followupsRes, dealsRes] = await Promise.all([
-        supabase.from("customers").select("id, status, created_at", { count: "exact" }),
-        supabase.from("activities").select("id, type, created_at"),
-        supabase.from("followups").select("id, status, due_date"),
-        supabase.from("deals").select("id, value, pipeline_stage, status, created_at"),
-      ]);
+      try {
+        const [customersRes, activitiesRes, followupsRes, dealsRes] = await Promise.all([
+          supabase.from("customers").select("id, status, created_at", { count: "exact" }),
+          supabase.from("activities").select("id, type, created_at"),
+          supabase.from("followups").select("id, status, due_date"),
+          supabase.from("deals").select("id, value, pipeline_stage, status, created_at"),
+        ]);
 
       const customers = customersRes.data || [];
       const activities = activitiesRes.data || [];
@@ -84,6 +85,10 @@ export default function DashboardPage() {
         customersByStatus,
       });
       setLoading(false);
+      } catch (error) {
+        console.error("Failed to fetch dashboard stats:", error);
+        setLoading(false);
+      }
     };
 
     fetchStats();

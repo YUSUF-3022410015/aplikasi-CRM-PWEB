@@ -61,36 +61,41 @@ export default function CustomerDetailPage() {
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      const { data: cust } = await supabase
-        .from("customers")
-        .select("*")
-        .eq("id", id)
-        .single();
+      try {
+        const { data: cust } = await supabase
+          .from("customers")
+          .select("*")
+          .eq("id", id)
+          .single();
 
-      if (!cust) {
-        setCustomer(null);
+        if (!cust) {
+          setCustomer(null);
+          setLoading(false);
+          return;
+        }
+
+        setCustomer(cust);
+
+        const { data: acts } = await supabase
+          .from("activities")
+          .select("*, user:profiles(fullname)")
+          .eq("customer_id", id)
+          .order("created_at", { ascending: false });
+
+        setActivities(acts || []);
+
+        const { data: fups } = await supabase
+          .from("followups")
+          .select("*")
+          .eq("customer_id", id)
+          .order("due_date", { ascending: false });
+
+        setFollowups(fups || []);
+      } catch (error) {
+        console.error("Failed to fetch customer detail:", error);
+      } finally {
         setLoading(false);
-        return;
       }
-
-      setCustomer(cust);
-
-      const { data: acts } = await supabase
-        .from("activities")
-        .select("*, user:profiles(fullname)")
-        .eq("customer_id", id)
-        .order("created_at", { ascending: false });
-
-      setActivities(acts || []);
-
-      const { data: fups } = await supabase
-        .from("followups")
-        .select("*")
-        .eq("customer_id", id)
-        .order("due_date", { ascending: false });
-
-      setFollowups(fups || []);
-      setLoading(false);
     };
 
     fetchData();

@@ -12,9 +12,10 @@ export default function ActivityLogPage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const supabase = createClient();
-      // Fetch all activities with user info
-      const { data: activities } = await supabase
+      try {
+        const supabase = createClient();
+        // Fetch all activities with user info
+        const { data: activities } = await supabase
         .from("activities")
         .select(`
           id,
@@ -117,7 +118,11 @@ export default function ActivityLogPage() {
       ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
       setAllActivities(combined);
-      setLoading(false);
+      } catch (error) {
+        console.error("Failed to fetch activity log:", error);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchData();

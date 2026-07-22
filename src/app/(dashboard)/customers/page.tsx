@@ -69,29 +69,34 @@ export default function CustomersPage() {
 
   const fetchCustomers = useCallback(async () => {
     setLoading(true);
-    let query = supabase
-      .from("customers")
-      .select("*", { count: "exact" })
-      .is("deleted_at", null)
-      .order("created_at", { ascending: false });
+    try {
+      let query = supabase
+        .from("customers")
+        .select("*", { count: "exact" })
+        .is("deleted_at", null)
+        .order("created_at", { ascending: false });
 
-    if (search) {
-      const safeSearch = search.replace(/[%_]/g, (m) => `\\${m}`);
-      query = query.or(`name.ilike.%${safeSearch}%,company.ilike.%${safeSearch}%,email.ilike.%${safeSearch}%`);
+      if (search) {
+        const safeSearch = search.replace(/[%_]/g, (m) => `\\${m}`);
+        query = query.or(`name.ilike.%${safeSearch}%,company.ilike.%${safeSearch}%,email.ilike.%${safeSearch}%`);
+      }
+
+      if (statusFilter !== "all") {
+        query = query.eq("status", statusFilter);
+      }
+
+      const from = (page - 1) * limit;
+      const to = from + limit - 1;
+
+      const { data, count } = await query.range(from, to);
+
+      setCustomers(data || []);
+      setTotal(count || 0);
+    } catch (error) {
+      console.error("Failed to fetch customers:", error);
+    } finally {
+      setLoading(false);
     }
-
-    if (statusFilter !== "all") {
-      query = query.eq("status", statusFilter);
-    }
-
-    const from = (page - 1) * limit;
-    const to = from + limit - 1;
-
-    const { data, count } = await query.range(from, to);
-
-    setCustomers(data || []);
-    setTotal(count || 0);
-    setLoading(false);
   }, [search, statusFilter, page, supabase]);
 
   useEffect(() => {

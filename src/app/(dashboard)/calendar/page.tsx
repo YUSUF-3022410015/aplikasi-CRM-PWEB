@@ -12,17 +12,22 @@ export default function CalendarPage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const supabase = createClient();
-      const { data } = await supabase
-        .from("followups")
-        .select(`
-          *,
-          customer:customers(name)
-        `)
-        .order("due_date", { ascending: true });
+      try {
+        const supabase = createClient();
+        const { data } = await supabase
+          .from("followups")
+          .select(`
+            *,
+            customer:customers(name)
+          `)
+          .order("due_date", { ascending: true });
 
-      setFollowUps(data || []);
-      setLoading(false);
+        setFollowUps(data || []);
+      } catch (error) {
+        console.error("Failed to fetch calendar data:", error);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchData();

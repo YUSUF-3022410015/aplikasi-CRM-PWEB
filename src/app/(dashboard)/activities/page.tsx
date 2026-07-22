@@ -46,13 +46,18 @@ export default function ActivitiesPage() {
 
   const fetchActivities = useCallback(async () => {
     setLoading(true);
-    const { data } = await supabase
-      .from("activities")
-      .select("*, customer:customers(name), user:profiles(fullname)")
-      .order("created_at", { ascending: false })
-      .limit(50);
-    setActivities(data || []);
-    setLoading(false);
+    try {
+      const { data } = await supabase
+        .from("activities")
+        .select("*, customer:customers(name), user:profiles(fullname)")
+        .order("created_at", { ascending: false })
+        .limit(50);
+      setActivities(data || []);
+    } catch (error) {
+      console.error("Failed to fetch activities:", error);
+    } finally {
+      setLoading(false);
+    }
   }, [supabase]);
 
   useEffect(() => {

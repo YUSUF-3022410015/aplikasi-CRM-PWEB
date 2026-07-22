@@ -16,14 +16,19 @@ export default function EditCustomerPage() {
 
   useEffect(() => {
     const fetchCustomer = async () => {
-      const supabase = createClient();
-      const { data } = await supabase
-        .from("customers")
-        .select("*")
-        .eq("id", id)
-        .single();
-      setCustomer(data);
-      setLoading(false);
+      try {
+        const supabase = createClient();
+        const { data } = await supabase
+          .from("customers")
+          .select("*")
+          .eq("id", id)
+          .single();
+        setCustomer(data);
+      } catch (error) {
+        console.error("Failed to fetch customer:", error);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchCustomer();
   }, [id]);

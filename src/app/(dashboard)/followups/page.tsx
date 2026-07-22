@@ -68,13 +68,18 @@ export default function FollowUpsPage() {
 
   const fetchData = useCallback(async () => {
     setLoading(true);
-    const [fRes, cRes] = await Promise.all([
-      supabase.from("followups").select("*, customer:customers(name)").order("due_date", { ascending: true }),
-      supabase.from("customers").select("id, name").order("name"),
-    ]);
-    setFollowups(fRes.data || []);
-    setCustomers(cRes.data || []);
-    setLoading(false);
+    try {
+      const [fRes, cRes] = await Promise.all([
+        supabase.from("followups").select("*, customer:customers(name)").order("due_date", { ascending: true }),
+        supabase.from("customers").select("id, name").order("name"),
+      ]);
+      setFollowups(fRes.data || []);
+      setCustomers(cRes.data || []);
+    } catch (error) {
+      console.error("Failed to fetch followups:", error);
+    } finally {
+      setLoading(false);
+    }
   }, [supabase]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
@@ -225,7 +230,7 @@ export default function FollowUpsPage() {
                 ) : (
                   followups.map((f) => {
                     const cfg = getStatusConfig()[f.status] || getStatusConfig().pending;
-                    const isOverdue = f.status === "pending" && f.due_date < today;
+                    const isOverdue = f.status === "pending" && new Date(f.due_date).toISOString().split("T")[0] < today;
                     return (
                       <TableRow key={f.id} className="hover:bg-muted/30 transition-colors group">
                         <TableCell className="font-medium max-w-[250px] truncate">{f.note || "-"}</TableCell>

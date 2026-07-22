@@ -29,20 +29,25 @@ export default function ProfilePage() {
 
   const fetchProfile = useCallback(async () => {
     setLoading(true);
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", user.id)
-        .single();
-      if (profile) {
-        setFullname(profile.fullname || "");
-        setEmail(profile.email || user.email || "");
-        setRole(profile.role || "");
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", user.id)
+          .single();
+        if (profile) {
+          setFullname(profile.fullname || "");
+          setEmail(profile.email || user.email || "");
+          setRole(profile.role || "");
+        }
       }
+    } catch (error) {
+      console.error("Failed to fetch profile:", error);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, [supabase]);
 
   useEffect(() => { fetchProfile(); }, [fetchProfile]);

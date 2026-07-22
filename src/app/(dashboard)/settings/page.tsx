@@ -56,13 +56,18 @@ export default function SettingsPage() {
 
   const fetchSettings = useCallback(async () => {
     setLoading(true);
-    const { data } = await supabase.from("settings").select("key, value");
-    if (data) {
-      const map: Record<string, string> = {};
-      data.forEach((s) => { map[s.key] = s.value; });
-      setValues(map);
+    try {
+      const { data } = await supabase.from("settings").select("key, value");
+      if (data) {
+        const map: Record<string, string> = {};
+        data.forEach((s) => { map[s.key] = s.value; });
+        setValues(map);
+      }
+    } catch (error) {
+      console.error("Failed to fetch settings:", error);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, [supabase]);
 
   useEffect(() => { fetchSettings(); }, [fetchSettings]);

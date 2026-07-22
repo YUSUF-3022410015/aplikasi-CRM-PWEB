@@ -48,12 +48,17 @@ export default function ProductsPage() {
 
   const fetchData = useCallback(async () => {
     setLoading(true);
-    const { data } = await supabase
-      .from("products")
-      .select("*")
-      .order("created_at", { ascending: false });
-    setProducts(data || []);
-    setLoading(false);
+    try {
+      const { data } = await supabase
+        .from("products")
+        .select("*")
+        .order("created_at", { ascending: false });
+      setProducts(data || []);
+    } catch (error) {
+      console.error("Failed to fetch products:", error);
+    } finally {
+      setLoading(false);
+    }
   }, [supabase]);
 
   useEffect(() => {
@@ -83,7 +88,7 @@ export default function ProductsPage() {
           message: `Produk ${form.name} telah diperbarui`,
           type: "activity_added",
           link: "/products",
-        }).maybeSingle();
+        });
       }
     } else {
       await supabase.from("products").insert(form);
@@ -94,7 +99,7 @@ export default function ProductsPage() {
           message: `Produk ${form.name} berhasil ditambahkan`,
           type: "activity_added",
           link: "/products",
-        }).maybeSingle();
+        });
       }
     }
     setDialogOpen(false);
@@ -112,7 +117,7 @@ export default function ProductsPage() {
         message: `Produk ${product.name} telah dihapus`,
         type: "activity_added",
         link: "/products",
-      }).maybeSingle();
+      });
     }
     fetchData();
   };

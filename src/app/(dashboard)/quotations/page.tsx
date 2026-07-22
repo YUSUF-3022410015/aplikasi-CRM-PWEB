@@ -80,15 +80,20 @@ export default function QuotationsPage() {
 
   const fetchData = useCallback(async () => {
     setLoading(true);
-    const [qRes, cRes, pRes] = await Promise.all([
-      supabase.from("quotations").select("*, customer:customers(name)").order("created_at", { ascending: false }),
-      supabase.from("customers").select("*").order("name"),
-      supabase.from("products").select("*").eq("status", "active").order("name"),
-    ]);
-    setQuotations(qRes.data || []);
-    setCustomers(cRes.data || []);
-    setProducts(pRes.data || []);
-    setLoading(false);
+    try {
+      const [qRes, cRes, pRes] = await Promise.all([
+        supabase.from("quotations").select("*, customer:customers(name)").order("created_at", { ascending: false }),
+        supabase.from("customers").select("*").order("name"),
+        supabase.from("products").select("*").eq("status", "active").order("name"),
+      ]);
+      setQuotations(qRes.data || []);
+      setCustomers(cRes.data || []);
+      setProducts(pRes.data || []);
+    } catch (error) {
+      console.error("Failed to fetch quotations:", error);
+    } finally {
+      setLoading(false);
+    }
   }, [supabase]);
 
   useEffect(() => { fetchData(); }, [fetchData]);

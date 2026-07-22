@@ -45,18 +45,19 @@ export default function ReportsPage() {
 
   const fetchData = useCallback(async () => {
     setLoading(true);
-    const [custRes, quotRes, actRes, fuRes, dealsRes] = await Promise.all([
-      supabase.from("customers").select("id, status"),
-      supabase.from("quotations").select("id, total, status, created_at"),
-      supabase.from("activities").select("id, type"),
-      supabase.from("followups").select("id, status"),
-      supabase.from("deals").select("id, value, pipeline_stage, status"),
-    ]);
+    try {
+      const [custRes, quotRes, actRes, fuRes, dealsRes] = await Promise.all([
+        supabase.from("customers").select("id, status"),
+        supabase.from("quotations").select("id, total, status, created_at"),
+        supabase.from("activities").select("id, type"),
+        supabase.from("followups").select("id, status"),
+        supabase.from("deals").select("id, value, pipeline_stage, status"),
+      ]);
 
-    const customers = custRes.data || [];
-    const quotations = quotRes.data || [];
-    const activities = actRes.data || [];
-    const followups = fuRes.data || [];
+      const customers = custRes.data || [];
+      const quotations = quotRes.data || [];
+      const activities = actRes.data || [];
+      const followups = fuRes.data || [];
     const deals = dealsRes.data || [];
 
     const wonQuotations = quotations.filter((q) => q.status === "approved");
@@ -100,8 +101,12 @@ export default function ReportsPage() {
       revenueByMonth,
       activitiesByType,
     });
-    setLoading(false);
-  }, [supabase]);
+    } catch (error) {
+      console.error("Failed to fetch reports:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [supabase, tArray]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
