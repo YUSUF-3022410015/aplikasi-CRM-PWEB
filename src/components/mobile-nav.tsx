@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -39,8 +40,13 @@ const allNavItems = [
 
 export function MobileNav() {
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
   const { t } = useLanguage();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Prevent body scroll when sidebar is open
   useEffect(() => {
@@ -57,23 +63,15 @@ export function MobileNav() {
     setOpen(false);
   }, [pathname]);
 
-  return (
-    <div className="md:hidden">
-      {/* Hamburger Button */}
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        className="inline-flex items-center justify-center rounded-md p-2 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-        aria-label="Open menu"
-      >
-        <Menu className="h-5 w-5" />
-      </button>
-
-      {/* Full-screen Backdrop */}
+  const sidebarContent = (
+    <>
+      {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/60"
         style={{
-          zIndex: 9998,
+          position: "fixed",
+          inset: 0,
+          backgroundColor: "rgba(0, 0, 0, 0.6)",
+          zIndex: 2147483640,
           opacity: open ? 1 : 0,
           pointerEvents: open ? "auto" : "none",
           transition: "opacity 0.25s ease-out",
@@ -83,59 +81,129 @@ export function MobileNav() {
 
       {/* Sidebar Panel */}
       <div
-        className="fixed top-0 left-0 bottom-0 w-[280px] bg-white dark:bg-slate-900 shadow-2xl"
         style={{
-          zIndex: 9999,
+          position: "fixed",
+          top: 0,
+          left: 0,
+          bottom: 0,
+          width: "280px",
+          backgroundColor: "#ffffff",
+          boxShadow: "4px 0 24px rgba(0, 0, 0, 0.15)",
+          zIndex: 2147483641,
           transform: open ? "translateX(0)" : "translateX(-100%)",
           transition: "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+          overflowY: "auto",
         }}
       >
         {/* Header */}
-        <div className="flex h-14 items-center justify-between border-b border-slate-200 dark:border-slate-700 px-4 bg-white dark:bg-slate-900">
-          <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-blue-700 text-white font-bold text-sm shrink-0">
+        <div style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          height: "56px",
+          padding: "0 16px",
+          borderBottom: "1px solid #e5e7eb",
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <div style={{
+              width: "36px",
+              height: "36px",
+              borderRadius: "12px",
+              background: "linear-gradient(135deg, #2563eb, #1d4ed8)",
+              color: "white",
+              fontWeight: "bold",
+              fontSize: "14px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+            }}>
               N
             </div>
-            <div className="min-w-0">
-              <h1 className="text-sm font-bold text-slate-900 dark:text-white truncate">Nexus CRM</h1>
-              <p className="text-[10px] text-slate-500 dark:text-slate-400">Enterprise Edition</p>
+            <div>
+              <div style={{ fontSize: "14px", fontWeight: "bold", color: "#0f172a" }}>Nexus CRM</div>
+              <div style={{ fontSize: "11px", color: "#64748b" }}>Enterprise Edition</div>
             </div>
           </div>
           <button
             type="button"
             onClick={() => setOpen(false)}
-            className="inline-flex items-center justify-center rounded-lg p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-800 transition-colors shrink-0"
-            aria-label="Close menu"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "36px",
+              height: "36px",
+              borderRadius: "8px",
+              border: "none",
+              background: "transparent",
+              cursor: "pointer",
+              color: "#64748b",
+            }}
           >
-            <X className="h-5 w-5" />
+            <X size={20} />
           </button>
         </div>
 
-        {/* Navigation Items - selalu tampilkan semua menu */}
-        <div className="overflow-y-auto" style={{ maxHeight: "calc(100vh - 56px)" }}>
-          <div className="p-3 space-y-1">
-            {allNavItems.map((item) => {
-              const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setOpen(false)}
-                  className={cn(
-                    "flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-150",
-                    isActive
-                      ? "bg-blue-600 text-white shadow-md"
-                      : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
-                  )}
-                >
-                  <item.icon className={cn("h-5 w-5 shrink-0", isActive && "text-white")} />
-                  <span className="truncate">{t(item.labelKey)}</span>
-                </Link>
-              );
-            })}
-          </div>
+        {/* Navigation Items */}
+        <div style={{ padding: "12px" }}>
+          {allNavItems.map((item) => {
+            const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setOpen(false)}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "12px",
+                  padding: "12px 16px",
+                  borderRadius: "12px",
+                  fontSize: "14px",
+                  fontWeight: 500,
+                  textDecoration: "none",
+                  marginBottom: "4px",
+                  backgroundColor: isActive ? "#2563eb" : "transparent",
+                  color: isActive ? "#ffffff" : "#475569",
+                  boxShadow: isActive ? "0 4px 12px rgba(37, 99, 235, 0.3)" : "none",
+                }}
+              >
+                <Icon size={20} style={{ flexShrink: 0 }} />
+                <span>{t(item.labelKey)}</span>
+              </Link>
+            );
+          })}
         </div>
       </div>
+    </>
+  );
+
+  return (
+    <div className="md:hidden">
+      {/* Hamburger Button */}
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "8px",
+          borderRadius: "6px",
+          border: "none",
+          background: "transparent",
+          cursor: "pointer",
+          color: "#64748b",
+        }}
+        aria-label="Open menu"
+      >
+        <Menu size={20} />
+      </button>
+
+      {/* Render sidebar via Portal to escape navbar stacking context */}
+      {mounted && createPortal(sidebarContent, document.body)}
     </div>
   );
 }
