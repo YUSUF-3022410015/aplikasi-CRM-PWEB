@@ -151,13 +151,13 @@ export default function FollowUpsPage() {
   const doneCount = followups.filter((f) => f.status === "done").length;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">{t("followups.title")}</h1>
-          <p className="text-muted-foreground">{t("followups.subtitle2")}</p>
+          <h1 className="text-2xl font-bold tracking-tight md:text-3xl">{t("followups.title")}</h1>
+          <p className="text-muted-foreground mt-1.5">{t("followups.subtitle2")}</p>
         </div>
-        <Button onClick={openCreate} className="self-start">
+        <Button onClick={openCreate} className="shadow-sm">
           <Plus className="mr-2 h-4 w-4" />
           {t("followups.addFollowup")}
         </Button>
@@ -165,83 +165,69 @@ export default function FollowUpsPage() {
 
       {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-3">
-        <Card className="hover:shadow-md transition-shadow">
-          <CardContent className="p-5">
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-sm font-medium text-muted-foreground">{t("followups.pending")}</span>
-              <div className="p-2.5 rounded-full bg-tertiary/10">
-                <CalendarCheck className="h-5 w-5 text-tertiary" />
+        {[
+          { label: t("followups.pending"), value: pendingCount, gradient: "from-amber-500/10 to-amber-500/5", iconColor: "text-amber-600" },
+          { label: t("followups.overdue"), value: overdueCount, gradient: "from-red-500/10 to-red-500/5", iconColor: "text-red-600" },
+          { label: t("followups.completed"), value: doneCount, gradient: "from-emerald-500/10 to-emerald-500/5", iconColor: "text-emerald-600" },
+        ].map((s, i) => (
+          <Card key={s.label} className="group hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 border-border/50 overflow-hidden" style={{ animationDelay: `${i * 60}ms` }}>
+            <div className={`absolute inset-0 bg-gradient-to-br ${s.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
+            <CardContent className="p-5 relative">
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-sm font-semibold text-muted-foreground/80 uppercase tracking-wider">{s.label}</span>
+                <div className="p-2.5 rounded-xl bg-gradient-to-br ${s.gradient} group-hover:scale-110 transition-transform duration-300">
+                  <CalendarCheck className={`h-5 w-5 ${s.iconColor}`} />
+                </div>
               </div>
-            </div>
-            <div className="text-3xl font-bold text-foreground">{pendingCount}</div>
-          </CardContent>
-        </Card>
-        <Card className="hover:shadow-md transition-shadow">
-          <CardContent className="p-5">
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-sm font-medium text-muted-foreground">{t("followups.overdue")}</span>
-              <div className="p-2.5 rounded-full bg-destructive/10">
-                <CalendarCheck className="h-5 w-5 text-destructive" />
-              </div>
-            </div>
-            <div className="text-3xl font-bold text-foreground">{overdueCount}</div>
-          </CardContent>
-        </Card>
-        <Card className="hover:shadow-md transition-shadow">
-          <CardContent className="p-5">
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-sm font-medium text-muted-foreground">{t("followups.completed")}</span>
-              <div className="p-2.5 rounded-full bg-tertiary/10">
-                <CalendarCheck className="h-5 w-5 text-tertiary" />
-              </div>
-            </div>
-            <div className="text-3xl font-bold text-foreground">{doneCount}</div>
-          </CardContent>
-        </Card>
+              <div className="text-3xl font-bold text-foreground">{s.value}</div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>{t("followups.allFollowups")}</CardTitle>
+      <Card className="border-border/50 shadow-sm overflow-hidden">
+        <CardHeader className="border-b border-border/50 pb-3">
+          <CardTitle className="text-base font-bold">{t("followups.allFollowups")}</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="rounded-md border overflow-x-auto">
+        <CardContent className="p-0">
+          <div className="overflow-x-auto">
             <Table className="min-w-[600px]">
               <TableHeader>
-                <TableRow>
-                  <TableHead>{t("followups.note")}</TableHead>
-                  <TableHead>{t("followups.customer")}</TableHead>
-                  <TableHead>{t("followups.dueDate")}</TableHead>
-                  <TableHead>{t("followups.status")}</TableHead>
-                  <TableHead className="w-[120px]">{t("followups.actions")}</TableHead>
+                <TableRow className="bg-muted/50">
+                  <TableHead className="font-semibold text-xs uppercase tracking-wider">{t("followups.note")}</TableHead>
+                  <TableHead className="font-semibold text-xs uppercase tracking-wider">{t("followups.customer")}</TableHead>
+                  <TableHead className="font-semibold text-xs uppercase tracking-wider">{t("followups.dueDate")}</TableHead>
+                  <TableHead className="font-semibold text-xs uppercase tracking-wider">{t("followups.status")}</TableHead>
+                  <TableHead className="w-[120px] font-semibold text-xs uppercase tracking-wider">{t("followups.actions")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {loading ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="h-24 text-center">{t("common.loading")}</TableCell>
+                    <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">{t("common.loading")}</TableCell>
                   </TableRow>
                 ) : followups.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="h-24 text-center">{t("followups.empty")}</TableCell>
+                    <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">{t("followups.empty")}</TableCell>
                   </TableRow>
                 ) : (
                   followups.map((f) => {
                     const cfg = getStatusConfig()[f.status] || getStatusConfig().pending;
                     const isOverdue = f.status === "pending" && f.due_date < today;
                     return (
-                      <TableRow key={f.id}>
+                      <TableRow key={f.id} className="hover:bg-muted/30 transition-colors group">
                         <TableCell className="font-medium max-w-[250px] truncate">{f.note || "-"}</TableCell>
-                        <TableCell>{f.customer?.name || "-"}</TableCell>
+                        <TableCell className="text-muted-foreground">{f.customer?.name || "-"}</TableCell>
                         <TableCell>
-                          <span className={isOverdue ? "text-red-600 font-medium" : ""}>
+                          <span className={isOverdue ? "text-red-600 font-semibold" : "text-muted-foreground"}>
+                            {isOverdue && <span className="inline-block h-2 w-2 rounded-full bg-red-500 mr-1.5 animate-pulse-soft" />}
                             {formatDate(f.due_date)}
                           </span>
                         </TableCell>
                         <TableCell>
                           <Select value={f.status} onValueChange={(v) => handleStatusChange(f.id, v)}>
-                            <SelectTrigger className="w-[110px] h-8 text-xs">
-                              <Badge variant={cfg.variant} className="text-xs">{cfg.label}</Badge>
+                            <SelectTrigger className="w-[110px] h-8 text-xs shadow-none">
+                              <Badge variant={cfg.variant} className="text-xs font-medium">{cfg.label}</Badge>
                             </SelectTrigger>
                             <SelectContent>
                               <SelectItem value="pending">{t("followups.pending")}</SelectItem>
@@ -251,11 +237,11 @@ export default function FollowUpsPage() {
                           </Select>
                         </TableCell>
                         <TableCell>
-                          <div className="flex gap-1">
-                            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(f)}>
+                          <div className="flex gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
+                            <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-primary/10 hover:text-primary" onClick={() => openEdit(f)}>
                               <Pencil className="h-4 w-4" />
                             </Button>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => setDeleteId(f.id)}>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive" onClick={() => setDeleteId(f.id)}>
                               <Trash2 className="h-4 w-4" />
                             </Button>
                           </div>
@@ -272,15 +258,15 @@ export default function FollowUpsPage() {
 
       {/* Dialog Tambah/Edit */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>{editItem ? t("followups.editFollowup") : t("followups.addFollowup")}</DialogTitle>
+            <DialogTitle className="text-lg">{editItem ? t("followups.editFollowup") : t("followups.addFollowup")}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label>{t("followups.customer")} *</Label>
+              <Label className="text-sm font-semibold">{t("followups.customer")} *</Label>
               <Select value={form.customer_id} onValueChange={(v) => setForm({ ...form, customer_id: v })}>
-                <SelectTrigger><SelectValue placeholder={t("customers.title")} /></SelectTrigger>
+                <SelectTrigger className="bg-muted/50 focus:bg-background"><SelectValue placeholder={t("customers.title")} /></SelectTrigger>
                 <SelectContent>
                   {customers.map((c) => (
                     <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
@@ -289,17 +275,17 @@ export default function FollowUpsPage() {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label>{t("followups.dueDate")} *</Label>
-              <Input type="date" value={form.due_date} onChange={(e) => setForm({ ...form, due_date: e.target.value })} />
+              <Label className="text-sm font-semibold">{t("followups.dueDate")} *</Label>
+              <Input type="date" value={form.due_date} onChange={(e) => setForm({ ...form, due_date: e.target.value })} className="bg-muted/50 focus:bg-background" />
             </div>
             <div className="space-y-2">
-              <Label>{t("followups.note")}</Label>
-              <Textarea value={form.note} onChange={(e) => setForm({ ...form, note: e.target.value })} placeholder={t("followups.notePlaceholder")} rows={3} />
+              <Label className="text-sm font-semibold">{t("followups.note")}</Label>
+              <Textarea value={form.note} onChange={(e) => setForm({ ...form, note: e.target.value })} placeholder={t("followups.notePlaceholder")} rows={3} className="bg-muted/50 focus:bg-background resize-none" />
             </div>
             <div className="space-y-2">
-              <Label>{t("followups.status")}</Label>
+              <Label className="text-sm font-semibold">{t("followups.status")}</Label>
               <Select value={form.status} onValueChange={(v) => setForm({ ...form, status: v })}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectTrigger className="bg-muted/50 focus:bg-background"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="pending">{t("followups.pending")}</SelectItem>
                   <SelectItem value="done">{t("followups.done")}</SelectItem>
@@ -308,7 +294,7 @@ export default function FollowUpsPage() {
               </Select>
             </div>
           </div>
-          <DialogFooter>
+          <DialogFooter className="gap-2">
             <Button variant="outline" onClick={() => setDialogOpen(false)}>{t("common.cancel")}</Button>
             <Button onClick={handleSave} disabled={saving || !form.customer_id || !form.due_date}>
               {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -320,13 +306,16 @@ export default function FollowUpsPage() {
 
       {/* Dialog Hapus */}
       <Dialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-sm">
           <DialogHeader>
-            <DialogTitle>{t("followups.deleteTitle")}</DialogTitle>
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10 mb-2">
+              <Trash2 className="h-6 w-6 text-destructive" />
+            </div>
+            <DialogTitle className="text-center text-lg">{t("followups.deleteTitle")}</DialogTitle>
           </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleteId(null)}>{t("common.cancel")}</Button>
-            <Button variant="destructive" onClick={handleDelete}>{t("common.delete")}</Button>
+          <DialogFooter className="sm:justify-center gap-2">
+            <Button variant="outline" onClick={() => setDeleteId(null)} className="sm:w-28">{t("common.cancel")}</Button>
+            <Button variant="destructive" onClick={handleDelete} className="sm:w-28">{t("common.delete")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
