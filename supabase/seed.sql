@@ -1,46 +1,49 @@
 -- ============================================
 -- SEED DATA untuk CRM Application
 -- ============================================
--- CARA PAKAI:
--- 1. Jalankan: SELECT id, email FROM profiles; (untuk ambil ID user)
--- 2. Ganti ID di bawah dengan ID user asli kamu
--- 3. Jalankan seluruh script ini di SQL Editor
+-- Cara pakai: jalankan langsung di Supabase SQL Editor
+-- (tidak perlu ganti ID manual lagi)
 -- ============================================
-
--- ============================================
--- GANTI ID INI DENGAN ID USER ASLI KAMU
--- ============================================
--- Jalankan dulu: SELECT id FROM profiles LIMIT 1;
--- Lalu ganti ID di bawah ini:
 
 DO $$
 DECLARE
-  v_user_id UUID := 'd5e14b30-c796-4163-bc34-e22089c100d8';
+  v_user_id UUID;
 BEGIN
+  -- Ambil user admin pertama, atau user pertama sebagai fallback
+  SELECT id INTO v_user_id FROM profiles WHERE role = 'admin' LIMIT 1;
+  IF v_user_id IS NULL THEN
+    SELECT id INTO v_user_id FROM profiles ORDER BY created_at ASC LIMIT 1;
+  END IF;
+
+  -- Pastikan ada user reference
+  IF v_user_id IS NULL THEN
+    RAISE EXCEPTION 'Tidak ada user di tabel profiles. Buat user dulu via halaman Users.';
+  END IF;
+
   -- ============================================
   -- 1. CUSTOMERS (20 data sample)
   -- ============================================
-  INSERT INTO customers (id, name, company, email, phone, whatsapp, industry, city, address, website, source, status, pipeline_stage, created_at) VALUES
-  ('c0000001-0000-0000-0000-000000000001', 'Budi Santoso', 'PT Tech Indonesia', 'budi@techindonesia.com', '081234567890', '081234567890', 'Technology', 'Jakarta', 'Jl. Sudirman No. 100', 'www.techindonesia.com', 'Website', 'active', 'proposal', NOW() - INTERVAL '60 days'),
-  ('c0000001-0000-0000-0000-000000000002', 'Siti Rahayu', 'CV Digital Solusi', 'siti@digitalsolusi.co.id', '081234567891', '081234567891', 'Technology', 'Bandung', 'Jl. Asia Afrika No. 50', 'www.digitalsolusi.co.id', 'Referral', 'active', 'negotiation', NOW() - INTERVAL '55 days'),
-  ('c0000001-0000-0000-0000-000000000003', 'Ahmad Fauzi', 'PT Cloud Nusantara', 'ahmad@cloudnusantara.id', '081234567892', '081234567892', 'Technology', 'Surabaya', 'Jl. Pemuda No. 25', 'www.cloudnusantara.id', 'LinkedIn', 'lead', 'lead', NOW() - INTERVAL '45 days'),
-  ('c0000001-0000-0000-0000-000000000004', 'Dewi Lestari', 'PT Data Maju', 'dewi@datamaju.com', '081234567893', '081234567893', 'Technology', 'Jakarta', 'Jl. Gatot Subroto No. 30', 'www.datamaju.com', 'Google Ads', 'prospect', 'qualified', NOW() - INTERVAL '40 days'),
-  ('c0000001-0000-0000-0000-000000000005', 'Rizki Pratama', 'Startup Digital', 'rizki@startupdigital.io', '081234567894', '081234567894', 'Technology', 'Yogyakarta', 'Jl. Malioboro No. 10', 'www.startupdigital.io', 'Event', 'active', 'contacted', NOW() - INTERVAL '35 days'),
-  ('c0000001-0000-0000-0000-000000000006', 'Hendra Wijaya', 'PT Manufacturing Jaya', 'hendra@mfgjaya.co.id', '081234567895', '081234567895', 'Manufacturing', 'Semarang', 'Jl. Industri No. 100', 'www.mfgjaya.co.id', 'Cold Call', 'active', 'meeting', NOW() - INTERVAL '30 days'),
-  ('c0000001-0000-0000-0000-000000000007', 'Putri Anggraini', 'CV Produksi Mandiri', 'putri@produksimandiri.com', '081234567896', '081234567896', 'Manufacturing', 'Medan', 'Jl. Pabrik No. 20', 'www.produksimandiri.com', 'Website', 'lead', 'lead', NOW() - INTERVAL '25 days'),
-  ('c0000001-0000-0000-0000-000000000008', 'Agus Setiawan', 'PT Fabrika Utama', 'agus@fabrikautama.id', '081234567897', '081234567897', 'Manufacturing', 'Surabaya', 'Jl. Rungkut No. 50', 'www.fabrikautama.id', 'Referral', 'prospect', 'proposal', NOW() - INTERVAL '20 days'),
-  ('c0000001-0000-0000-0000-000000000009', 'Maya Sari', 'PT Retail Modern', 'maya@retailmodern.co.id', '081234567898', '081234567898', 'Retail', 'Jakarta', 'Jl. Thamrin No. 45', 'www.retailmodern.co.id', 'Facebook', 'active', 'won', NOW() - INTERVAL '15 days'),
-  ('c0000001-0000-0000-0000-000000000010', 'Andi Kurniawan', 'Toko Bangunan Jaya', 'andi@tokobangunan.com', '081234567899', '081234567899', 'Retail', 'Bandung', 'Jl. Dago No. 75', 'www.tokobangunan.com', 'Walk-in', 'inactive', 'lost', NOW() - INTERVAL '10 days'),
-  ('c0000001-0000-0000-0000-000000000011', 'Dr. Sari Dewi', 'Klinik Sehat Selalu', 'sari@kliniksehat.co.id', '081234567900', '081234567900', 'Healthcare', 'Jakarta', 'Jl. Kesehatan No. 15', 'www.kliniksehat.co.id', 'Google Ads', 'active', 'qualified', NOW() - INTERVAL '50 days'),
-  ('c0000001-0000-0000-0000-000000000012', 'Bambang Hermanto', 'RS Medika Utama', 'bambang@rsmedika.co.id', '081234567901', '081234567901', 'Healthcare', 'Surabaya', 'Jl. Dharmawangsa No. 30', 'www.rsmedika.co.id', 'Referral', 'lead', 'lead', NOW() - INTERVAL '48 days'),
-  ('c0000001-0000-0000-0000-000000000013', 'Prof. Dr. Hadi', 'Universitas Nusantara', 'hadi@uninusantara.ac.id', '081234567902', '081234567902', 'Education', 'Yogyakarta', 'Jl. Kampus No. 1', 'www.uninusantara.ac.id', 'Event', 'active', 'contacted', NOW() - INTERVAL '52 days'),
-  ('c0000001-0000-0000-0000-000000000014', 'Rina Susanti', 'SMA Nusantara', 'rina@smanusantara.sch.id', '081234567903', '081234567903', 'Education', 'Bandung', 'Jl. Pendidikan No. 25', 'www.smanusantara.sch.id', 'Cold Call', 'prospect', 'meeting', NOW() - INTERVAL '38 days'),
-  ('c0000001-0000-0000-0000-000000000015', 'Indra Lesmana', 'PT Finance Sejahtera', 'indra@financesejahtera.co.id', '081234567904', '081234567904', 'Finance', 'Jakarta', 'Jl. Sudirman No. 200', 'www.financesejahtera.co.id', 'LinkedIn', 'active', 'negotiation', NOW() - INTERVAL '42 days'),
-  ('c0000001-0000-0000-0000-000000000016', 'Linda Hartono', 'Bank Digital Indonesia', 'linda@bankdigital.co.id', '081234567905', '081234567905', 'Finance', 'Surabaya', 'Jl. Basuki Rahmat No. 40', 'www.bankdigital.co.id', 'Website', 'lead', 'lead', NOW() - INTERVAL '28 days'),
-  ('c0000001-0000-0000-0000-000000000017', 'Hadi Purnomo', 'PT Properti Bersama', 'hadi@propertibersama.com', '081234567906', '081234567906', 'Real Estate', 'Jakarta', 'Jl. TB Simatupang No. 88', 'www.propertibersama.com', 'Google Ads', 'active', 'proposal', NOW() - INTERVAL '33 days'),
-  ('c0000001-0000-0000-0000-000000000018', 'Eka Putri', 'Griya Indah Property', 'eka@griyaindah.co.id', '081234567907', '081234567907', 'Real Estate', 'Bandung', 'Jl. Buah Batu No. 55', 'www.griyaindah.co.id', 'Referral', 'archived', 'lost', NOW() - INTERVAL '65 days'),
-  ('c0000001-0000-0000-0000-000000000019', 'Rudi Hartono', 'PT Mobil Sejahtera', 'rudi@mobilsejahtera.co.id', '081234567908', '081234567908', 'Automotive', 'Surabaya', 'Jl. Ahmad Yani No. 120', 'www.mobilsejahtera.co.id', 'Walk-in', 'active', 'qualified', NOW() - INTERVAL '18 days'),
-  ('c0000001-0000-0000-0000-000000000020', 'Yanti Sari', 'Bengkel Maju Jaya', 'yanti@bengkelmaju.com', '081234567909', '081234567909', 'Automotive', 'Medan', 'Jl. Pahlawan No. 35', 'www.bengkelmaju.com', 'Event', 'inactive', 'lead', NOW() - INTERVAL '58 days')
+  INSERT INTO customers (id, name, company, email, phone, whatsapp, industry, city, address, website, source, status, pipeline_stage, assigned_to, created_at) VALUES
+  ('c0000001-0000-0000-0000-000000000001', 'Budi Santoso', 'PT Tech Indonesia', 'budi@techindonesia.com', '081234567890', '081234567890', 'Technology', 'Jakarta', 'Jl. Sudirman No. 100', 'www.techindonesia.com', 'Website', 'active', 'proposal', v_user_id, NOW() - INTERVAL '60 days'),
+  ('c0000001-0000-0000-0000-000000000002', 'Siti Rahayu', 'CV Digital Solusi', 'siti@digitalsolusi.co.id', '081234567891', '081234567891', 'Technology', 'Bandung', 'Jl. Asia Afrika No. 50', 'www.digitalsolusi.co.id', 'Referral', 'active', 'negotiation', v_user_id, NOW() - INTERVAL '55 days'),
+  ('c0000001-0000-0000-0000-000000000003', 'Ahmad Fauzi', 'PT Cloud Nusantara', 'ahmad@cloudnusantara.id', '081234567892', '081234567892', 'Technology', 'Surabaya', 'Jl. Pemuda No. 25', 'www.cloudnusantara.id', 'LinkedIn', 'lead', 'lead', v_user_id, NOW() - INTERVAL '45 days'),
+  ('c0000001-0000-0000-0000-000000000004', 'Dewi Lestari', 'PT Data Maju', 'dewi@datamaju.com', '081234567893', '081234567893', 'Technology', 'Jakarta', 'Jl. Gatot Subroto No. 30', 'www.datamaju.com', 'Google Ads', 'prospect', 'qualified', v_user_id, NOW() - INTERVAL '40 days'),
+  ('c0000001-0000-0000-0000-000000000005', 'Rizki Pratama', 'Startup Digital', 'rizki@startupdigital.io', '081234567894', '081234567894', 'Technology', 'Yogyakarta', 'Jl. Malioboro No. 10', 'www.startupdigital.io', 'Event', 'active', 'contacted', v_user_id, NOW() - INTERVAL '35 days'),
+  ('c0000001-0000-0000-0000-000000000006', 'Hendra Wijaya', 'PT Manufacturing Jaya', 'hendra@mfgjaya.co.id', '081234567895', '081234567895', 'Manufacturing', 'Semarang', 'Jl. Industri No. 100', 'www.mfgjaya.co.id', 'Cold Call', 'active', 'meeting', v_user_id, NOW() - INTERVAL '30 days'),
+  ('c0000001-0000-0000-0000-000000000007', 'Putri Anggraini', 'CV Produksi Mandiri', 'putri@produksimandiri.com', '081234567896', '081234567896', 'Manufacturing', 'Medan', 'Jl. Pabrik No. 20', 'www.produksimandiri.com', 'Website', 'lead', 'lead', v_user_id, NOW() - INTERVAL '25 days'),
+  ('c0000001-0000-0000-0000-000000000008', 'Agus Setiawan', 'PT Fabrika Utama', 'agus@fabrikautama.id', '081234567897', '081234567897', 'Manufacturing', 'Surabaya', 'Jl. Rungkut No. 50', 'www.fabrikautama.id', 'Referral', 'prospect', 'proposal', v_user_id, NOW() - INTERVAL '20 days'),
+  ('c0000001-0000-0000-0000-000000000009', 'Maya Sari', 'PT Retail Modern', 'maya@retailmodern.co.id', '081234567898', '081234567898', 'Retail', 'Jakarta', 'Jl. Thamrin No. 45', 'www.retailmodern.co.id', 'Facebook', 'active', 'won', v_user_id, NOW() - INTERVAL '15 days'),
+  ('c0000001-0000-0000-0000-000000000010', 'Andi Kurniawan', 'Toko Bangunan Jaya', 'andi@tokobangunan.com', '081234567899', '081234567899', 'Retail', 'Bandung', 'Jl. Dago No. 75', 'www.tokobangunan.com', 'Walk-in', 'inactive', 'lost', v_user_id, NOW() - INTERVAL '10 days'),
+  ('c0000001-0000-0000-0000-000000000011', 'Dr. Sari Dewi', 'Klinik Sehat Selalu', 'sari@kliniksehat.co.id', '081234567900', '081234567900', 'Healthcare', 'Jakarta', 'Jl. Kesehatan No. 15', 'www.kliniksehat.co.id', 'Google Ads', 'active', 'qualified', v_user_id, NOW() - INTERVAL '50 days'),
+  ('c0000001-0000-0000-0000-000000000012', 'Bambang Hermanto', 'RS Medika Utama', 'bambang@rsmedika.co.id', '081234567901', '081234567901', 'Healthcare', 'Surabaya', 'Jl. Dharmawangsa No. 30', 'www.rsmedika.co.id', 'Referral', 'lead', 'lead', v_user_id, NOW() - INTERVAL '48 days'),
+  ('c0000001-0000-0000-0000-000000000013', 'Prof. Dr. Hadi', 'Universitas Nusantara', 'hadi@uninusantara.ac.id', '081234567902', '081234567902', 'Education', 'Yogyakarta', 'Jl. Kampus No. 1', 'www.uninusantara.ac.id', 'Event', 'active', 'contacted', v_user_id, NOW() - INTERVAL '52 days'),
+  ('c0000001-0000-0000-0000-000000000014', 'Rina Susanti', 'SMA Nusantara', 'rina@smanusantara.sch.id', '081234567903', '081234567903', 'Education', 'Bandung', 'Jl. Pendidikan No. 25', 'www.smanusantara.sch.id', 'Cold Call', 'prospect', 'meeting', v_user_id, NOW() - INTERVAL '38 days'),
+  ('c0000001-0000-0000-0000-000000000015', 'Indra Lesmana', 'PT Finance Sejahtera', 'indra@financesejahtera.co.id', '081234567904', '081234567904', 'Finance', 'Jakarta', 'Jl. Sudirman No. 200', 'www.financesejahtera.co.id', 'LinkedIn', 'active', 'negotiation', v_user_id, NOW() - INTERVAL '42 days'),
+  ('c0000001-0000-0000-0000-000000000016', 'Linda Hartono', 'Bank Digital Indonesia', 'linda@bankdigital.co.id', '081234567905', '081234567905', 'Finance', 'Surabaya', 'Jl. Basuki Rahmat No. 40', 'www.bankdigital.co.id', 'Website', 'lead', 'lead', v_user_id, NOW() - INTERVAL '28 days'),
+  ('c0000001-0000-0000-0000-000000000017', 'Hadi Purnomo', 'PT Properti Bersama', 'hadi@propertibersama.com', '081234567906', '081234567906', 'Real Estate', 'Jakarta', 'Jl. TB Simatupang No. 88', 'www.propertibersama.com', 'Google Ads', 'active', 'proposal', v_user_id, NOW() - INTERVAL '33 days'),
+  ('c0000001-0000-0000-0000-000000000018', 'Eka Putri', 'Griya Indah Property', 'eka@griyaindah.co.id', '081234567907', '081234567907', 'Real Estate', 'Bandung', 'Jl. Buah Batu No. 55', 'www.griyaindah.co.id', 'Referral', 'archived', 'lost', v_user_id, NOW() - INTERVAL '65 days'),
+  ('c0000001-0000-0000-0000-000000000019', 'Rudi Hartono', 'PT Mobil Sejahtera', 'rudi@mobilsejahtera.co.id', '081234567908', '081234567908', 'Automotive', 'Surabaya', 'Jl. Ahmad Yani No. 120', 'www.mobilsejahtera.co.id', 'Walk-in', 'active', 'qualified', v_user_id, NOW() - INTERVAL '18 days'),
+  ('c0000001-0000-0000-0000-000000000020', 'Yanti Sari', 'Bengkel Maju Jaya', 'yanti@bengkelmaju.com', '081234567909', '081234567909', 'Automotive', 'Medan', 'Jl. Pahlawan No. 35', 'www.bengkelmaju.com', 'Event', 'inactive', 'lead', v_user_id, NOW() - INTERVAL '58 days')
   ON CONFLICT (id) DO NOTHING;
 
   -- ============================================
@@ -102,7 +105,21 @@ BEGIN
   ON CONFLICT (id) DO NOTHING;
 
   -- ============================================
-  -- 5. QUOTATIONS (8 data sample)
+  -- 5. DEALS (8 data sample) — untuk Pipeline
+  -- ============================================
+  INSERT INTO deals (id, customer_id, name, value, pipeline_stage, status, assigned_to, created_at) VALUES
+  ('d0000001-0000-0000-0000-000000000001', 'c0000001-0000-0000-0000-000000000001', 'CRM Pro - Tech Indonesia', 1500000, 'proposal', 'active', v_user_id, NOW() - INTERVAL '55 days'),
+  ('d0000001-0000-0000-0000-000000000002', 'c0000001-0000-0000-0000-000000000002', 'Enterprise + Training - Digital Solusi', 5000000, 'negotiation', 'active', v_user_id, NOW() - INTERVAL '50 days'),
+  ('d0000001-0000-0000-0000-000000000003', 'c0000001-0000-0000-0000-000000000003', 'Cloud Nusantara - Paket Basic', 500000, 'lead', 'active', v_user_id, NOW() - INTERVAL '45 days'),
+  ('d0000001-0000-0000-0000-000000000004', 'c0000001-0000-0000-0000-000000000004', 'Data Maju - CRM Pro', 1500000, 'qualified', 'active', v_user_id, NOW() - INTERVAL '38 days'),
+  ('d0000001-0000-0000-0000-000000000005', 'c0000001-0000-0000-0000-000000000005', 'Startup Digital - Basic Plan', 500000, 'contacted', 'active', v_user_id, NOW() - INTERVAL '33 days'),
+  ('d0000001-0000-0000-0000-000000000006', 'c0000001-0000-0000-0000-000000000006', 'Manufacturing Jaya - Custom Integration', 10000000, 'meeting', 'active', v_user_id, NOW() - INTERVAL '28 days'),
+  ('d0000001-0000-0000-0000-000000000007', 'c0000001-0000-0000-0000-000000000009', 'Retail Modern - Basic Plan', 500000, 'won', 'won', v_user_id, NOW() - INTERVAL '14 days'),
+  ('d0000001-0000-0000-0000-000000000008', 'c0000001-0000-0000-0000-000000000010', 'Toko Bangunan - Basic Plan', 500000, 'lost', 'lost', v_user_id, NOW() - INTERVAL '10 days')
+  ON CONFLICT (id) DO NOTHING;
+
+  -- ============================================
+  -- 6. QUOTATIONS (8 data sample)
   -- ============================================
   INSERT INTO quotations (id, customer_id, quotation_number, subtotal, tax, discount, total, status, notes, created_at) VALUES
   ('20000000-0000-0000-0000-000000000001', 'c0000001-0000-0000-0000-000000000001', 'Q-2026-001', 1500000, 165000, 0, 1665000, 'sent', 'Penawaran CRM Pro Plan untuk PT Tech Indonesia', NOW() - INTERVAL '48 days'),
@@ -116,7 +133,7 @@ BEGIN
   ON CONFLICT (id) DO NOTHING;
 
   -- ============================================
-  -- 6. QUOTATION ITEMS
+  -- 7. QUOTATION ITEMS
   -- ============================================
   INSERT INTO quotation_items (id, quotation_id, product_id, qty, price) VALUES
   ('30000000-0000-0000-0000-000000000001', '20000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000002', 1, 1500000),
