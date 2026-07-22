@@ -5,13 +5,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Eye, EyeOff, Loader2, Mail, Lock, Languages } from "lucide-react";
+import { Eye, EyeOff, Loader2, Mail, Lock } from "lucide-react";
 import { useLanguage } from "@/components/language-provider";
 
 export default function LoginPage() {
@@ -45,43 +39,62 @@ export default function LoginPage() {
   };
 
   return (
-    <>
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-xl font-semibold tracking-tight text-[#111827]">{t("auth.login")}</h1>
-          <p className="text-sm text-[#6b7280] mt-1">Selamat datang kembali</p>
+    <div className="w-full max-w-sm mx-auto">
+      <div className="md:hidden text-center mb-10">
+        <div className="inline-flex items-center justify-center h-12 w-12 rounded-xl bg-primary text-primary-foreground font-bold text-lg mb-4">
+          N
         </div>
-        <button
-          type="button"
-          className="text-xs font-medium text-[#6b7280] hover:text-[#111827] px-2 py-1 rounded-md hover:bg-gray-100 transition-colors"
-          onClick={() => setLocale(locale === "id" ? "en" : "id")}
-        >
-          <Languages className="h-3.5 w-3.5 inline mr-1" />
-          {locale === "id" ? "EN" : "ID"}
-        </button>
+        <h1 className="text-xl font-semibold tracking-tight text-foreground">Nexus CRM</h1>
       </div>
 
-      <Card className="w-full border border-gray-200 shadow-sm rounded-xl bg-white">
-        <CardHeader className="pb-4 pt-5 px-5">
-          <CardTitle className="text-sm font-medium text-[#374151]">Masuk ke akun Anda</CardTitle>
-        </CardHeader>
-        <CardContent className="px-5 pb-5">
+      <div className="hidden md:flex items-center justify-center mb-12">
+        <div className="flex items-center gap-4">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground font-bold text-lg shadow-md shadow-primary/20">
+            N
+          </div>
+          <div>
+            <h1 className="text-xl font-semibold tracking-tight text-foreground">Nexus CRM</h1>
+            <p className="text-sm text-muted-foreground">Customer Relationship Management</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-card border border-border rounded-xl shadow-sm">
+        <div className="p-6 pb-4 border-b border-border">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-base font-semibold text-foreground">{t("auth.login")}</h2>
+              <p className="text-sm text-muted-foreground mt-0.5">Selamat datang kembali</p>
+            </div>
+            <button
+              type="button"
+              className="text-xs font-medium text-muted-foreground hover:text-foreground px-2 py-1.5 rounded-md hover:bg-muted transition-colors"
+              onClick={() => setLocale(locale === "id" ? "en" : "id")}
+            >
+              {locale === "id" ? "EN" : "ID"}
+            </button>
+          </div>
+        </div>
+
+        <div className="p-6">
           {error && (
-            <div className="mb-4 rounded-lg bg-red-50 border border-red-100 px-3.5 py-2.5 text-sm text-red-700 leading-relaxed">
+            <div className="mb-5 rounded-lg bg-destructive/10 border border-destructive/20 px-3.5 py-2.5 text-sm text-destructive leading-relaxed">
               {error}
             </div>
           )}
 
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-1.5">
-              <label htmlFor="email" className="text-sm font-medium text-[#374151]">{t("auth.email")}</label>
+              <label htmlFor="email" className="text-sm font-medium text-foreground">
+                {t("auth.email")}
+              </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#9ca3af] pointer-events-none" />
+                <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground pointer-events-none" />
                 <Input
                   id="email"
                   type="email"
                   placeholder="nama@perusahaan.com"
-                  className="pl-9 h-10 text-sm bg-white border-gray-300 focus:border-primary focus:ring-1 focus:ring-primary/20 transition-colors rounded-lg"
+                  className="pl-9 h-10 text-sm bg-background border-border focus:border-primary focus:ring-1 focus:ring-primary/20 transition-colors"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   autoComplete="email"
@@ -91,14 +104,16 @@ export default function LoginPage() {
             </div>
 
             <div className="space-y-1.5">
-              <label htmlFor="password" className="text-sm font-medium text-[#374151]">{t("auth.password")}</label>
+              <label htmlFor="password" className="text-sm font-medium text-foreground">
+                {t("auth.password")}
+              </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#9ca3af] pointer-events-none" />
+                <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground pointer-events-none" />
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="Masukkan kata sandi"
-                  className="pl-9 pr-10 h-10 text-sm bg-white border-gray-300 focus:border-primary focus:ring-1 focus:ring-primary/20 transition-colors rounded-lg"
+                  className="pl-9 pr-10 h-10 text-sm bg-background border-border focus:border-primary focus:ring-1 focus:ring-primary/20 transition-colors"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   autoComplete="current-password"
@@ -106,7 +121,7 @@ export default function LoginPage() {
                 />
                 <button
                   type="button"
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-[#9ca3af] hover:text-[#374151] p-1 rounded-md hover:bg-gray-100 transition-colors"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1 rounded-md hover:bg-muted transition-colors"
                   onClick={() => setShowPassword(!showPassword)}
                   tabIndex={-1}
                 >
@@ -119,11 +134,7 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <Button
-              type="submit"
-              className="w-full h-10 rounded-lg text-sm font-medium shadow-sm"
-              disabled={loading}
-            >
+            <Button type="submit" className="w-full h-10 text-sm font-medium" disabled={loading}>
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -134,12 +145,12 @@ export default function LoginPage() {
               )}
             </Button>
           </form>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
-      <p className="text-center text-xs text-[#9ca3af] mt-8">
+      <p className="text-center text-xs text-muted-foreground mt-8">
         &copy; {new Date().getFullYear()} Nexus CRM
       </p>
-    </>
+    </div>
   );
 }
