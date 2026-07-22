@@ -54,22 +54,33 @@ export default function PipelinePage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">{t("pipeline.title")}</h1>
-        <p className="text-muted-foreground">{t("pipeline.subtitle")}</p>
+        <h1 className="text-2xl font-bold tracking-tight md:text-3xl">{t("pipeline.title")}</h1>
+        <p className="text-muted-foreground mt-1.5">{t("pipeline.subtitle")}</p>
       </div>
 
       {loading ? (
-        <p className="text-center py-8 text-muted-foreground">{t("common.loading")}</p>
-      ) : (
         <div className="flex gap-4 overflow-x-auto pb-4">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="min-w-[280px] flex-shrink-0">
+              <div className="h-8 w-24 bg-muted rounded-lg animate-pulse-soft mb-4" />
+              <div className="space-y-3">
+                {Array.from({ length: 3 }).map((_, j) => (
+                  <div key={j} className="h-20 bg-muted rounded-xl animate-pulse-soft" />
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="flex gap-5 overflow-x-auto pb-4 scrollbar-thin">
           {stages.map((stage) => {
             const stageCustomers = customers.filter((c) => c.pipeline_stage === stage.key);
             return (
               <div
                 key={stage.key}
-                className={`min-w-[280px] flex-shrink-0 rounded-lg border-2 p-4 ${stage.color}`}
+                className={`min-w-[280px] flex-shrink-0 rounded-xl border-2 p-4 ${stage.color} shadow-sm`}
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={(e) => {
                   e.preventDefault();
@@ -78,10 +89,13 @@ export default function PipelinePage() {
                 }}
               >
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-semibold text-sm">{stage.label}</h3>
-                  <Badge variant="secondary">{stageCustomers.length}</Badge>
+                  <div className="flex items-center gap-2">
+                    <div className={`h-2.5 w-2.5 rounded-full ${stage.color.split(' ')[0].replace('bg-', 'bg-').replace('border-', '')}`} />
+                    <h3 className="font-bold text-sm tracking-wide">{stage.label}</h3>
+                  </div>
+                  <Badge variant="secondary" className="font-bold text-xs">{stageCustomers.length}</Badge>
                 </div>
-                <div className="space-y-3">
+                <div className="space-y-3 min-h-[120px]">
                   {stageCustomers.map((c) => (
                     <Card
                       key={c.id}
@@ -89,16 +103,25 @@ export default function PipelinePage() {
                       onDragStart={(e) => {
                         e.dataTransfer.setData("text/plain", c.id);
                       }}
-                      className="cursor-grab active:cursor-grabbing hover:shadow-md transition-shadow"
+                      className="cursor-grab active:cursor-grabbing hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 bg-card border-border/50"
                     >
-                      <CardContent className="p-3">
-                        <p className="font-medium text-sm">{c.name}</p>
-                        <p className="text-xs text-muted-foreground">{c.company || t("pipeline.noCompany")}</p>
+                      <CardContent className="p-3.5">
+                        <div className="flex items-start gap-3">
+                          <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center text-primary text-xs font-bold shrink-0">
+                            {c.name.charAt(0).toUpperCase()}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="font-bold text-sm truncate">{c.name}</p>
+                            <p className="text-xs text-muted-foreground truncate mt-0.5">{c.company || t("pipeline.noCompany")}</p>
+                          </div>
+                        </div>
                       </CardContent>
                     </Card>
                   ))}
                   {stageCustomers.length === 0 && (
-                    <p className="text-xs text-muted-foreground text-center py-4">{t("pipeline.empty")}</p>
+                    <div className="flex items-center justify-center h-[80px] rounded-xl border-2 border-dashed border-border/50">
+                      <p className="text-xs text-muted-foreground">{t("pipeline.empty")}</p>
+                    </div>
                   )}
                 </div>
               </div>

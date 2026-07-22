@@ -144,22 +144,22 @@ export default function CustomersPage() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-foreground md:text-3xl">{t("customers.title")}</h1>
-          <p className="text-muted-foreground mt-1">{t("customers.subtitle")}</p>
+          <h1 className="text-2xl font-bold text-foreground md:text-3xl tracking-tight">{t("customers.title")}</h1>
+          <p className="text-muted-foreground mt-1.5">{t("customers.subtitle")}</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button variant="outline" size="sm" onClick={handleExport} disabled={exporting} className="border-border">
-            <Download className="mr-1 h-4 w-4" />
+          <Button variant="outline" size="sm" onClick={handleExport} disabled={exporting} className="border-border shadow-sm">
+            <Download className="mr-1.5 h-4 w-4" />
             {exporting ? t("common.loading") : t("common.export")}
           </Button>
-          <Button variant="outline" size="sm" onClick={() => setImportOpen(true)} className="border-border">
-            <Upload className="mr-1 h-4 w-4" />
+          <Button variant="outline" size="sm" onClick={() => setImportOpen(true)} className="border-border shadow-sm">
+            <Upload className="mr-1.5 h-4 w-4" />
             {t("common.import")}
           </Button>
           {!isManager && (
             <Link href="/customers/new">
-              <Button size="sm" className="bg-primary text-primary-foreground shadow-sm">
-                <Plus className="mr-1 h-4 w-4" />
+              <Button size="sm" className="shadow-sm">
+                <Plus className="mr-1.5 h-4 w-4" />
                 {t("common.add")}
               </Button>
             </Link>
@@ -168,12 +168,12 @@ export default function CustomersPage() {
       </div>
 
       {/* Filter Bar */}
-      <div className="bg-card rounded-xl border border-border p-4 flex flex-col sm:flex-row gap-4 items-center shadow-sm">
+      <div className="bg-card rounded-xl border border-border/50 p-4 flex flex-col sm:flex-row gap-4 items-center shadow-sm">
         <div className="relative flex-1 w-full">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder={t("customers.searchPlaceholder")}
-            className="pl-9 border-border bg-background"
+            className="pl-9 border-border/50 bg-background focus:border-primary/50 transition-all"
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -188,7 +188,7 @@ export default function CustomersPage() {
             setPage(1);
           }}
         >
-          <SelectTrigger className="w-full sm:w-[180px] border-border bg-background">
+          <SelectTrigger className="w-full sm:w-[180px] border-border/50 bg-background shadow-sm">
             <SelectValue placeholder={t("customers.filterStatus")} />
           </SelectTrigger>
           <SelectContent>
@@ -202,16 +202,16 @@ export default function CustomersPage() {
         </Select>
       </div>
 
-      <div className="rounded-md border overflow-x-auto">
+      <div className="rounded-xl border border-border/50 overflow-hidden shadow-sm">
         <Table className="min-w-[600px]">
           <TableHeader>
-            <TableRow>
-              <TableHead>{t("customers.name")}</TableHead>
-              <TableHead>{t("customers.company")}</TableHead>
-              <TableHead>{t("customers.email")}</TableHead>
-              <TableHead>{t("customers.phone")}</TableHead>
-              <TableHead>{t("customers.status")}</TableHead>
-              <TableHead className="w-[120px]">{t("common.edit")}</TableHead>
+            <TableRow className="bg-muted/50">
+              <TableHead className="font-semibold text-xs uppercase tracking-wider">{t("customers.name")}</TableHead>
+              <TableHead className="font-semibold text-xs uppercase tracking-wider">{t("customers.company")}</TableHead>
+              <TableHead className="font-semibold text-xs uppercase tracking-wider">{t("customers.email")}</TableHead>
+              <TableHead className="font-semibold text-xs uppercase tracking-wider">{t("customers.phone")}</TableHead>
+              <TableHead className="font-semibold text-xs uppercase tracking-wider">{t("customers.status")}</TableHead>
+              <TableHead className="w-[120px] font-semibold text-xs uppercase tracking-wider">{t("common.edit")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -240,22 +240,22 @@ export default function CustomersPage() {
               </TableRow>
             ) : (
               customers.map((customer) => (
-                <TableRow key={customer.id} className="hover:bg-muted/50 transition-colors">
-                  <TableCell className="font-medium">{customer.name}</TableCell>
-                  <TableCell>{customer.company || "-"}</TableCell>
-                  <TableCell>{customer.email || "-"}</TableCell>
-                  <TableCell>{customer.phone || "-"}</TableCell>
+                <TableRow key={customer.id} className="hover:bg-muted/30 transition-colors group">
+                  <TableCell className="font-semibold">{customer.name}</TableCell>
+                  <TableCell className="text-muted-foreground">{customer.company || "-"}</TableCell>
+                  <TableCell className="text-muted-foreground">{customer.email || "-"}</TableCell>
+                  <TableCell className="text-muted-foreground">{customer.phone || "-"}</TableCell>
                   <TableCell>
-                    <Badge variant={statusColors[customer.status] || "default"}>
+                    <Badge variant={statusColors[customer.status] || "default"} className="font-medium capitalize">
                       {customer.status}
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <div className="flex gap-1">
+                    <div className="flex gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8"
+                        className="h-8 w-8 hover:bg-primary/10 hover:text-primary"
                         onClick={() => router.push(`/customers/${customer.id}`)}
                       >
                         <Eye className="h-4 w-4" />
@@ -265,7 +265,7 @@ export default function CustomersPage() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8"
+                            className="h-8 w-8 hover:bg-primary/10 hover:text-primary"
                             onClick={() => router.push(`/customers/${customer.id}/edit`)}
                           >
                             <Edit className="h-4 w-4" />
@@ -273,7 +273,7 @@ export default function CustomersPage() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 text-destructive"
+                            className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive"
                             onClick={() => setDeleteId(customer.id)}
                           >
                             <Trash2 className="h-4 w-4" />
@@ -290,8 +290,8 @@ export default function CustomersPage() {
       </div>
 
       {totalPages > 1 && (
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-muted-foreground">
+        <div className="flex items-center justify-between bg-card rounded-xl border border-border/50 px-4 py-3 shadow-sm">
+          <p className="text-sm text-muted-foreground font-medium">
             {(page - 1) * limit + 1} - {Math.min(page * limit, total)} / {total}
           </p>
           <div className="flex gap-2">
@@ -300,6 +300,7 @@ export default function CustomersPage() {
               size="sm"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
+              className="shadow-sm"
             >
               {t("common.previous")}
             </Button>
@@ -308,6 +309,7 @@ export default function CustomersPage() {
               size="sm"
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
+              className="shadow-sm"
             >
               {t("common.next")}
             </Button>
