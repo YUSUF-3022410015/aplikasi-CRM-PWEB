@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Eye, EyeOff, Loader2, Mail, Lock, ArrowRight } from "lucide-react";
+import { Eye, EyeOff, Loader2, Mail, Lock, ArrowRight, AlertCircle } from "lucide-react";
 import { useLanguage } from "@/components/language-provider";
 import { z } from "zod";
 
@@ -61,18 +61,18 @@ export default function LoginPage() {
 
   return (
     <div className="w-full max-w-sm mx-auto">
-      <div className="text-center mb-10 animate-fade-in">
-        <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-md text-white text-3xl font-bold shadow-2xl ring-1 ring-white/25 mb-6">
-          N
-        </div>
-        <h1 className="text-white text-3xl font-bold tracking-tight">Nexus CRM</h1>
-        <p className="text-white/60 text-sm mt-2 font-medium">Customer Relationship Management</p>
-      </div>
-
       <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl shadow-black/15 p-8 animate-slide-up">
+        <div className="text-center mb-8">
+          <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[#2563eb] to-[#1e40af] text-white text-3xl font-bold shadow-lg mb-4">
+            N
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Nexus CRM</h1>
+          <p className="text-sm text-gray-400 mt-1 font-medium">Customer Relationship Management</p>
+        </div>
+
         <div className="mb-6">
           <h2 className="text-lg font-semibold text-gray-900">{t("auth.login")}</h2>
-          <p className="text-sm text-gray-500 mt-1">Selamat datang kembali</p>
+          <p className="text-sm text-gray-500 mt-1">{t("auth.welcome")}</p>
         </div>
 
         {error && (
@@ -92,22 +92,34 @@ export default function LoginPage() {
               {t("auth.email")}
             </label>
             <div className="relative group">
-              <div className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 pointer-events-none group-focus-within:text-primary transition-colors duration-200">
+              <div className={`absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 pointer-events-none transition-colors duration-200 ${fieldErrors.email ? "text-red-400" : "text-gray-400 group-focus-within:text-primary"}`}>
                 <Mail className="h-4 w-4" />
               </div>
               <Input
                 id="email"
                 type="email"
                 placeholder="nama@perusahaan.com"
-                className="pl-10 h-11 text-sm bg-gray-50 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all rounded-xl"
+                className={`pl-10 h-11 text-sm bg-gray-50 transition-all rounded-xl ${
+                  fieldErrors.email
+                    ? "border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
+                    : "border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20"
+                }`}
                 value={email}
                 onChange={(e) => { setEmail(e.target.value); setFieldErrors({}); }}
                 autoComplete="email"
                 required
               />
+              {fieldErrors.email && (
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-400">
+                  <AlertCircle className="h-4 w-4" />
+                </div>
+              )}
             </div>
             {fieldErrors.email && (
-              <p className="text-xs text-red-600 font-medium mt-1">{fieldErrors.email}</p>
+              <p className="text-xs text-red-600 font-medium mt-1 flex items-center gap-1">
+                <AlertCircle className="h-3 w-3" />
+                {fieldErrors.email}
+              </p>
             )}
           </div>
 
@@ -118,14 +130,18 @@ export default function LoginPage() {
               </label>
             </div>
             <div className="relative group">
-              <div className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 pointer-events-none group-focus-within:text-primary transition-colors duration-200">
+              <div className={`absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 pointer-events-none transition-colors duration-200 ${fieldErrors.password ? "text-red-400" : "text-gray-400 group-focus-within:text-primary"}`}>
                 <Lock className="h-4 w-4" />
               </div>
               <Input
                 id="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="Masukkan kata sandi"
-                className="pl-10 pr-12 h-11 text-sm bg-gray-50 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all rounded-xl"
+                className={`pl-10 pr-12 h-11 text-sm bg-gray-50 transition-all rounded-xl ${
+                  fieldErrors.password
+                    ? "border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
+                    : "border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20"
+                }`}
                 value={password}
                 onChange={(e) => { setPassword(e.target.value); setFieldErrors({}); }}
                 autoComplete="current-password"
@@ -143,9 +159,17 @@ export default function LoginPage() {
                   <Eye className="h-4 w-4" />
                 )}
               </button>
+              {fieldErrors.password && (
+                <div className="absolute right-10 top-1/2 -translate-y-1/2 text-red-400">
+                  <AlertCircle className="h-4 w-4" />
+                </div>
+              )}
             </div>
             {fieldErrors.password && (
-              <p className="text-xs text-red-600 font-medium mt-1">{fieldErrors.password}</p>
+              <p className="text-xs text-red-600 font-medium mt-1 flex items-center gap-1">
+                <AlertCircle className="h-3 w-3" />
+                {fieldErrors.password}
+              </p>
             )}
           </div>
 

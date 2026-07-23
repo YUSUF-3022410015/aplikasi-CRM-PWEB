@@ -267,6 +267,7 @@ export const translations = {
   // Auth
   auth: {
     login: { id: "Masuk", en: "Login" },
+    welcome: { id: "Selamat datang", en: "Welcome" },
     signup: { id: "Daftar", en: "Sign Up" },
     forgotPassword: { id: "Lupa Password?", en: "Forgot Password?" },
     resetPassword: { id: "Atur Ulang Password", en: "Reset Password" },
