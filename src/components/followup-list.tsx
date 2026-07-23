@@ -204,7 +204,7 @@ export function FollowUpList({
                         <Badge variant={cfg.variant}>{cfg.label}</Badge>
                       ) : (
                         <Select value={fu.status} onValueChange={(v) => handleStatusChange(fu.id, v)}>
-                          <SelectTrigger className="w-[100px] h-8 text-xs">
+                          <SelectTrigger className="w-[150px] h-8 text-xs pr-7">
                             <Badge variant={cfg.variant}>{cfg.label}</Badge>
                           </SelectTrigger>
                           <SelectContent>

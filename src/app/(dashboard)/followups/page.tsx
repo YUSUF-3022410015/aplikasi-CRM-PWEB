@@ -293,7 +293,7 @@ export default function FollowUpsPage() {
                             <Badge variant={cfg.variant} className="text-xs font-medium">{cfg.label}</Badge>
                           ) : (
                             <Select value={f.status} onValueChange={(v) => handleStatusChange(f.id, v)}>
-                              <SelectTrigger className="w-[110px] h-8 text-xs shadow-none">
+                              <SelectTrigger className="w-[150px] h-8 text-xs shadow-none pr-7">
                                 <Badge variant={cfg.variant} className="text-xs font-medium">{cfg.label}</Badge>
                               </SelectTrigger>
                               <SelectContent>
