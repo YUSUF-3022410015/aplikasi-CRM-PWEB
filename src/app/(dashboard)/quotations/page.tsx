@@ -166,8 +166,20 @@ export default function QuotationsPage() {
   };
 
   const handleDelete = async (id: string) => {
+    const q = quotations.find((q) => q.id === id);
     await supabase.from("quotation_items").delete().eq("quotation_id", id);
     await supabase.from("quotations").delete().eq("id", id);
+    // Notifikasi hapus quotation
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user && q) {
+      Promise.resolve(supabase.from("notifications").insert({
+        user_id: user.id,
+        title: "Quotation Dihapus",
+        message: `Quotation ${q.quotation_number} telah dihapus`,
+        type: "activity_added",
+        link: "/quotations",
+      })).catch(() => {});
+    }
     fetchData();
   };
 
@@ -206,23 +218,26 @@ export default function QuotationsPage() {
       // Get all user IDs
       const { data: users } = await supabase.from("profiles").select("id");
 
-      if (users && users.length > 0 && (newStatus === "approved" || newStatus === "rejected")) {
-        // Insert notification for each user
+      if (users && users.length > 0) {
+        const statusLabels: Record<string, string> = {
+          draft: "Draft",
+          sent: "Terkirim",
+          approved: "Disetujui",
+          rejected: "Ditolak",
+          expired: "Kadaluarsa",
+        };
+        const notifTitle = `Quotation ${statusLabels[newStatus] || newStatus}`;
+        const notifMessage = `Quotation ${quotation.quotation_number} untuk ${customerName} diubah ke "${statusLabels[newStatus] || newStatus}"`;
+
         for (const u of users) {
-          const { error: notifError } = await supabase.from("notifications").insert({
+          Promise.resolve(supabase.from("notifications").insert({
             user_id: u.id,
-            title: newStatus === "approved" ? "Quotation Disetujui" : "Quotation Ditolak",
-            message:
-              newStatus === "approved"
-                ? `Quotation ${quotation.quotation_number} untuk ${customerName} telah disetujui`
-                : `Quotation ${quotation.quotation_number} untuk ${customerName} telah ditolak`,
-            type: newStatus === "approved" ? "quotation_approved" : "quotation_rejected",
+            title: notifTitle,
+            message: notifMessage,
+            type: "activity_added",
             link: "/quotations",
             read: false,
-          });
-          if (notifError) {
-            console.error("Failed to create notification:", notifError.message);
-          }
+          })).catch(() => {});
         }
       }
     }

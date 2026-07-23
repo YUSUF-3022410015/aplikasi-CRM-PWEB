@@ -115,6 +115,17 @@ export default function CustomersPage() {
     await supabase.from("customers").update({ deleted_at: now }).eq("id", deleteId);
     if (customer) {
       logAudit("delete", "customers", deleteId, customer as unknown as Record<string, unknown>, null);
+      // Notifikasi hapus pelanggan
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        Promise.resolve(supabase.from("notifications").insert({
+          user_id: user.id,
+          title: "Pelanggan Dihapus",
+          message: `Pelanggan ${customer.name} telah dihapus`,
+          type: "activity_added",
+          link: "/customers",
+        })).catch(() => {});
+      }
     }
     setDeleting(false);
     setDeleteId(null);

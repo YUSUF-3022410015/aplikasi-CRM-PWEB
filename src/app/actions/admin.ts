@@ -64,6 +64,20 @@ export async function inviteUser(email: string, fullname: string, password: stri
       if (profileError) {
         return { success: false, error: profileError.message };
       }
+
+      // Notifikasi ke semua user aktif
+      const { data: users } = await supabaseAdmin.from("profiles").select("id").eq("is_active", true);
+      if (users) {
+        for (const u of users) {
+          Promise.resolve(supabaseAdmin.from("notifications").insert({
+            user_id: u.id,
+            title: "User Baru",
+            message: `${fullname} (${email}) telah diundang sebagai ${role}`,
+            type: "activity_added",
+            link: "/users",
+          })).catch(() => {});
+        }
+      }
     }
 
     return { success: true };
@@ -80,6 +94,9 @@ export async function editUserRole(userId: string, newRole: string) {
   if (authError) return { success: false, error: authError };
 
   try {
+    // Ambil data user sebelum diubah
+    const { data: targetUser } = await supabaseAdmin.from("profiles").select("fullname, role").eq("id", userId).single();
+
     const { error } = await supabaseAdmin
       .from("profiles")
       .update({ role: newRole })
@@ -87,6 +104,20 @@ export async function editUserRole(userId: string, newRole: string) {
 
     if (error) {
       return { success: false, error: error.message };
+    }
+
+    // Notifikasi ke semua user aktif
+    const { data: users } = await supabaseAdmin.from("profiles").select("id").eq("is_active", true);
+    if (users && targetUser) {
+      for (const u of users) {
+        Promise.resolve(supabaseAdmin.from("notifications").insert({
+          user_id: u.id,
+          title: "Role User Diubah",
+          message: `Role ${targetUser.fullname} diubah dari "${targetUser.role}" ke "${newRole}"`,
+          type: "activity_added",
+          link: "/users",
+        })).catch(() => {});
+      }
     }
 
     return { success: true };
@@ -111,6 +142,15 @@ export async function resetUserPassword(userId: string, newPassword: string) {
     if (error) {
       return { success: false, error: error.message };
     }
+
+    // Notifikasi ke user yang password-nya direset
+    Promise.resolve(supabaseAdmin.from("notifications").insert({
+      user_id: userId,
+      title: "Password Direset",
+      message: "Password Anda telah direset oleh administrator",
+      type: "activity_added",
+      link: "/profile",
+    })).catch(() => {});
 
     return { success: true };
   } catch (err) {

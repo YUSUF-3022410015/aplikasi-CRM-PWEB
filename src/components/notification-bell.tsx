@@ -80,8 +80,8 @@ export function NotificationBell({ userId }: { userId: string }) {
         }
       });
 
-    // Polling fallback - refresh every 10 seconds
-    const interval = setInterval(fetchNotifications, 10000);
+    // Polling fallback - refresh every 3 seconds
+    const interval = setInterval(fetchNotifications, 3000);
 
     return () => {
       supabase.removeChannel(channel);

@@ -41,6 +41,9 @@ export async function deactivateUser(userId: string) {
   if (authError) return { success: false, error: authError };
 
   try {
+    // Ambil data user sebelum dinonaktifkan
+    const { data: targetUser } = await supabaseAdmin.from("profiles").select("fullname").eq("id", userId).single();
+
     // PRD §3.4: Nonaktifkan user (is_active = false) — bukan hard delete
     // User tidak bisa login lagi, tapi data pelanggan/deal miliknya tetap tersimpan
     const { error } = await supabaseAdmin
@@ -50,6 +53,20 @@ export async function deactivateUser(userId: string) {
 
     if (error) {
       return { success: false, error: error.message };
+    }
+
+    // Notifikasi ke semua user aktif
+    const { data: users } = await supabaseAdmin.from("profiles").select("id").eq("is_active", true);
+    if (users && targetUser) {
+      for (const u of users) {
+        Promise.resolve(supabaseAdmin.from("notifications").insert({
+          user_id: u.id,
+          title: "User Dinonaktifkan",
+          message: `${targetUser.fullname} telah dinonaktifkan oleh administrator`,
+          type: "activity_added",
+          link: "/users",
+        })).catch(() => {});
+      }
     }
 
     return { success: true };
