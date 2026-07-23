@@ -155,6 +155,7 @@ export function MobileNav() {
                 key={item.href}
                 href={item.href}
                 onClick={() => setOpen(false)}
+                className="active:animate-[shake-bottom_0.8s_cubic-bezier(0.455,0.03,0.515,0.955)]"
                 style={{
                   display: "flex",
                   alignItems: "center",

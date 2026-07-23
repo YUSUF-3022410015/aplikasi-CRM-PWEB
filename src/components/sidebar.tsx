@@ -135,7 +135,7 @@ export function Sidebar() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 active:scale-[0.97]",
+                  "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 active:scale-[0.97] active:animate-[shake-bottom_0.8s_cubic-bezier(0.455,0.03,0.515,0.955)]",
                   collapsed && "relative justify-center px-2 py-2.5",
                   isActive
                     ? "bg-sidebar-primary/10 text-sidebar-primary shadow-sm"
