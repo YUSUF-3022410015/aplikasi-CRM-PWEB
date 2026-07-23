@@ -223,7 +223,7 @@ export default function CustomersPage() {
         </Select>
       </div>
 
-      <div className="rounded-xl border border-border/50 overflow-hidden shadow-sm">
+      <div className="rounded-xl border border-border/50 overflow-x-auto shadow-sm">
         <Table className="min-w-[600px]">
           <TableHeader>
             <TableRow className="bg-muted/50">

@@ -188,7 +188,7 @@ export function FollowUpList({
             return (
               <Card key={fu.id}>
                 <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                     <div className="flex items-center gap-3">
                       <CalendarCheck className="h-4 w-4 text-muted-foreground" />
                       <div>
@@ -199,12 +199,12 @@ export function FollowUpList({
                         </p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 ml-7 sm:ml-0">
                       {isManager ? (
                         <Badge variant={cfg.variant}>{cfg.label}</Badge>
                       ) : (
                         <Select value={fu.status} onValueChange={(v) => handleStatusChange(fu.id, v)}>
-                          <SelectTrigger className="w-[150px] h-8 text-xs pr-7">
+                          <SelectTrigger className="w-full sm:w-[150px] h-8 text-xs pr-7">
                             <Badge variant={cfg.variant}>{cfg.label}</Badge>
                           </SelectTrigger>
                           <SelectContent>
