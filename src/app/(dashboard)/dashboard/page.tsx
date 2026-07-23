@@ -148,7 +148,7 @@ export default function DashboardPage() {
         {statCards.map((stat, index) => (
           <Card
             key={stat.title}
-            className="group hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 animate-slide-up border-border/50 overflow-hidden"
+            className="relative group hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 animate-slide-up border-border/50 overflow-hidden"
             style={{ animationDelay: `${index * 60}ms` }}
           >
             <div className={`absolute inset-0 bg-gradient-to-br ${stat.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
