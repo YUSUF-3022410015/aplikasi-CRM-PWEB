@@ -129,6 +129,17 @@ export default function PipelinePage() {
       .single();
     if (newDeal) {
       logAudit("create", "deals", newDeal.id, null, newDeal as unknown as Record<string, unknown>);
+      // Fire-and-forget notification untuk deal baru
+      if (user) {
+        const custName = customers.find((c) => c.id === form.customer_id)?.name || "";
+        supabase.from("notifications").insert({
+          user_id: user.id,
+          title: "Deal Baru",
+          message: `Deal "${form.name}" untuk ${custName} berhasil dibuat`,
+          type: "activity_added",
+          link: "/pipeline",
+        }).then(() => {}).catch(() => {});
+      }
     }
     setDialogOpen(false);
     setForm({ customer_id: "", name: "", value: 0 });

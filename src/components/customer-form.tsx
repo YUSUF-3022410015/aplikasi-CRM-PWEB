@@ -121,43 +121,10 @@ export function CustomerForm({ customer, mode }: CustomerFormProps) {
       }
     }
 
-    if (mode === "create") {
-      const { data: inserted, error } = await supabase.from("customers").insert({
-        ...data,
-        email: data.email || null,
-        phone: data.phone || null,
-        whatsapp: data.whatsapp || null,
-        industry: data.industry || null,
-        city: data.city || null,
-        address: data.address || null,
-        website: data.website || null,
-        source: data.source || null,
-        assigned_to: data.assigned_to || null,
-      }).select("id").single();
-      if (error) {
-        console.error(error);
-        return;
-      }
-      logAudit("create", "customers", inserted.id, null, data as unknown as Record<string, unknown>);
-      if (user) {
-        try {
-          const { error: notifErr } = await supabase.from("notifications").insert({
-            user_id: user.id,
-            title: "Pelanggan Baru",
-            message: `Pelanggan ${data.name} berhasil ditambahkan`,
-            type: "activity_added",
-            link: "/customers",
-          });
-          if (notifErr) console.error("Notif insert error:", notifErr.message);
-        } catch (e) { console.error("Notif catch:", e); }
-      }
-    } else {
-      const oldData = { ...customer };
-      const { error } = await supabase
-        .from("customers")
-        .update({
-          name: data.name,
-          company: data.company || null,
+    try {
+      if (mode === "create") {
+        const { data: inserted, error } = await supabase.from("customers").insert({
+          ...data,
           email: data.email || null,
           phone: data.phone || null,
           whatsapp: data.whatsapp || null,
@@ -167,30 +134,60 @@ export function CustomerForm({ customer, mode }: CustomerFormProps) {
           website: data.website || null,
           source: data.source || null,
           assigned_to: data.assigned_to || null,
-          status: data.status,
-          pipeline_stage: data.pipeline_stage,
-        })
-        .eq("id", customer!.id);
-      if (error) {
-        console.error(error);
-        return;
-      }
-      logAudit("update", "customers", customer!.id, oldData as unknown as Record<string, unknown>, data as unknown as Record<string, unknown>);
-      if (user) {
-        try {
-          const { error: notifErr } = await supabase.from("notifications").insert({
+        }).select("id").single();
+        if (error) {
+          console.error(error);
+          return;
+        }
+        logAudit("create", "customers", inserted.id, null, data as unknown as Record<string, unknown>);
+        if (user) {
+          supabase.from("notifications").insert({
+            user_id: user.id,
+            title: "Pelanggan Baru",
+            message: `Pelanggan ${data.name} berhasil ditambahkan`,
+            type: "activity_added",
+            link: "/customers",
+          }).then(() => {}).catch(() => {});
+        }
+      } else {
+        const oldData = { ...customer };
+        const { error } = await supabase
+          .from("customers")
+          .update({
+            name: data.name,
+            company: data.company || null,
+            email: data.email || null,
+            phone: data.phone || null,
+            whatsapp: data.whatsapp || null,
+            industry: data.industry || null,
+            city: data.city || null,
+            address: data.address || null,
+            website: data.website || null,
+            source: data.source || null,
+            assigned_to: data.assigned_to || null,
+            status: data.status,
+            pipeline_stage: data.pipeline_stage,
+          })
+          .eq("id", customer!.id);
+        if (error) {
+          console.error(error);
+          return;
+        }
+        logAudit("update", "customers", customer!.id, oldData as unknown as Record<string, unknown>, data as unknown as Record<string, unknown>);
+        if (user) {
+          supabase.from("notifications").insert({
             user_id: user.id,
             title: "Pelanggan Diperbarui",
             message: `Data pelanggan ${data.name} telah diperbarui`,
             type: "activity_added",
             link: `/customers/${customer!.id}`,
-          });
-          if (notifErr) console.error("Notif insert error:", notifErr.message);
-        } catch (e) { console.error("Notif catch:", e); }
+          }).then(() => {}).catch(() => {});
+        }
       }
+    } finally {
+      router.push("/customers");
+      router.refresh();
     }
-    router.push("/customers");
-    router.refresh();
   };
 
   return (
