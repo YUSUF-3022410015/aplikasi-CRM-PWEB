@@ -4,9 +4,12 @@ import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useLanguage } from "@/components/language-provider";
 import { ActivityLogList } from "@/components/activity-log-list";
+import { usePermissions } from "@/hooks/use-permissions";
+import { ShieldAlert } from "lucide-react";
 
 export default function ActivityLogPage() {
   const { t } = useLanguage();
+  const { isAdmin, loading: permLoading } = usePermissions();
   const [allActivities, setAllActivities] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -127,6 +130,16 @@ export default function ActivityLogPage() {
 
     fetchData();
   }, [t]);
+
+  if (!permLoading && !isAdmin) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 animate-fade-in">
+        <ShieldAlert className="h-16 w-16 text-muted-foreground/40 mb-4" />
+        <h2 className="text-xl font-semibold text-foreground">{t("unauthorized.title")}</h2>
+        <p className="text-muted-foreground mt-2 text-center max-w-md">{t("unauthorized.description")}</p>
+      </div>
+    );
+  }
 
   if (loading) {
     return <div className="flex items-center justify-center h-64"><p className="text-muted-foreground">{t("common.loading")}</p></div>;

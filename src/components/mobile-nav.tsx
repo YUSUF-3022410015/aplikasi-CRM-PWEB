@@ -22,6 +22,8 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/language-provider";
+import { usePermissions } from "@/hooks/use-permissions";
+import { getAccessibleRoutes, type Role } from "@/lib/permissions";
 
 const allNavItems = [
   { href: "/dashboard", icon: LayoutDashboard, labelKey: "nav.dashboard" },
@@ -43,6 +45,14 @@ export function MobileNav() {
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
   const { t } = useLanguage();
+  const { role } = usePermissions();
+
+  const navItems = role
+    ? allNavItems.filter((item) => {
+        const routes = getAccessibleRoutes(role as Role);
+        return routes.some((r) => item.href === r || item.href.startsWith(r + "/"));
+      })
+    : [];
 
   useEffect(() => {
     setMounted(true);
@@ -147,7 +157,7 @@ export function MobileNav() {
 
         {/* Navigation Items */}
         <div style={{ padding: "12px" }}>
-          {allNavItems.map((item) => {
+          {navItems.map((item) => {
             const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
             const Icon = item.icon;
             return (

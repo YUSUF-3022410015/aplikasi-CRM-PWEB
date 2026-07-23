@@ -49,10 +49,12 @@ export default function ActivitiesPage() {
     try {
       const { data } = await supabase
         .from("activities")
-        .select("*, customer:customers(name), user:profiles(fullname)")
+        .select("*, customer:customers(name, deleted_at), user:profiles(fullname)")
         .order("created_at", { ascending: false })
         .limit(50);
-      setActivities(data || []);
+      // Filter out activities for soft-deleted customers
+      const filtered = (data || []).filter((a: any) => !a.customer || !a.customer.deleted_at);
+      setActivities(filtered);
     } catch (error) {
       console.error("Failed to fetch activities:", error);
     } finally {

@@ -5,10 +5,11 @@ import { useLanguage } from "@/components/language-provider";
 import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Users, TrendingUp, TrendingDown, DollarSign, CalendarCheck, Activity, Download, FileText } from "lucide-react";
+import { Users, TrendingUp, TrendingDown, DollarSign, CalendarCheck, Activity, Download, FileText, ShieldAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { exportReportToExcel, exportReportToPDF } from "@/lib/export-reports";
 import { formatCurrency } from "@/lib/utils";
+import { usePermissions } from "@/hooks/use-permissions";
 import {
   BarChart,
   Bar,
@@ -27,6 +28,7 @@ const COLORS = ["#0058be", "#006947", "#4edea3", "#ba1a1a", "#8b5cf6", "#06b6d4"
 
 export default function ReportsPage() {
   const { t, tArray } = useLanguage();
+  const { isAdmin, isManager, loading: permLoading } = usePermissions();
   const [stats, setStats] = useState({
     totalCustomers: 0,
     totalRevenue: 0,
@@ -109,6 +111,16 @@ export default function ReportsPage() {
   }, [supabase, tArray]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
+
+  if (!permLoading && !isAdmin && !isManager) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 animate-fade-in">
+        <ShieldAlert className="h-16 w-16 text-muted-foreground/40 mb-4" />
+        <h2 className="text-xl font-semibold text-foreground">{t("unauthorized.title")}</h2>
+        <p className="text-muted-foreground mt-2 text-center max-w-md">{t("unauthorized.description")}</p>
+      </div>
+    );
+  }
 
   if (loading) {
     return <div className="flex items-center justify-center h-64"><p className="text-muted-foreground">{t("common.loading")}</p></div>;

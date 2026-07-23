@@ -70,10 +70,12 @@ export default function FollowUpsPage() {
     setLoading(true);
     try {
       const [fRes, cRes] = await Promise.all([
-        supabase.from("followups").select("*, customer:customers(name)").order("due_date", { ascending: true }),
-        supabase.from("customers").select("id, name").order("name"),
+        supabase.from("followups").select("*, customer:customers(name, deleted_at)").order("due_date", { ascending: true }),
+        supabase.from("customers").select("id, name").is("deleted_at", null).order("name"),
       ]);
-      setFollowups(fRes.data || []);
+      // Filter out followups for soft-deleted customers
+      const filteredFollowups = (fRes.data || []).filter((f: any) => f.customer && !f.customer.deleted_at);
+      setFollowups(filteredFollowups);
       setCustomers(cRes.data || []);
     } catch (error) {
       console.error("Failed to fetch followups:", error);
@@ -100,10 +102,13 @@ export default function FollowUpsPage() {
 
   const handleSave = async () => {
     if (!form.customer_id || !form.due_date) return;
-    const today = new Date().toISOString().split("T")[0];
-    if (form.due_date < today) {
-      setFormError(t("followups.pastDateError"));
-      return;
+    // Only validate past date on create, not edit
+    if (!editItem) {
+      const today = new Date().toISOString().split("T")[0];
+      if (form.due_date < today) {
+        setFormError(t("followups.pastDateError"));
+        return;
+      }
     }
     setFormError("");
     setSaving(true);

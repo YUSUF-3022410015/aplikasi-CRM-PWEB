@@ -29,7 +29,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, UserCog, Shield, Pencil, Trash2, Loader2, KeyRound } from "lucide-react";
+import { Plus, UserCog, Shield, Pencil, Trash2, Loader2, KeyRound, ShieldAlert } from "lucide-react";
 import { useLanguage } from "@/components/language-provider";
 import { resetUserPassword, inviteUser, editUserRole } from "@/app/actions/admin";
 import { deactivateUser } from "@/app/actions/delete-user";
@@ -173,6 +173,16 @@ export default function UsersPage() {
 
     setResetLoading(false);
   };
+
+  if (!isAdmin) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 animate-fade-in">
+        <ShieldAlert className="h-16 w-16 text-muted-foreground/40 mb-4" />
+        <h2 className="text-xl font-semibold text-foreground">{t("unauthorized.title")}</h2>
+        <p className="text-muted-foreground mt-2 text-center max-w-md">{t("unauthorized.description")}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 animate-fade-in">

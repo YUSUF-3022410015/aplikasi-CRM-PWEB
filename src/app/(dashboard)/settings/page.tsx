@@ -6,11 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Settings, Save, Loader2, Building, Globe, Mail, Image } from "lucide-react";
+import { Settings, Save, Loader2, Building, Globe, Mail, Image, ShieldAlert } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useLanguage } from "@/components/language-provider";
+import { usePermissions } from "@/hooks/use-permissions";
 
 const settingKeys = [
   { key: "company_name", labelKey: "settings.companyName", placeholder: "PT. Nama Perusahaan" },
@@ -53,6 +54,17 @@ export default function SettingsPage() {
   const [saving, setSaving] = useState(false);
   const [supabase] = useState(() => createClient());
   const { t } = useLanguage();
+  const { isAdmin, loading: permLoading } = usePermissions();
+
+  if (!permLoading && !isAdmin) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 animate-fade-in">
+        <ShieldAlert className="h-16 w-16 text-muted-foreground/40 mb-4" />
+        <h2 className="text-xl font-semibold text-foreground">{t("unauthorized.title")}</h2>
+        <p className="text-muted-foreground mt-2 text-center max-w-md">{t("unauthorized.description")}</p>
+      </div>
+    );
+  }
 
   const fetchSettings = useCallback(async () => {
     setLoading(true);

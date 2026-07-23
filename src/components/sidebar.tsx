@@ -73,12 +73,14 @@ export function Sidebar() {
   useEffect(() => {
     const fetchFollowUpCount = async () => {
       const today = new Date().toISOString().split("T")[0];
-      const { count } = await supabase
+      const { data } = await supabase
         .from("followups")
-        .select("*", { count: "exact", head: true })
+        .select("id, customer:customers(deleted_at)")
         .eq("status", "pending")
         .lte("due_date", today);
-      setFollowUpCount(count || 0);
+      // Filter out followups for soft-deleted customers
+      const count = (data || []).filter((f: any) => !f.customer || !f.customer.deleted_at).length;
+      setFollowUpCount(count);
     };
 
     fetchFollowUpCount();
