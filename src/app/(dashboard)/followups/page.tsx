@@ -114,6 +114,7 @@ export default function FollowUpsPage() {
     setSaving(true);
 
     const { data: { user } } = await supabase.auth.getUser();
+    const custName = customers.find((c) => c.id === form.customer_id)?.name || "";
 
     if (editItem) {
       await supabase.from("followups").update({
@@ -122,6 +123,16 @@ export default function FollowUpsPage() {
         due_date: form.due_date,
         status: form.status,
       }).eq("id", editItem.id);
+      // Notifikasi edit follow-up
+      if (user) {
+        Promise.resolve(supabase.from("notifications").insert({
+          user_id: user.id,
+          title: "Follow-up Diubah",
+          message: `Follow-up untuk ${custName} telah diperbarui`,
+          type: "activity_added",
+          link: "/followups",
+        })).catch(() => {});
+      }
     } else {
       await supabase.from("followups").insert({
         customer_id: form.customer_id,
@@ -130,19 +141,15 @@ export default function FollowUpsPage() {
         due_date: form.due_date,
         status: form.status,
       });
-      // Create notification (non-blocking)
+      // Notifikasi tambah follow-up
       if (user) {
-        const custName = customers.find((c) => c.id === form.customer_id)?.name || "";
-        try {
-          const { error: notifErr } = await supabase.from("notifications").insert({
-            user_id: user.id,
-            title: "Follow-up Baru",
-            message: `Follow-up untuk ${custName} dijadwalkan pada ${form.due_date}`,
-            type: "followup_reminder",
-            link: "/followups",
-          });
-          if (notifErr) console.error("Notif insert error:", notifErr.message);
-        } catch (e) { console.error("Notif catch:", e); }
+        Promise.resolve(supabase.from("notifications").insert({
+          user_id: user.id,
+          title: "Follow-up Baru",
+          message: `Follow-up untuk ${custName} dijadwalkan pada ${form.due_date}`,
+          type: "followup_reminder",
+          link: "/followups",
+        })).catch(() => {});
       }
     }
 
@@ -153,13 +160,40 @@ export default function FollowUpsPage() {
 
   const handleDelete = async () => {
     if (!deleteId) return;
+    const { data: { user } } = await supabase.auth.getUser();
+    const deleted = followups.find((f) => f.id === deleteId);
     await supabase.from("followups").delete().eq("id", deleteId);
+    // Notifikasi hapus follow-up
+    if (user && deleted) {
+      const custName = customers.find((c) => c.id === deleted.customer_id)?.name || "";
+      Promise.resolve(supabase.from("notifications").insert({
+        user_id: user.id,
+        title: "Follow-up Dihapus",
+        message: `Follow-up untuk ${custName} telah dihapus`,
+        type: "activity_added",
+        link: "/followups",
+      })).catch(() => {});
+    }
     setDeleteId(null);
     fetchData();
   };
 
   const handleStatusChange = async (id: string, status: string) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    const fu = followups.find((f) => f.id === id);
     await supabase.from("followups").update({ status }).eq("id", id);
+    // Notifikasi ubah status
+    if (user && fu) {
+      const custName = customers.find((c) => c.id === fu.customer_id)?.name || "";
+      const statusLabel = status === "done" ? "Selesai" : status === "cancelled" ? "Dibatalkan" : "Ditunda";
+      Promise.resolve(supabase.from("notifications").insert({
+        user_id: user.id,
+        title: "Status Follow-up Diubah",
+        message: `Follow-up untuk ${custName} diubah ke "${statusLabel}"`,
+        type: "activity_added",
+        link: "/followups",
+      })).catch(() => {});
+    }
     fetchData();
   };
 

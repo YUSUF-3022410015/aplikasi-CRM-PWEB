@@ -97,6 +97,16 @@ export function FollowUpList({
         due_date: dueDate,
         status,
       }).eq("id", editItem.id);
+      // Notifikasi edit follow-up
+      if (user) {
+        Promise.resolve(supabase.from("notifications").insert({
+          user_id: user.id,
+          title: "Follow-up Diubah",
+          message: `Follow-up dijadwalkan pada ${dueDate} telah diperbarui`,
+          type: "activity_added",
+          link: `/customers/${customerId}`,
+        })).catch(() => {});
+      }
     } else {
       await supabase.from("followups").insert({
         customer_id: customerId,
@@ -105,18 +115,15 @@ export function FollowUpList({
         due_date: dueDate,
         status: "pending",
       });
-
-      // Create notification
+      // Notifikasi tambah follow-up
       if (user) {
-        try {
-          await supabase.from("notifications").insert({
-            user_id: user.id,
-            title: "Follow-up Baru",
-            message: `Follow-up dijadwalkan pada ${dueDate}`,
-            type: "followup_reminder",
-            link: `/customers/${customerId}`,
-          });
-        } catch (e) { console.error("Notif catch:", e); }
+        Promise.resolve(supabase.from("notifications").insert({
+          user_id: user.id,
+          title: "Follow-up Baru",
+          message: `Follow-up dijadwalkan pada ${dueDate}`,
+          type: "followup_reminder",
+          link: `/customers/${customerId}`,
+        })).catch(() => {});
       }
     }
 
@@ -129,13 +136,36 @@ export function FollowUpList({
   };
 
   const handleStatusChange = async (id: string, newStatus: string) => {
+    const { data: { user } } = await supabase.auth.getUser();
     await supabase.from("followups").update({ status: newStatus }).eq("id", id);
+    // Notifikasi ubah status
+    if (user) {
+      const statusLabel = newStatus === "done" ? "Selesai" : newStatus === "cancelled" ? "Dibatalkan" : "Ditunda";
+      Promise.resolve(supabase.from("notifications").insert({
+        user_id: user.id,
+        title: "Status Follow-up Diubah",
+        message: `Status follow-up diubah ke "${statusLabel}"`,
+        type: "activity_added",
+        link: `/customers/${customerId}`,
+      })).catch(() => {});
+    }
     router.refresh();
   };
 
   const handleDelete = async () => {
     if (!deleteId) return;
+    const { data: { user } } = await supabase.auth.getUser();
     await supabase.from("followups").delete().eq("id", deleteId);
+    // Notifikasi hapus follow-up
+    if (user) {
+      Promise.resolve(supabase.from("notifications").insert({
+        user_id: user.id,
+        title: "Follow-up Dihapus",
+        message: "Follow-up telah dihapus",
+        type: "activity_added",
+        link: `/customers/${customerId}`,
+      })).catch(() => {});
+    }
     setDeleteId(null);
     router.refresh();
   };
