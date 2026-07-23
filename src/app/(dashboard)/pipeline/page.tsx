@@ -76,12 +76,25 @@ export default function PipelinePage() {
 
   const handleDrop = async (dealId: string, newStage: string) => {
     const deal = deals.find((d) => d.id === dealId);
+    const updateData: Record<string, string> = {
+      pipeline_stage: newStage,
+      updated_at: new Date().toISOString(),
+    };
+    // Update status when moving to won/lost
+    if (newStage === "won") {
+      updateData.status = "won";
+    } else if (newStage === "lost") {
+      updateData.status = "lost";
+    } else if (deal?.status === "won" || deal?.status === "lost") {
+      // Moving back from won/lost to active stage
+      updateData.status = "active";
+    }
     await supabase
       .from("deals")
-      .update({ pipeline_stage: newStage, updated_at: new Date().toISOString() })
+      .update(updateData)
       .eq("id", dealId);
     if (deal) {
-      logAudit("update", "deals", dealId, { pipeline_stage: deal.pipeline_stage }, { pipeline_stage: newStage });
+      logAudit("update", "deals", dealId, { pipeline_stage: deal.pipeline_stage, status: deal.status }, { pipeline_stage: newStage, status: updateData.status || deal.status });
     }
     fetchData();
   };

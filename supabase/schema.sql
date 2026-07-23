@@ -403,21 +403,56 @@ CREATE POLICY "Quotations: insert" ON quotations FOR INSERT WITH CHECK (
   auth.uid() IS NOT NULL AND public.get_user_role() IN ('admin', 'sales')
 );
 DROP POLICY IF EXISTS "Quotations: update" ON quotations;
-CREATE POLICY "Quotations: update" ON quotations FOR UPDATE USING (auth.uid() IS NOT NULL);
+CREATE POLICY "Quotations: update" ON quotations FOR UPDATE USING (
+  auth.uid() IS NOT NULL AND (
+    public.get_user_role() = 'admin'
+    OR customer_id IN (SELECT id FROM customers WHERE assigned_to = auth.uid())
+  )
+);
 DROP POLICY IF EXISTS "Quotations: delete" ON quotations;
 CREATE POLICY "Quotations: delete" ON quotations FOR DELETE USING (
   auth.uid() IS NOT NULL AND public.get_user_role() = 'admin'
 );
 
--- Quotation Items
+-- Quotation Items (tied to quotation ownership)
 DROP POLICY IF EXISTS "Quotation Items: read" ON quotation_items;
-CREATE POLICY "Quotation Items: read" ON quotation_items FOR SELECT USING (auth.uid() IS NOT NULL);
+CREATE POLICY "Quotation Items: read" ON quotation_items FOR SELECT USING (
+  EXISTS (
+    SELECT 1 FROM quotations q
+    WHERE q.id = quotation_items.quotation_id
+    AND q.customer_id IN (SELECT id FROM customers WHERE assigned_to = auth.uid())
+  ) OR public.get_user_role() IN ('admin', 'manager')
+);
 DROP POLICY IF EXISTS "Quotation Items: insert" ON quotation_items;
-CREATE POLICY "Quotation Items: insert" ON quotation_items FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
+CREATE POLICY "Quotation Items: insert" ON quotation_items FOR INSERT WITH CHECK (
+  EXISTS (
+    SELECT 1 FROM quotations q
+    WHERE q.id = quotation_items.quotation_id
+    AND (
+      q.customer_id IN (SELECT id FROM customers WHERE assigned_to = auth.uid())
+      OR public.get_user_role() = 'admin'
+    )
+  )
+);
 DROP POLICY IF EXISTS "Quotation Items: update" ON quotation_items;
-CREATE POLICY "Quotation Items: update" ON quotation_items FOR UPDATE USING (auth.uid() IS NOT NULL);
+CREATE POLICY "Quotation Items: update" ON quotation_items FOR UPDATE USING (
+  EXISTS (
+    SELECT 1 FROM quotations q
+    WHERE q.id = quotation_items.quotation_id
+    AND (
+      q.customer_id IN (SELECT id FROM customers WHERE assigned_to = auth.uid())
+      OR public.get_user_role() = 'admin'
+    )
+  )
+);
 DROP POLICY IF EXISTS "Quotation Items: delete" ON quotation_items;
-CREATE POLICY "Quotation Items: delete" ON quotation_items FOR DELETE USING (auth.uid() IS NOT NULL);
+CREATE POLICY "Quotation Items: delete" ON quotation_items FOR DELETE USING (
+  EXISTS (
+    SELECT 1 FROM quotations q
+    WHERE q.id = quotation_items.quotation_id
+    AND public.get_user_role() = 'admin'
+  )
+);
 
 -- Settings: Admin only for write
 DROP POLICY IF EXISTS "Settings: read" ON settings;
