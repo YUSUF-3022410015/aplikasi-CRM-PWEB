@@ -99,8 +99,8 @@ export function Sidebar() {
     >
       {/* Logo */}
       <div className={cn(
-        "flex h-16 items-center border-b border-sidebar-border gap-3",
-        collapsed ? "justify-center px-2" : "px-4"
+        "flex h-16 items-center border-b border-sidebar-border",
+        collapsed ? "justify-center px-2" : "gap-3 px-4"
       )}>
         <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-blue-600 text-primary-foreground font-bold text-base shrink-0 shadow-sm">
           N
@@ -111,19 +111,31 @@ export function Sidebar() {
             <p className="text-[10px] text-sidebar-foreground/50 truncate font-medium">Enterprise Edition</p>
           </div>
         )}
-        <Button
-          variant="ghost"
-          size="icon"
-          className={cn("h-7 w-7 shrink-0 text-sidebar-foreground/40 hover:text-sidebar-foreground hover:bg-sidebar-accent", collapsed && "mx-auto")}
-          onClick={() => setCollapsed(!collapsed)}
-        >
-          {collapsed ? (
-            <ChevronRight className="h-3.5 w-3.5" />
-          ) : (
+        {!collapsed && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7 shrink-0 text-sidebar-foreground/40 hover:text-sidebar-foreground hover:bg-sidebar-accent"
+            onClick={() => setCollapsed(!collapsed)}
+          >
             <ChevronLeft className="h-3.5 w-3.5" />
-          )}
-        </Button>
+          </Button>
+        )}
       </div>
+
+      {/* Expand button when collapsed */}
+      {collapsed && (
+        <div className="flex justify-center py-2 border-b border-sidebar-border">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7 text-sidebar-foreground/40 hover:text-sidebar-foreground hover:bg-sidebar-accent"
+            onClick={() => setCollapsed(!collapsed)}
+          >
+            <ChevronRight className="h-3.5 w-3.5" />
+          </Button>
+        </div>
+      )}
 
       {/* Navigation */}
       <div className="flex-1 overflow-y-auto py-4">
