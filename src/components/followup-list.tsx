@@ -25,6 +25,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Plus, Loader2, CalendarCheck, Pencil, Trash2 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { useLanguage } from "@/components/language-provider";
+import { usePermissions } from "@/hooks/use-permissions";
 
 interface FollowUpItem {
   id: string;
@@ -42,6 +43,7 @@ export function FollowUpList({
   customerId: string;
 }) {
   const { t } = useLanguage();
+  const { isAdmin, isManager } = usePermissions();
   const [open, setOpen] = useState(false);
   const [editItem, setEditItem] = useState<FollowUpItem | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
@@ -77,6 +79,14 @@ export function FollowUpList({
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!dueDate) return;
+    // PRD §2.2: due_date tidak boleh tanggal lampau
+    if (!editItem) {
+      const today = new Date().toISOString().split("T")[0];
+      if (dueDate < today) {
+        alert(t("followups.pastDateError"));
+        return;
+      }
+    }
     setLoading(true);
 
     const { data: { user } } = await supabase.auth.getUser();
@@ -90,7 +100,7 @@ export function FollowUpList({
     } else {
       await supabase.from("followups").insert({
         customer_id: customerId,
-        assigned_to: user?.id || "",
+        assigned_to: user?.id || null,
         note: note.trim(),
         due_date: dueDate,
         status: "pending",
@@ -132,10 +142,12 @@ export function FollowUpList({
 
   return (
     <div className="space-y-4">
-      <Button variant="outline" onClick={openCreate}>
-        <Plus className="mr-2 h-4 w-4" />
-        {t("followups.addFollowup")}
-      </Button>
+      {!isManager && (
+        <Button variant="outline" onClick={openCreate}>
+          <Plus className="mr-2 h-4 w-4" />
+          {t("followups.addFollowup")}
+        </Button>
+      )}
 
       {followups.length === 0 ? (
         <p className="text-center py-8 text-muted-foreground">{t("common.noFollowups")}</p>
@@ -158,22 +170,32 @@ export function FollowUpList({
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Select value={fu.status} onValueChange={(v) => handleStatusChange(fu.id, v)}>
-                        <SelectTrigger className="w-[100px] h-8 text-xs">
-                          <Badge variant={cfg.variant}>{cfg.label}</Badge>
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="pending">{t("followups.pending")}</SelectItem>
-                          <SelectItem value="done">{t("followups.done")}</SelectItem>
-                          <SelectItem value="cancelled">{t("followups.cancelled")}</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(fu)}>
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => setDeleteId(fu.id)}>
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      {isManager ? (
+                        <Badge variant={cfg.variant}>{cfg.label}</Badge>
+                      ) : (
+                        <Select value={fu.status} onValueChange={(v) => handleStatusChange(fu.id, v)}>
+                          <SelectTrigger className="w-[100px] h-8 text-xs">
+                            <Badge variant={cfg.variant}>{cfg.label}</Badge>
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="pending">{t("followups.pending")}</SelectItem>
+                            <SelectItem value="done">{t("followups.done")}</SelectItem>
+                            <SelectItem value="cancelled">{t("followups.cancelled")}</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      )}
+                      {!isManager && (
+                        <>
+                          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(fu)}>
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          {isAdmin && (
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => setDeleteId(fu.id)}>
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          )}
+                        </>
+                      )}
                     </div>
                   </div>
                 </CardContent>

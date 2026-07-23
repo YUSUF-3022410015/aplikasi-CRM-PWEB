@@ -93,8 +93,8 @@ export default function ReportsPage() {
     setStats({
       totalCustomers: customers.length,
       totalRevenue,
-      dealsWon: dealsWon + wonQuotations.length,
-      dealsLost: dealsLost + lostQuotations.length,
+      dealsWon: dealsWon,
+      dealsLost: dealsLost,
       totalActivities: activities.length,
       followUpsPending: followups.filter((f) => f.status === "pending").length,
       followUpsDone: followups.filter((f) => f.status === "done").length,

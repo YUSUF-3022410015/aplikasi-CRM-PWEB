@@ -76,7 +76,7 @@ export default function QuotationsPage() {
   const [discount, setDiscount] = useState(0);
   const [supabase] = useState(() => createClient());
   const { t } = useLanguage();
-  const { isAdmin } = usePermissions();
+  const { isAdmin, isManager } = usePermissions();
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -392,21 +392,25 @@ export default function QuotationsPage() {
                 <div><span className="text-muted-foreground">{t("quotations.customer")}:</span> {(selectedQuotation.customer as { name: string })?.name}</div>
                 <div className="flex items-center gap-2">
                   <span className="text-muted-foreground">{t("customers.status")}:</span>
-                  <Select
-                    value={selectedQuotation.status}
-                    onValueChange={(value) => handleStatusChange(selectedQuotation.id, value)}
-                  >
-                    <SelectTrigger className="w-32 h-8">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="draft">Draft</SelectItem>
-                      <SelectItem value="sent">Sent</SelectItem>
-                      <SelectItem value="approved">{t("quotations.approved")}</SelectItem>
-                      <SelectItem value="rejected">{t("quotations.rejected")}</SelectItem>
-                      <SelectItem value="expired">Expired</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  {isManager ? (
+                    <Badge variant={statusColors[selectedQuotation.status] || "default"}>{selectedQuotation.status}</Badge>
+                  ) : (
+                    <Select
+                      value={selectedQuotation.status}
+                      onValueChange={(value) => handleStatusChange(selectedQuotation.id, value)}
+                    >
+                      <SelectTrigger className="w-32 h-8">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="draft">Draft</SelectItem>
+                        <SelectItem value="sent">Sent</SelectItem>
+                        <SelectItem value="approved">{t("quotations.approved")}</SelectItem>
+                        <SelectItem value="rejected">{t("quotations.rejected")}</SelectItem>
+                        <SelectItem value="expired">Expired</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  )}
                 </div>
               </div>
               <Table>

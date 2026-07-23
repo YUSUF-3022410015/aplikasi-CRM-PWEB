@@ -454,9 +454,11 @@ CREATE POLICY "Quotation Items: delete" ON quotation_items FOR DELETE USING (
   )
 );
 
--- Settings: Admin only for write
+-- Settings: Admin only for read and write
 DROP POLICY IF EXISTS "Settings: read" ON settings;
-CREATE POLICY "Settings: read" ON settings FOR SELECT USING (auth.uid() IS NOT NULL);
+CREATE POLICY "Settings: read" ON settings FOR SELECT USING (
+  auth.uid() IS NOT NULL AND public.get_user_role() = 'admin'
+);
 DROP POLICY IF EXISTS "Settings: insert" ON settings;
 CREATE POLICY "Settings: insert" ON settings FOR INSERT WITH CHECK (
   auth.uid() IS NOT NULL AND public.get_user_role() = 'admin'

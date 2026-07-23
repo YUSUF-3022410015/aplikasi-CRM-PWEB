@@ -12,11 +12,11 @@ export default function ActivityLogPage() {
   const { isAdmin, loading: permLoading } = usePermissions();
   const [allActivities, setAllActivities] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [supabase] = useState(() => createClient());
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const supabase = createClient();
         // Fetch all activities with user info
         const { data: activities } = await supabase
         .from("activities")

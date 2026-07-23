@@ -58,7 +58,7 @@ export default function FollowUpsPage() {
   const [formError, setFormError] = useState("");
   const [saving, setSaving] = useState(false);
   const [supabase] = useState(() => createClient());
-  const { isAdmin } = usePermissions();
+  const { isAdmin, isManager } = usePermissions();
 
   const getStatusConfig = (): Record<string, { label: string; variant: "default" | "success" | "destructive" | "secondary" }> => ({
     pending: { label: t("followups.pending"), variant: "default" },
@@ -125,7 +125,7 @@ export default function FollowUpsPage() {
     } else {
       await supabase.from("followups").insert({
         customer_id: form.customer_id,
-        assigned_to: user?.id || "",
+        assigned_to: user?.id || null,
         note: form.note,
         due_date: form.due_date,
         status: form.status,
@@ -179,10 +179,12 @@ export default function FollowUpsPage() {
           <h1 className="text-2xl font-bold tracking-tight md:text-3xl">{t("followups.title")}</h1>
           <p className="text-muted-foreground mt-1.5">{t("followups.subtitle2")}</p>
         </div>
-        <Button onClick={openCreate} className="shadow-sm">
-          <Plus className="mr-2 h-4 w-4" />
-          {t("followups.addFollowup")}
-        </Button>
+        {!isManager && (
+          <Button onClick={openCreate} className="shadow-sm">
+            <Plus className="mr-2 h-4 w-4" />
+            {t("followups.addFollowup")}
+          </Button>
+        )}
       </div>
 
       {/* Stats Cards */}
@@ -253,22 +255,28 @@ export default function FollowUpsPage() {
                           </span>
                         </TableCell>
                         <TableCell>
-                          <Select value={f.status} onValueChange={(v) => handleStatusChange(f.id, v)}>
-                            <SelectTrigger className="w-[110px] h-8 text-xs shadow-none">
-                              <Badge variant={cfg.variant} className="text-xs font-medium">{cfg.label}</Badge>
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="pending">{t("followups.pending")}</SelectItem>
-                              <SelectItem value="done">{t("followups.done")}</SelectItem>
-                              <SelectItem value="cancelled">{t("followups.cancelled")}</SelectItem>
-                            </SelectContent>
-                          </Select>
+                          {isManager ? (
+                            <Badge variant={cfg.variant} className="text-xs font-medium">{cfg.label}</Badge>
+                          ) : (
+                            <Select value={f.status} onValueChange={(v) => handleStatusChange(f.id, v)}>
+                              <SelectTrigger className="w-[110px] h-8 text-xs shadow-none">
+                                <Badge variant={cfg.variant} className="text-xs font-medium">{cfg.label}</Badge>
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="pending">{t("followups.pending")}</SelectItem>
+                                <SelectItem value="done">{t("followups.done")}</SelectItem>
+                                <SelectItem value="cancelled">{t("followups.cancelled")}</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          )}
                         </TableCell>
                         <TableCell>
                           <div className="flex gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
-                            <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-primary/10 hover:text-primary" onClick={() => openEdit(f)}>
-                              <Pencil className="h-4 w-4" />
-                            </Button>
+                            {!isManager && (
+                              <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-primary/10 hover:text-primary" onClick={() => openEdit(f)}>
+                                <Pencil className="h-4 w-4" />
+                              </Button>
+                            )}
                             {isAdmin && (
                               <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive" onClick={() => setDeleteId(f.id)}>
                                 <Trash2 className="h-4 w-4" />

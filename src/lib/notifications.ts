@@ -41,8 +41,8 @@ export async function notifyAllUsers(
 ) {
   const supabase = await createClient();
 
-  // Get all users
-  const { data: users } = await supabase.from("profiles").select("id");
+  // Get all active users only
+  const { data: users } = await supabase.from("profiles").select("id").eq("is_active", true);
 
   if (!users || users.length === 0) return false;
 

@@ -14,6 +14,16 @@ interface SendEmailParams {
   html: string;
 }
 
+// Escape HTML to prevent XSS
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 // Default config from environment
 const getEmailConfig = (): EmailConfig => ({
   apiKey: process.env.RESEND_API_KEY || "",
@@ -101,10 +111,10 @@ export const emailTemplates = {
             <h1>PENAWARAN HARGA</h1>
           </div>
           <div class="content">
-            <p>Halo ${params.customerName},</p>
+            <p>Halo ${escapeHtml(params.customerName)},</p>
             <p>Berikut kami kirimkan penawaran harga untuk Anda:</p>
             
-            <p><strong>Nomor:</strong> ${params.quotationNumber}</p>
+            <p><strong>Nomor:</strong> ${escapeHtml(params.quotationNumber)}</p>
             
             <table>
               <thead>
@@ -117,17 +127,17 @@ export const emailTemplates = {
               <tbody>
                 ${params.items.map(item => `
                   <tr>
-                    <td>${item.name}</td>
+                    <td>${escapeHtml(item.name)}</td>
                     <td>${item.qty}</td>
-                    <td>${item.price}</td>
+                    <td>${escapeHtml(item.price)}</td>
                   </tr>
                 `).join("")}
               </tbody>
             </table>
             
-            <div class="total">Total: ${params.total}</div>
+            <div class="total">Total: ${escapeHtml(params.total)}</div>
             
-            ${params.notes ? `<p><strong>Catatan:</strong> ${params.notes}</p>` : ""}
+            ${params.notes ? `<p><strong>Catatan:</strong> ${escapeHtml(params.notes)}</p>` : ""}
             
             <p>Silakan hubungi kami jika ada pertanyaan.</p>
             <p>Terima kasih.</p>
@@ -171,9 +181,9 @@ export const emailTemplates = {
             <p>Anda memiliki follow-up yang perlu ditindaklanjuti:</p>
             
             <div class="highlight">
-              <p><strong>Customer:</strong> ${params.customerName}</p>
-              <p><strong>Jatuh Tempo:</strong> ${params.dueDate}</p>
-              ${params.note ? `<p><strong>Catatan:</strong> ${params.note}</p>` : ""}
+              <p><strong>Customer:</strong> ${escapeHtml(params.customerName)}</p>
+              <p><strong>Jatuh Tempo:</strong> ${escapeHtml(params.dueDate)}</p>
+              ${params.note ? `<p><strong>Catatan:</strong> ${escapeHtml(params.note)}</p>` : ""}
             </div>
             
             <p>Silakan lakukan follow-up sebelum jatuh tempo.</p>
@@ -212,9 +222,9 @@ export const emailTemplates = {
             <h1>SELAMAT DATANG!</h1>
           </div>
           <div class="content">
-            <p>Halo ${params.userName},</p>
+            <p>Halo ${escapeHtml(params.userName)},</p>
             <p>Selamat datang di CRM System!</p>
-            <p>Akun Anda telah berhasil dibuat dengan email: ${params.email}</p>
+            <p>Akun Anda telah berhasil dibuat dengan email: ${escapeHtml(params.email)}</p>
             <p>Anda dapat login menggunakan email dan password yang telah didaftarkan.</p>
             <p>Terima kasih telah bergabung.</p>
           </div>

@@ -38,8 +38,8 @@ export function CustomerForm({ customer, mode }: CustomerFormProps) {
     name: z.string().min(3, t("customers.nameMinLength")),
     company: z.string().optional(),
     email: z.string().email(t("common.invalidEmail")).optional().or(z.literal("")),
-    phone: z.string().optional(),
-    whatsapp: z.string().optional(),
+    phone: z.string().optional().refine((val) => !val || (/^\d{10,}$/.test(val.replace(/\D/g, ""))), "Nomor telepon minimal 10 digit angka"),
+    whatsapp: z.string().optional().refine((val) => !val || (/^\d{10,}$/.test(val.replace(/\D/g, ""))), "WhatsApp minimal 10 digit angka"),
     industry: z.string().optional(),
     city: z.string().optional(),
     address: z.string().optional(),
@@ -94,6 +94,32 @@ export function CustomerForm({ customer, mode }: CustomerFormProps) {
 
   const onSubmit = async (data: CustomerFormData) => {
     const { data: { user } } = await supabase.auth.getUser();
+
+    // PRD §2.2: validasi unik email dan phone
+    if (data.email) {
+      const { data: existingEmail } = await supabase
+        .from("customers")
+        .select("id")
+        .eq("email", data.email)
+        .is("deleted_at", null)
+        .maybeSingle();
+      if (existingEmail && existingEmail.id !== customer?.id) {
+        alert("Email sudah digunakan oleh customer lain");
+        return;
+      }
+    }
+    if (data.phone) {
+      const { data: existingPhone } = await supabase
+        .from("customers")
+        .select("id")
+        .eq("phone", data.phone)
+        .is("deleted_at", null)
+        .maybeSingle();
+      if (existingPhone && existingPhone.id !== customer?.id) {
+        alert("Nomor telepon sudah digunakan oleh customer lain");
+        return;
+      }
+    }
 
     if (mode === "create") {
       const { data: inserted, error } = await supabase.from("customers").insert({

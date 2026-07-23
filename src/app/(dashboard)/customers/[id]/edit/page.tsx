@@ -13,11 +13,11 @@ export default function EditCustomerPage() {
   const id = params.id as string;
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [loading, setLoading] = useState(true);
+  const [supabase] = useState(() => createClient());
 
   useEffect(() => {
     const fetchCustomer = async () => {
       try {
-        const supabase = createClient();
         const { data } = await supabase
           .from("customers")
           .select("*")

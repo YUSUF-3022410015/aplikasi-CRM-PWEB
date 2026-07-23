@@ -45,7 +45,7 @@ export function AddActivityForm({ customerId }: { customerId: string }) {
 
     const { error } = await supabase.from("activities").insert({
       customer_id: customerId,
-      user_id: user?.id || "",
+      user_id: user?.id || null,
       type,
       note: note.trim(),
     });
