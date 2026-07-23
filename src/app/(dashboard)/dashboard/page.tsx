@@ -18,10 +18,10 @@ export default function DashboardPage() {
     const fetchStats = async () => {
       try {
         const [customersRes, activitiesRes, followupsRes, dealsRes] = await Promise.all([
-          supabase.from("customers").select("id, status, created_at", { count: "exact" }),
-          supabase.from("activities").select("id, type, created_at"),
+          supabase.from("customers").select("id, status, created_at", { count: "exact" }).is("deleted_at", null),
+          supabase.from("activities").select("id, type, created_at").is("deleted_at", null),
           supabase.from("followups").select("id, status, due_date"),
-          supabase.from("deals").select("id, value, pipeline_stage, status, created_at"),
+          supabase.from("deals").select("id, value, pipeline_stage, status, created_at").is("deleted_at", null),
         ]);
 
       const customers = customersRes.data || [];

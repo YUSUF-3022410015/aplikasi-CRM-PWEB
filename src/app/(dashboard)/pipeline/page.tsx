@@ -30,7 +30,7 @@ import type { Deal, Customer } from "@/types/database";
 
 export default function PipelinePage() {
   const { t } = useLanguage();
-  const { isManager } = usePermissions();
+  const { isManager, profile } = usePermissions();
   const [deals, setDeals] = useState<Deal[]>([]);
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [loading, setLoading] = useState(true);
@@ -74,8 +74,23 @@ export default function PipelinePage() {
     fetchData();
   }, [fetchData]);
 
+  const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const getUserId = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUserId(user?.id || null);
+    };
+    getUserId();
+  }, [supabase]);
+
   const handleDrop = async (dealId: string, newStage: string) => {
     const deal = deals.find((d) => d.id === dealId);
+    if (!deal) return;
+
+    // PRD §3.3: Sales hanya boleh edit deal miliknya sendiri
+    if (profile?.role === "sales" && deal.assigned_to !== userId) return;
+
     const updateData: Record<string, string> = {
       pipeline_stage: newStage,
       updated_at: new Date().toISOString(),
@@ -93,14 +108,12 @@ export default function PipelinePage() {
       .from("deals")
       .update(updateData)
       .eq("id", dealId);
-    if (deal) {
-      logAudit("update", "deals", dealId, { pipeline_stage: deal.pipeline_stage, status: deal.status }, { pipeline_stage: newStage, status: updateData.status || deal.status });
-    }
+    logAudit("update", "deals", dealId, { pipeline_stage: deal.pipeline_stage, status: deal.status }, { pipeline_stage: newStage, status: updateData.status || deal.status });
     fetchData();
   };
 
   const handleCreate = async () => {
-    if (!form.customer_id || !form.name) return;
+    if (!form.customer_id || !form.name || form.value <= 0) return;
     setSaving(true);
     const { data: { user } } = await supabase.auth.getUser();
     const { data: newDeal } = await supabase
@@ -110,7 +123,7 @@ export default function PipelinePage() {
         name: form.name,
         value: form.value || 0,
         pipeline_stage: "lead",
-        assigned_to: user?.id || "",
+        assigned_to: user?.id || null,
       })
       .select()
       .single();
@@ -266,7 +279,7 @@ export default function PipelinePage() {
           </div>
           <DialogFooter className="gap-2">
             <Button variant="outline" onClick={() => setDialogOpen(false)}>{t("common.cancel")}</Button>
-            <Button onClick={handleCreate} disabled={saving || !form.customer_id || !form.name}>
+            <Button onClick={handleCreate} disabled={saving || !form.customer_id || !form.name || form.value <= 0}>
               {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {t("common.save")}
             </Button>

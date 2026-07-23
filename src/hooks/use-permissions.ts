@@ -30,6 +30,13 @@ export function usePermissions() {
         .eq("id", user.id)
         .single();
 
+      // PRD §3.4: User nonaktif (is_active = false) tidak boleh mengakses data
+      if (data && (data as any).is_active === false) {
+        setProfile(null);
+        setLoading(false);
+        return;
+      }
+
       setProfile(data as UserProfile | null);
       setLoading(false);
     };

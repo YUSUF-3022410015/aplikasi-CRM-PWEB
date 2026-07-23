@@ -1,4 +1,6 @@
-import { createClient } from "@/lib/supabase/client";
+"use server";
+
+import { createClient } from "@/lib/supabase/server";
 
 export async function logAudit(
   action: "create" | "update" | "delete",
@@ -8,7 +10,7 @@ export async function logAudit(
   newData?: Record<string, unknown> | null
 ) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
