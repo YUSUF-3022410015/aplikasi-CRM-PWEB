@@ -132,13 +132,13 @@ export default function PipelinePage() {
       // Fire-and-forget notification untuk deal baru
       if (user) {
         const custName = customers.find((c) => c.id === form.customer_id)?.name || "";
-        supabase.from("notifications").insert({
+        Promise.resolve(supabase.from("notifications").insert({
           user_id: user.id,
           title: "Deal Baru",
           message: `Deal "${form.name}" untuk ${custName} berhasil dibuat`,
           type: "activity_added",
           link: "/pipeline",
-        }).then(() => {}).catch(() => {});
+        })).catch(() => {});
       }
     }
     setDialogOpen(false);

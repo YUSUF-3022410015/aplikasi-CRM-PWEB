@@ -141,13 +141,13 @@ export function CustomerForm({ customer, mode }: CustomerFormProps) {
         }
         logAudit("create", "customers", inserted.id, null, data as unknown as Record<string, unknown>);
         if (user) {
-          supabase.from("notifications").insert({
+          Promise.resolve(supabase.from("notifications").insert({
             user_id: user.id,
             title: "Pelanggan Baru",
             message: `Pelanggan ${data.name} berhasil ditambahkan`,
             type: "activity_added",
             link: "/customers",
-          }).then(() => {}).catch(() => {});
+          })).catch(() => {});
         }
       } else {
         const oldData = { ...customer };
@@ -175,13 +175,13 @@ export function CustomerForm({ customer, mode }: CustomerFormProps) {
         }
         logAudit("update", "customers", customer!.id, oldData as unknown as Record<string, unknown>, data as unknown as Record<string, unknown>);
         if (user) {
-          supabase.from("notifications").insert({
+          Promise.resolve(supabase.from("notifications").insert({
             user_id: user.id,
             title: "Pelanggan Diperbarui",
             message: `Data pelanggan ${data.name} telah diperbarui`,
             type: "activity_added",
             link: `/customers/${customer!.id}`,
-          }).then(() => {}).catch(() => {});
+          })).catch(() => {});
         }
       }
     } finally {
