@@ -83,9 +83,14 @@ export function ImportCustomersDialog({
     let imported = 0;
     let errors = 0;
 
+    const { data: { user } } = await supabase.auth.getUser();
+
     // Import in batches of 50
     for (let i = 0; i < preview.data.length; i += 50) {
-      const batch = preview.data.slice(i, i + 50);
+      const batch = preview.data.slice(i, i + 50).map((row) => ({
+        ...row,
+        assigned_to: user?.id || null,
+      }));
       const { error } = await supabase.from("customers").insert(batch);
       if (error) {
         errors += batch.length;
