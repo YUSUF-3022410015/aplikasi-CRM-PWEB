@@ -70,18 +70,18 @@ export default function ActivitiesPage() {
     <div className="space-y-6 animate-fade-in">
       <div>
         <h1 className="text-2xl font-bold tracking-tight md:text-3xl">{t("activities.title")}</h1>
-        <p className="text-muted-foreground mt-1.5">{t("activities.history")}</p>
+        <p className="text-slate-500 mt-1.5">{t("activities.history")}</p>
       </div>
 
-      <Card className="border-border/50 shadow-sm overflow-hidden">
-        <CardHeader className="border-b border-border/50 pb-3">
+      <Card className="border-slate-200/50 shadow-sm overflow-hidden">
+        <CardHeader className="border-b border-slate-200/50 pb-3">
           <CardTitle className="text-base font-bold">{t("activities.listTitle")}</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table className="min-w-[600px]">
               <TableHeader>
-                <TableRow className="bg-muted/50">
+                <TableRow className="bg-slate-100/50">
                   <TableHead className="font-semibold text-xs uppercase tracking-wider">{t("activities.type")}</TableHead>
                   <TableHead className="font-semibold text-xs uppercase tracking-wider">{t("activities.customer")}</TableHead>
                   <TableHead className="font-semibold text-xs uppercase tracking-wider">{t("activities.note")}</TableHead>
@@ -92,18 +92,18 @@ export default function ActivitiesPage() {
               <TableBody>
                 {loading ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">{t("common.loading")}</TableCell>
+                    <TableCell colSpan={5} className="h-24 text-center text-slate-500">{t("common.loading")}</TableCell>
                   </TableRow>
                 ) : activities.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">{t("activities.empty")}</TableCell>
+                    <TableCell colSpan={5} className="h-24 text-center text-slate-500">{t("activities.empty")}</TableCell>
                   </TableRow>
                 ) : (
                   activities.map((a) => {
                     const cfg = typeConfig[a.type] || typeConfig.call;
                     const Icon = cfg.icon;
                     return (
-                      <TableRow key={a.id} className="hover:bg-muted/30 transition-colors">
+                      <TableRow key={a.id} className="hover:bg-slate-100/30 transition-colors">
                         <TableCell>
                           <Badge variant={cfg.variant} className="font-medium gap-1.5">
                             <Icon className="h-3 w-3" />
@@ -112,14 +112,14 @@ export default function ActivitiesPage() {
                         </TableCell>
                         <TableCell className="font-medium">
                           {a.customer?.name ? (
-                            <Link href={`/customers/${(a as any).customer_id}`} className="hover:text-primary transition-colors">
+                            <Link href={`/customers/${(a as any).customer_id}`} className="hover:text-blue-600 transition-colors">
                               {a.customer.name}
                             </Link>
                           ) : "-"}
                         </TableCell>
-                        <TableCell className="max-w-[280px] truncate text-muted-foreground">{a.note}</TableCell>
-                        <TableCell className="text-muted-foreground">{a.user?.fullname || "-"}</TableCell>
-                        <TableCell className="text-muted-foreground text-sm">
+                        <TableCell className="max-w-[280px] truncate text-slate-500">{a.note}</TableCell>
+                        <TableCell className="text-slate-500">{a.user?.fullname || "-"}</TableCell>
+                        <TableCell className="text-slate-500 text-sm">
                           {formatDateTime(a.created_at)}
                         </TableCell>
                       </TableRow>

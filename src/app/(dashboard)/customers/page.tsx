@@ -165,15 +165,15 @@ export default function CustomersPage() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-foreground md:text-3xl tracking-tight">{t("customers.title")}</h1>
-          <p className="text-muted-foreground mt-1.5">{t("customers.subtitle")}</p>
+          <h1 className="text-2xl font-bold text-slate-900 md:text-3xl tracking-tight">{t("customers.title")}</h1>
+          <p className="text-slate-500 mt-1.5">{t("customers.subtitle")}</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button variant="outline" size="sm" onClick={handleExport} disabled={exporting} className="border-border shadow-sm">
+          <Button variant="outline" size="sm" onClick={handleExport} disabled={exporting} className="border-slate-200 shadow-sm">
             <Download className="mr-1.5 h-4 w-4" />
             {exporting ? t("common.loading") : t("common.export")}
           </Button>
-          <Button variant="outline" size="sm" onClick={() => setImportOpen(true)} className="border-border shadow-sm">
+          <Button variant="outline" size="sm" onClick={() => setImportOpen(true)} className="border-slate-200 shadow-sm">
             <Upload className="mr-1.5 h-4 w-4" />
             {t("common.import")}
           </Button>
@@ -189,12 +189,12 @@ export default function CustomersPage() {
       </div>
 
       {/* Filter Bar */}
-      <div className="bg-card rounded-xl border border-border/50 p-4 flex flex-col sm:flex-row gap-4 items-center shadow-sm">
+      <div className="bg-white rounded-xl border border-slate-200/50 p-4 flex flex-col sm:flex-row gap-4 items-center shadow-sm">
         <div className="relative flex-1 w-full">
-          <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
           <Input
             placeholder={t("customers.searchPlaceholder")}
-            className="pl-9 border-border/50 bg-background focus:border-primary/50 transition-all"
+            className="pl-9 border-slate-200/50 bg-white focus:border-blue-600/50 transition-all"
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -209,7 +209,7 @@ export default function CustomersPage() {
             setPage(1);
           }}
         >
-          <SelectTrigger className="w-full sm:w-[180px] border-border/50 bg-background shadow-sm">
+          <SelectTrigger className="w-full sm:w-[180px] border-slate-200/50 bg-white shadow-sm">
             <SelectValue placeholder={t("customers.filterStatus")} />
           </SelectTrigger>
           <SelectContent>
@@ -223,10 +223,10 @@ export default function CustomersPage() {
         </Select>
       </div>
 
-      <div className="rounded-xl border border-border/50 overflow-x-auto shadow-sm">
+      <div className="rounded-xl border border-slate-200/50 overflow-x-auto shadow-sm">
         <Table className="min-w-[600px]">
           <TableHeader>
-            <TableRow className="bg-muted/50">
+            <TableRow className="bg-slate-100/50">
               <TableHead className="font-semibold text-xs uppercase tracking-wider">{t("customers.name")}</TableHead>
               <TableHead className="font-semibold text-xs uppercase tracking-wider">{t("customers.company")}</TableHead>
               <TableHead className="font-semibold text-xs uppercase tracking-wider">{t("customers.email")}</TableHead>
@@ -263,17 +263,17 @@ export default function CustomersPage() {
               customers.map((customer) => (
                 <TableRow
                   key={customer.id}
-                  className="hover:bg-muted/30 transition-colors group cursor-pointer"
+                  className="hover:bg-slate-100/30 transition-colors group cursor-pointer"
                   onClick={() => router.push(`/customers/${customer.id}`)}
                 >
                   <TableCell className="font-semibold">
-                    <Link href={`/customers/${customer.id}`} className="hover:text-primary transition-colors">
+                    <Link href={`/customers/${customer.id}`} className="hover:text-blue-600 transition-colors">
                       {customer.name}
                     </Link>
                   </TableCell>
-                  <TableCell className="text-muted-foreground">{customer.company || "-"}</TableCell>
-                  <TableCell className="text-muted-foreground">{customer.email || "-"}</TableCell>
-                  <TableCell className="text-muted-foreground">{customer.phone || "-"}</TableCell>
+                  <TableCell className="text-slate-500">{customer.company || "-"}</TableCell>
+                  <TableCell className="text-slate-500">{customer.email || "-"}</TableCell>
+                  <TableCell className="text-slate-500">{customer.phone || "-"}</TableCell>
                   <TableCell>
                     <Badge variant={statusColors[customer.status] || "default"} className="font-medium capitalize">
                       {customer.status}
@@ -286,7 +286,7 @@ export default function CustomersPage() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 hover:bg-primary/10 hover:text-primary"
+                            className="h-8 w-8 hover:bg-blue-600/10 hover:text-blue-600"
                             onClick={() => router.push(`/customers/${customer.id}/edit`)}
                           >
                             <Edit className="h-4 w-4" />
@@ -313,8 +313,8 @@ export default function CustomersPage() {
       </div>
 
       {totalPages > 1 && (
-        <div className="flex items-center justify-between bg-card rounded-xl border border-border/50 px-4 py-3 shadow-sm">
-          <p className="text-sm text-muted-foreground font-medium">
+        <div className="flex items-center justify-between bg-white rounded-xl border border-slate-200/50 px-4 py-3 shadow-sm">
+          <p className="text-sm text-slate-500 font-medium">
             {(page - 1) * limit + 1} - {Math.min(page * limit, total)} / {total}
           </p>
           <div className="flex gap-2">

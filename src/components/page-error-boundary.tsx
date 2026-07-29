@@ -26,12 +26,12 @@ export function PageErrorBoundary({ children }: { children: React.ReactNode }) {
             </svg>
           </div>
           <h2 className="text-lg font-semibold mb-2">Gagal Memuat Halaman</h2>
-          <p className="text-muted-foreground mb-4 max-w-md">
+          <p className="text-slate-500 mb-4 max-w-md">
             Terjadi kesalahan saat memuat halaman ini. Silakan coba lagi.
           </p>
           <button
             onClick={() => window.location.reload()}
-            className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
+            className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-slate-300 bg-white hover:bg-slate-100 hover:text-slate-900 h-10 px-4 py-2"
           >
             Muat Ulang Halaman
           </button>

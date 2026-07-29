@@ -177,9 +177,9 @@ export default function UsersPage() {
   if (!isAdmin) {
     return (
       <div className="flex flex-col items-center justify-center py-20 animate-fade-in">
-        <ShieldAlert className="h-16 w-16 text-muted-foreground/40 mb-4" />
-        <h2 className="text-xl font-semibold text-foreground">{t("unauthorized.title")}</h2>
-        <p className="text-muted-foreground mt-2 text-center max-w-md">{t("unauthorized.description")}</p>
+        <ShieldAlert className="h-16 w-16 text-slate-500/40 mb-4" />
+        <h2 className="text-xl font-semibold text-slate-900">{t("unauthorized.title")}</h2>
+        <p className="text-slate-500 mt-2 text-center max-w-md">{t("unauthorized.description")}</p>
       </div>
     );
   }
@@ -189,8 +189,8 @@ export default function UsersPage() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-foreground md:text-3xl tracking-tight">{t("users.title")}</h1>
-          <p className="text-muted-foreground mt-1.5">{t("users.subtitle")}</p>
+          <h1 className="text-2xl font-bold text-slate-900 md:text-3xl tracking-tight">{t("users.title")}</h1>
+          <p className="text-slate-500 mt-1.5">{t("users.subtitle")}</p>
         </div>
         {isAdmin && (
           <Button onClick={() => setDialogOpen(true)} className="shadow-sm">
@@ -201,12 +201,12 @@ export default function UsersPage() {
       </div>
 
       {/* Table Card */}
-      <Card className="border-border/50 shadow-sm overflow-hidden">
+      <Card className="border-slate-200/50 shadow-sm overflow-hidden">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
           <Table className="min-w-[500px]">
             <TableHeader>
-              <TableRow className="bg-muted/50">
+              <TableRow className="bg-slate-100/50">
                 <TableHead className="font-semibold text-xs uppercase tracking-wider">{t("customers.name")}</TableHead>
                 <TableHead className="font-semibold text-xs uppercase tracking-wider">{t("customers.email")}</TableHead>
                 <TableHead className="font-semibold text-xs uppercase tracking-wider">{t("auth.role")}</TableHead>
@@ -215,14 +215,14 @@ export default function UsersPage() {
             </TableHeader>
             <TableBody>
               {loading ? (
-              <TableRow><TableCell colSpan={4} className="h-24 text-center text-muted-foreground">{t("common.loading")}</TableCell></TableRow>
+              <TableRow><TableCell colSpan={4} className="h-24 text-center text-slate-500">{t("common.loading")}</TableCell></TableRow>
             ) : users.length === 0 ? (
-              <TableRow><TableCell colSpan={4} className="h-24 text-center text-muted-foreground">{t("common.noData")}</TableCell></TableRow>
+              <TableRow><TableCell colSpan={4} className="h-24 text-center text-slate-500">{t("common.noData")}</TableCell></TableRow>
             ) : (
               users.map((u) => (
-                <TableRow key={u.id} className="hover:bg-muted/30 transition-colors group">
+                <TableRow key={u.id} className="hover:bg-slate-100/30 transition-colors group">
                   <TableCell className="font-semibold">{u.fullname}</TableCell>
-                  <TableCell className="text-muted-foreground">{u.email}</TableCell>
+                  <TableCell className="text-slate-500">{u.email}</TableCell>
                   <TableCell>
                     <Badge variant={roleColors[u.role] || "default"} className="font-medium capitalize">
                       <Shield className="mr-1 h-3 w-3" />
@@ -236,7 +236,7 @@ export default function UsersPage() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 hover:bg-primary/10 hover:text-primary"
+                            className="h-8 w-8 hover:bg-blue-600/10 hover:text-blue-600"
                             title="Reset Password"
                             onClick={() => {
                               setResetUser(u);
@@ -249,7 +249,7 @@ export default function UsersPage() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 hover:bg-primary/10 hover:text-primary"
+                            className="h-8 w-8 hover:bg-blue-600/10 hover:text-blue-600"
                             onClick={() => {
                               setEditUser(u);
                               setEditRole(u.role);
@@ -284,7 +284,7 @@ export default function UsersPage() {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-lg">
-              <div className="p-1.5 rounded-lg bg-primary/10 text-primary">
+              <div className="p-1.5 rounded-lg bg-blue-600/10 text-blue-600">
                 <UserCog className="h-5 w-5" />
               </div>
               {t("users.inviteUser")}
@@ -293,20 +293,20 @@ export default function UsersPage() {
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label className="text-sm font-semibold">{t("auth.fullname")}</Label>
-              <Input value={fullname} onChange={(e) => setFullname(e.target.value)} placeholder={t("profile.fullNamePlaceholder")} className="bg-muted/50 focus:bg-background" />
+              <Input value={fullname} onChange={(e) => setFullname(e.target.value)} placeholder={t("profile.fullNamePlaceholder")} className="bg-slate-100/50 focus:bg-white" />
             </div>
             <div className="space-y-2">
               <Label className="text-sm font-semibold">{t("auth.email")}</Label>
-              <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t("customers.emailPlaceholder")} className="bg-muted/50 focus:bg-background" />
+              <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t("customers.emailPlaceholder")} className="bg-slate-100/50 focus:bg-white" />
             </div>
             <div className="space-y-2">
               <Label className="text-sm font-semibold">{t("auth.password")}</Label>
-              <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder={t("auth.password")} className="bg-muted/50 focus:bg-background" />
+              <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder={t("auth.password")} className="bg-slate-100/50 focus:bg-white" />
             </div>
             <div className="space-y-2">
               <Label className="text-sm font-semibold">{t("auth.role")}</Label>
               <Select value={role} onValueChange={setRole}>
-                <SelectTrigger className="bg-muted/50 focus:bg-background"><SelectValue /></SelectTrigger>
+                <SelectTrigger className="bg-slate-100/50 focus:bg-white"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {isAdmin && <SelectItem value="admin">{t("auth.admin")}</SelectItem>}
                   <SelectItem value="manager">{t("auth.manager")}</SelectItem>
@@ -314,7 +314,7 @@ export default function UsersPage() {
                 </SelectContent>
               </Select>
               {isManager && (
-                <p className="text-xs text-muted-foreground mt-1">Manager tidak dapat membuat akun Admin</p>
+                <p className="text-xs text-slate-500 mt-1">Manager tidak dapat membuat akun Admin</p>
               )}
             </div>
           </div>
@@ -332,17 +332,17 @@ export default function UsersPage() {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-lg">
-              <div className="p-1.5 rounded-lg bg-primary/10 text-primary">
+              <div className="p-1.5 rounded-lg bg-blue-600/10 text-blue-600">
                 <UserCog className="h-5 w-5" />
               </div>
               {t("users.editRole")}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
-            <div className="bg-muted/30 rounded-xl p-4 border border-border/50">
-              <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">{t("nav.users")}</p>
+            <div className="bg-slate-100/30 rounded-xl p-4 border border-slate-200/50">
+              <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">{t("nav.users")}</p>
               <p className="font-semibold mt-1">{editUser?.fullname}</p>
-              <p className="text-sm text-muted-foreground">{editUser?.email}</p>
+              <p className="text-sm text-slate-500">{editUser?.email}</p>
               {isManager && editUser?.role === "admin" && (
                 <p className="text-xs text-destructive mt-2 font-medium">Manager tidak dapat mengubah role Admin</p>
               )}
@@ -354,7 +354,7 @@ export default function UsersPage() {
                 onValueChange={setEditRole}
                 disabled={isManager && editUser?.role === "admin"}
               >
-                <SelectTrigger className="bg-muted/50 focus:bg-background"><SelectValue /></SelectTrigger>
+                <SelectTrigger className="bg-slate-100/50 focus:bg-white"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {isAdmin && <SelectItem value="admin">{t("auth.admin")}</SelectItem>}
                   <SelectItem value="manager">{t("auth.manager")}</SelectItem>
@@ -419,10 +419,10 @@ export default function UsersPage() {
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
-            <div className="bg-muted/30 rounded-xl p-4 border border-border/50">
-              <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">User</p>
+            <div className="bg-slate-100/30 rounded-xl p-4 border border-slate-200/50">
+              <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">User</p>
               <p className="font-semibold mt-1">{resetUser?.fullname}</p>
-              <p className="text-sm text-muted-foreground">{resetUser?.email}</p>
+              <p className="text-sm text-slate-500">{resetUser?.email}</p>
             </div>
             {resetSuccess ? (
               <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-4 text-sm text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-800 text-center font-medium animate-scale-in">
@@ -436,7 +436,7 @@ export default function UsersPage() {
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   placeholder="Masukkan password baru (min 6 karakter)"
-                  className="bg-muted/50 focus:bg-background"
+                  className="bg-slate-100/50 focus:bg-white"
                 />
                 {newPassword.length > 0 && newPassword.length < 6 && (
                   <p className="text-xs text-destructive font-medium">Password minimal 6 karakter</p>

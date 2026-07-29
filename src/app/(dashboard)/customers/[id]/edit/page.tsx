@@ -34,18 +34,18 @@ export default function EditCustomerPage() {
   }, [id]);
 
   if (loading) {
-    return <div className="flex items-center justify-center h-64"><p className="text-muted-foreground">{t("common.loading")}</p></div>;
+    return <div className="flex items-center justify-center h-64"><p className="text-slate-500">{t("common.loading")}</p></div>;
   }
 
   if (!customer) {
-    return <div className="flex items-center justify-center h-64"><p className="text-muted-foreground">{t("customers.notFound")}</p></div>;
+    return <div className="flex items-center justify-center h-64"><p className="text-slate-500">{t("customers.notFound")}</p></div>;
   }
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">{t("customers.editCustomer")}</h1>
-        <p className="text-muted-foreground">{t("customers.editCustomerDesc")}</p>
+        <p className="text-slate-500">{t("customers.editCustomerDesc")}</p>
       </div>
       <CustomerForm customer={customer} mode="edit" />
     </div>

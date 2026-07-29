@@ -11,7 +11,7 @@ function Skeleton({ className, ...props }: React.HTMLAttributes<HTMLDivElement>)
 
 function SkeletonCard({ className }: { className?: string }) {
   return (
-    <div className={cn("rounded-xl border bg-card p-6 space-y-4", className)}>
+    <div className={cn("rounded-xl border bg-white p-6 space-y-4", className)}>
       <div className="flex items-center justify-between">
         <Skeleton className="h-4 w-32" />
         <Skeleton className="h-10 w-10 rounded-full" />
@@ -23,7 +23,7 @@ function SkeletonCard({ className }: { className?: string }) {
 
 function SkeletonTable({ rows = 5, cols = 4 }: { rows?: number; cols?: number }) {
   return (
-    <div className="rounded-xl border bg-card overflow-hidden">
+    <div className="rounded-xl border bg-white overflow-hidden">
       <div className="p-4 border-b">
         <div className="flex gap-4">
           {Array.from({ length: cols }).map((_, i) => (
@@ -64,7 +64,7 @@ function SkeletonAvatar({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
 
 function SkeletonChart({ className }: { className?: string }) {
   return (
-    <div className={cn("rounded-xl border bg-card p-6", className)}>
+    <div className={cn("rounded-xl border bg-white p-6", className)}>
       <Skeleton className="h-4 w-40 mb-4" />
       <Skeleton className="h-48 w-full rounded-lg" />
     </div>

@@ -11,7 +11,7 @@ export default function UnauthorizedPage() {
 
   return (
     <div className="flex items-center justify-center min-h-[60vh] animate-fade-in">
-      <Card className="w-full max-w-md text-center border-border/50 shadow-lg">
+      <Card className="w-full max-w-md text-center border-slate-200/50 shadow-lg">
         <CardHeader>
           <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-destructive/10 mb-4">
             <ShieldX className="h-10 w-10 text-destructive" />

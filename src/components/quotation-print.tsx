@@ -24,15 +24,15 @@ export function QuotationPrint({ quotation }: QuotationPrintProps) {
       {/* Header */}
       <div className="flex justify-between items-start mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-primary">CRM</h1>
-          <p className="text-sm text-muted-foreground">Jl. Contoh No. 123, Jakarta</p>
-          <p className="text-sm text-muted-foreground">Telp: 021-12345678</p>
-          <p className="text-sm text-muted-foreground">Email: info@crm.com</p>
+          <h1 className="text-2xl font-bold text-blue-600">CRM</h1>
+          <p className="text-sm text-slate-500">Jl. Contoh No. 123, Jakarta</p>
+          <p className="text-sm text-slate-500">Telp: 021-12345678</p>
+          <p className="text-sm text-slate-500">Email: info@crm.com</p>
         </div>
         <div className="text-right">
           <h2 className="text-xl font-bold">{t("print.quotation")}</h2>
-          <p className="text-sm text-muted-foreground">{quotation.quotation_number}</p>
-          <p className="text-sm text-muted-foreground">{t("print.date")} {today}</p>
+          <p className="text-sm text-slate-500">{quotation.quotation_number}</p>
+          <p className="text-sm text-slate-500">{t("print.date")} {today}</p>
         </div>
       </div>
 
@@ -40,15 +40,15 @@ export function QuotationPrint({ quotation }: QuotationPrintProps) {
       <div className="mb-6 p-4 border rounded-lg">
         <h3 className="font-semibold mb-2">{t("print.to")}</h3>
         <p className="font-medium">{quotation.customer?.name || "-"}</p>
-        <p className="text-sm text-muted-foreground">{quotation.customer?.company || ""}</p>
-        <p className="text-sm text-muted-foreground">{quotation.customer?.email || ""}</p>
-        <p className="text-sm text-muted-foreground">{quotation.customer?.phone || ""}</p>
+        <p className="text-sm text-slate-500">{quotation.customer?.company || ""}</p>
+        <p className="text-sm text-slate-500">{quotation.customer?.email || ""}</p>
+        <p className="text-sm text-slate-500">{quotation.customer?.phone || ""}</p>
       </div>
 
       {/* Items Table */}
       <table className="w-full mb-6 border-collapse">
         <thead>
-          <tr className="bg-muted">
+          <tr className="bg-slate-100">
             <th className="border p-2 text-left">{t("print.no")}</th>
             <th className="border p-2 text-left">{t("print.product")}</th>
             <th className="border p-2 text-center">{t("print.qty")}</th>

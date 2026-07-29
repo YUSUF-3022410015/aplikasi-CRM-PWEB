@@ -138,8 +138,8 @@ export default function ProductsPage() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-foreground md:text-3xl tracking-tight">{t("products.title")}</h1>
-          <p className="text-muted-foreground mt-1.5">{t("products.subtitle")}</p>
+          <h1 className="text-2xl font-bold text-slate-900 md:text-3xl tracking-tight">{t("products.title")}</h1>
+          <p className="text-slate-500 mt-1.5">{t("products.subtitle")}</p>
         </div>
         {isAdmin && (
           <Button onClick={openCreate} className="shadow-sm">
@@ -150,12 +150,12 @@ export default function ProductsPage() {
       </div>
 
       {/* Table Card */}
-      <Card className="border-border/50 shadow-sm overflow-hidden">
+      <Card className="border-slate-200/50 shadow-sm overflow-hidden">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
           <Table className="min-w-[600px]">
             <TableHeader>
-              <TableRow className="bg-muted/50">
+              <TableRow className="bg-slate-100/50">
                 <TableHead className="font-semibold text-xs uppercase tracking-wider">{t("products.sku")}</TableHead>
                 <TableHead className="font-semibold text-xs uppercase tracking-wider">{t("products.name")}</TableHead>
                 <TableHead className="font-semibold text-xs uppercase tracking-wider">{t("products.category")}</TableHead>
@@ -167,18 +167,18 @@ export default function ProductsPage() {
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">{t("common.loading")}</TableCell>
+                  <TableCell colSpan={6} className="h-24 text-center text-slate-500">{t("common.loading")}</TableCell>
                 </TableRow>
             ) : products.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">{t("products.noProducts")}</TableCell>
+                <TableCell colSpan={6} className="h-24 text-center text-slate-500">{t("products.noProducts")}</TableCell>
               </TableRow>
             ) : (
               products.map((p) => (
-                <TableRow key={p.id} className="hover:bg-muted/30 transition-colors group">
-                  <TableCell className="font-mono text-sm text-muted-foreground">{p.sku}</TableCell>
+                <TableRow key={p.id} className="hover:bg-slate-100/30 transition-colors group">
+                  <TableCell className="font-mono text-sm text-slate-500">{p.sku}</TableCell>
                   <TableCell className="font-semibold">{p.name}</TableCell>
-                  <TableCell className="text-muted-foreground">{p.category || "-"}</TableCell>
+                  <TableCell className="text-slate-500">{p.category || "-"}</TableCell>
                   <TableCell className="font-semibold">{formatCurrency(p.price)}</TableCell>
                   <TableCell>
                     <Badge variant={p.status === "active" ? "success" : "secondary"} className="font-medium capitalize">
@@ -189,7 +189,7 @@ export default function ProductsPage() {
                     <div className="flex gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
                       {isAdmin && (
                         <>
-                          <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-primary/10 hover:text-primary" onClick={() => openEdit(p)}>
+                          <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-blue-600/10 hover:text-blue-600" onClick={() => openEdit(p)}>
                             <Edit className="h-4 w-4" />
                           </Button>
                           <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive" onClick={() => setDeleteId(p.id)}>
@@ -217,12 +217,12 @@ export default function ProductsPage() {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label className="text-sm font-semibold">SKU</Label>
-                <Input value={form.sku} onChange={(e) => setForm({ ...form, sku: e.target.value })} placeholder="SKU-001" className="bg-muted/50 focus:bg-background" />
+                <Input value={form.sku} onChange={(e) => setForm({ ...form, sku: e.target.value })} placeholder="SKU-001" className="bg-slate-100/50 focus:bg-white" />
               </div>
               <div className="space-y-2">
                 <Label className="text-sm font-semibold">{t("products.status")}</Label>
                 <Select value={form.status} onValueChange={(v) => setForm({ ...form, status: v as "active" | "inactive" })}>
-                  <SelectTrigger className="bg-muted/50 focus:bg-background"><SelectValue /></SelectTrigger>
+                  <SelectTrigger className="bg-slate-100/50 focus:bg-white"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="active">{t("common.active")}</SelectItem>
                     <SelectItem value="inactive">{t("common.inactive")}</SelectItem>
@@ -232,19 +232,19 @@ export default function ProductsPage() {
             </div>
             <div className="space-y-2">
               <Label className="text-sm font-semibold">{t("products.name")}</Label>
-              <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder={t("customers.name")} className="bg-muted/50 focus:bg-background" />
+              <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder={t("customers.name")} className="bg-slate-100/50 focus:bg-white" />
             </div>
             <div className="space-y-2">
               <Label className="text-sm font-semibold">{t("products.category")}</Label>
-              <Input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} placeholder={t("products.category")} className="bg-muted/50 focus:bg-background" />
+              <Input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} placeholder={t("products.category")} className="bg-slate-100/50 focus:bg-white" />
             </div>
             <div className="space-y-2">
               <Label className="text-sm font-semibold">{t("products.price")} (IDR)</Label>
-              <Input type="text" inputMode="numeric" value={form.price === 0 ? "" : form.price} onChange={(e) => { const val = e.target.value.replace(/[^0-9]/g, ""); setForm({ ...form, price: val ? Number(val) : 0 }); }} className="bg-muted/50 focus:bg-background" />
+              <Input type="text" inputMode="numeric" value={form.price === 0 ? "" : form.price} onChange={(e) => { const val = e.target.value.replace(/[^0-9]/g, ""); setForm({ ...form, price: val ? Number(val) : 0 }); }} className="bg-slate-100/50 focus:bg-white" />
             </div>
             <div className="space-y-2">
               <Label className="text-sm font-semibold">{t("products.description")}</Label>
-              <Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} className="bg-muted/50 focus:bg-background resize-none" />
+              <Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} className="bg-slate-100/50 focus:bg-white resize-none" />
             </div>
           </div>
           <DialogFooter className="gap-2">

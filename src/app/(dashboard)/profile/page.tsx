@@ -99,16 +99,16 @@ export default function ProfilePage() {
   if (loading) {
     return (
       <div className="space-y-4 animate-fade-in">
-        <div className="h-8 w-48 bg-muted rounded-md animate-pulse-soft" />
-        <div className="rounded-xl border bg-card p-6 space-y-4">
+        <div className="h-8 w-48 bg-slate-100 rounded-md animate-pulse-soft" />
+        <div className="rounded-xl border bg-white p-6 space-y-4">
           <div className="flex items-center gap-4">
-            <div className="h-16 w-16 rounded-full bg-muted animate-pulse-soft" />
+            <div className="h-16 w-16 rounded-full bg-slate-100 animate-pulse-soft" />
             <div className="space-y-2">
-              <div className="h-4 w-32 bg-muted rounded-md animate-pulse-soft" />
-              <div className="h-3 w-48 bg-muted rounded-md animate-pulse-soft" />
+              <div className="h-4 w-32 bg-slate-100 rounded-md animate-pulse-soft" />
+              <div className="h-3 w-48 bg-slate-100 rounded-md animate-pulse-soft" />
             </div>
           </div>
-          <div className="h-10 w-full bg-muted rounded-md animate-pulse-soft" />
+          <div className="h-10 w-full bg-slate-100 rounded-md animate-pulse-soft" />
         </div>
       </div>
     );
@@ -118,8 +118,8 @@ export default function ProfilePage() {
     <div className="space-y-6 max-w-2xl mx-auto animate-fade-in">
       {/* Page Header */}
       <div className="animate-slide-up">
-        <h1 className="text-2xl font-bold text-foreground md:text-3xl">{t("nav.profile")}</h1>
-        <p className="text-muted-foreground mt-1">{t("profile.manageAccount")}</p>
+        <h1 className="text-2xl font-bold text-slate-900 md:text-3xl">{t("nav.profile")}</h1>
+        <p className="text-slate-500 mt-1">{t("profile.manageAccount")}</p>
       </div>
 
       {success && (
@@ -134,11 +134,11 @@ export default function ProfilePage() {
       )}
 
       {/* Profile Info Card */}
-      <Card className="border-border/50 shadow-sm hover:shadow-md transition-shadow animate-slide-up" style={{ animationDelay: "0.1s" }}>
+      <Card className="border-slate-200/50 shadow-sm hover:shadow-md transition-shadow animate-slide-up" style={{ animationDelay: "0.1s" }}>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <div className="p-2 rounded-lg bg-primary/10">
-              <User className="h-5 w-5 text-primary" />
+            <div className="p-2 rounded-lg bg-blue-600/10">
+              <User className="h-5 w-5 text-blue-600" />
             </div>
             {t("profile.profileInfo")}
           </CardTitle>
@@ -147,16 +147,16 @@ export default function ProfilePage() {
         <CardContent className="space-y-4">
           <div className="flex items-center gap-4 animate-slide-up" style={{ animationDelay: "0.15s" }}>
             <Avatar className="h-16 w-16 shadow-lg">
-              <AvatarFallback className="bg-primary text-primary-foreground text-xl font-bold">
+              <AvatarFallback className="bg-blue-600 text-white text-xl font-bold">
                 {getInitials(fullname || "U")}
               </AvatarFallback>
             </Avatar>
             <div>
               <p className="font-medium text-lg">{fullname || "User"}</p>
-              <p className="text-sm text-muted-foreground">{email}</p>
+              <p className="text-sm text-slate-500">{email}</p>
               <div className="flex items-center gap-1 mt-1">
-                <Shield className="h-3 w-3 text-muted-foreground" />
-                <p className="text-xs text-muted-foreground capitalize">{t("auth.role")}: {role}</p>
+                <Shield className="h-3 w-3 text-slate-500" />
+                <p className="text-xs text-slate-500 capitalize">{t("auth.role")}: {role}</p>
               </div>
             </div>
           </div>
@@ -168,13 +168,13 @@ export default function ProfilePage() {
               value={fullname}
               onChange={(e) => setFullname(e.target.value)}
               placeholder={t("profile.fullNamePlaceholder")}
-              className="border-border/60 bg-background/50 focus:bg-background transition-colors"
+              className="border-slate-200/60 bg-white/50 focus:bg-white transition-colors"
             />
           </div>
           <div className="space-y-2 animate-slide-up" style={{ animationDelay: "0.25s" }}>
             <Label htmlFor="email" className="text-sm font-medium">{t("auth.email")}</Label>
-            <Input id="email" value={email} disabled className="bg-muted/50" />
-            <p className="text-xs text-muted-foreground">{t("profile.emailCannotBeChanged")}</p>
+            <Input id="email" value={email} disabled className="bg-slate-100/50" />
+            <p className="text-xs text-slate-500">{t("profile.emailCannotBeChanged")}</p>
           </div>
           <div className="animate-slide-up" style={{ animationDelay: "0.3s" }}>
             <Button onClick={handleSave} disabled={saving} className="shadow-sm hover:shadow-md transition-shadow">
@@ -186,11 +186,11 @@ export default function ProfilePage() {
       </Card>
 
       {/* Change Password Card */}
-      <Card className="border-border/50 shadow-sm hover:shadow-md transition-shadow animate-slide-up" style={{ animationDelay: "0.2s" }}>
+      <Card className="border-slate-200/50 shadow-sm hover:shadow-md transition-shadow animate-slide-up" style={{ animationDelay: "0.2s" }}>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <div className="p-2 rounded-lg bg-primary/10">
-              <Lock className="h-5 w-5 text-primary" />
+            <div className="p-2 rounded-lg bg-blue-600/10">
+              <Lock className="h-5 w-5 text-blue-600" />
             </div>
             {t("profile.changePassword")}
           </CardTitle>
@@ -205,7 +205,7 @@ export default function ProfilePage() {
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               placeholder={t("auth.password")}
-              className="border-border/60 bg-background/50 focus:bg-background transition-colors"
+              className="border-slate-200/60 bg-white/50 focus:bg-white transition-colors"
             />
           </div>
           <div className="animate-slide-up" style={{ animationDelay: "0.3s" }}>

@@ -103,7 +103,7 @@ export default function DashboardPage() {
         </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="rounded-xl border bg-card p-5 space-y-4 shadow-sm">
+            <div key={i} className="rounded-xl border bg-white p-5 space-y-4 shadow-sm">
               <div className="flex items-center justify-between">
                 <div className="h-4 w-24 bg-gradient-to-r from-muted to-muted/50 rounded-md animate-pulse-soft" />
                 <div className="h-10 w-10 rounded-xl bg-gradient-to-r from-muted to-muted/50 animate-pulse-soft" />
@@ -114,7 +114,7 @@ export default function DashboardPage() {
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="rounded-xl border bg-card p-6 shadow-sm">
+            <div key={i} className="rounded-xl border bg-white p-6 shadow-sm">
               <div className="h-4 w-32 bg-gradient-to-r from-muted to-muted/50 rounded-md animate-pulse-soft mb-4" />
               <div className="h-48 w-full bg-gradient-to-r from-muted to-muted/50 rounded-lg animate-pulse-soft" />
             </div>
@@ -139,8 +139,8 @@ export default function DashboardPage() {
     <div className="space-y-6">
       {/* Page Header */}
       <div className="animate-fade-in">
-        <h1 className="text-2xl font-bold text-foreground md:text-3xl">{t("dashboard.title")}</h1>
-        <p className="text-muted-foreground mt-1.5">{t("dashboard.subtitle")}</p>
+        <h1 className="text-2xl font-bold text-slate-900 md:text-3xl">{t("dashboard.title")}</h1>
+        <p className="text-slate-500 mt-1.5">{t("dashboard.subtitle")}</p>
       </div>
 
       {/* Stats Grid */}
@@ -148,18 +148,18 @@ export default function DashboardPage() {
         {statCards.map((stat, index) => (
           <Card
             key={stat.title}
-            className="relative group hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 animate-slide-up border-border/50 overflow-hidden"
+            className="relative group hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 animate-slide-up border-slate-200/50 overflow-hidden"
             style={{ animationDelay: `${index * 60}ms` }}
           >
             <div className={`absolute inset-0 bg-gradient-to-br ${stat.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
             <CardContent className="p-3 sm:p-5 relative">
               <div className="flex items-center justify-between mb-3 sm:mb-4">
-                <span className="text-xs sm:text-sm font-semibold text-muted-foreground/80 truncate uppercase tracking-wider">{stat.title}</span>
+                <span className="text-xs sm:text-sm font-semibold text-slate-500/80 truncate uppercase tracking-wider">{stat.title}</span>
                 <div className={`p-2 sm:p-2.5 rounded-xl bg-gradient-to-br ${stat.gradient} shrink-0 group-hover:scale-110 transition-transform duration-300`}>
                   <stat.icon className={`h-4 w-4 sm:h-5 sm:w-5 ${stat.iconColor}`} />
                 </div>
               </div>
-              <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground tracking-tight">{stat.value}</div>
+              <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 tracking-tight">{stat.value}</div>
             </CardContent>
           </Card>
         ))}

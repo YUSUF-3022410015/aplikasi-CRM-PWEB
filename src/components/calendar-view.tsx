@@ -138,9 +138,9 @@ export function CalendarView({ followUps, onDateClick, onFollowUpClick }: Calend
       {/* Calendar Grid */}
       <div className="border rounded-lg overflow-hidden">
         {/* Day headers */}
-        <div className="grid grid-cols-7 bg-muted">
+        <div className="grid grid-cols-7 bg-slate-100">
           {daysInWeek.map((day) => (
-            <div key={day} className="p-2 text-center text-sm font-medium text-muted-foreground">
+            <div key={day} className="p-2 text-center text-sm font-medium text-slate-500">
               {day}
             </div>
           ))}
@@ -150,7 +150,7 @@ export function CalendarView({ followUps, onDateClick, onFollowUpClick }: Calend
         <div className="grid grid-cols-7">
           {calendarDays.map((day, index) => {
             if (day === null) {
-              return <div key={`empty-${index}`} className="border-b border-r min-h-[100px] bg-muted/30" />;
+              return <div key={`empty-${index}`} className="border-b border-r min-h-[100px] bg-slate-100/30" />;
             }
 
             const dateKey = formatDateKey(day);
@@ -160,7 +160,7 @@ export function CalendarView({ followUps, onDateClick, onFollowUpClick }: Calend
             return (
               <div
                 key={day}
-                className={`border-b border-r min-h-[100px] p-1 cursor-pointer hover:bg-muted/50 transition-colors ${
+                className={`border-b border-r min-h-[100px] p-1 cursor-pointer hover:bg-slate-100/50 transition-colors ${
                   isToday(day) ? "bg-blue-50" : ""
                 }`}
                 onClick={() => handleDateClick(day)}
@@ -196,7 +196,7 @@ export function CalendarView({ followUps, onDateClick, onFollowUpClick }: Calend
                     );
                   })}
                   {dayFollowUps.length > 2 && (
-                    <div className="text-[10px] text-muted-foreground text-center">
+                    <div className="text-[10px] text-slate-500 text-center">
                       +{dayFollowUps.length - 2} lagi
                     </div>
                   )}
@@ -218,7 +218,7 @@ export function CalendarView({ followUps, onDateClick, onFollowUpClick }: Calend
           </DialogHeader>
 
           {selectedDateFollowUps.length === 0 ? (
-            <div className="py-8 text-center text-muted-foreground">
+            <div className="py-8 text-center text-slate-500">
               <CalendarCheck className="mx-auto h-12 w-12 mb-2 opacity-50" />
               <p>{t("common.noFollowupsOnDate")}</p>
               {onDateClick && (
@@ -240,13 +240,13 @@ export function CalendarView({ followUps, onDateClick, onFollowUpClick }: Calend
                 return (
                   <div
                     key={fu.id}
-                    className="p-3 border rounded-lg cursor-pointer hover:bg-muted/50"
+                    className="p-3 border rounded-lg cursor-pointer hover:bg-slate-100/50"
                     onClick={() => handleFollowUpClick(fu)}
                   >
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="font-medium">{fu.customer?.name || t("common.followUp")}</p>
-                        <p className="text-sm text-muted-foreground">{fu.note || t("common.noData")}</p>
+                        <p className="text-sm text-slate-500">{fu.note || t("common.noData")}</p>
                       </div>
                       <Badge variant="outline" className={config.color}>
                         {config.label}

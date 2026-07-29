@@ -105,7 +105,7 @@ export default function CustomerDetailPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <p className="text-muted-foreground">{t("common.loading")}</p>
+        <p className="text-slate-500">{t("common.loading")}</p>
       </div>
     );
   }
@@ -113,7 +113,7 @@ export default function CustomerDetailPage() {
   if (!customer) {
     return (
       <div className="flex items-center justify-center h-64">
-        <p className="text-muted-foreground">{t("customers.notFound")}</p>
+        <p className="text-slate-500">{t("customers.notFound")}</p>
       </div>
     );
   }
@@ -123,7 +123,7 @@ export default function CustomerDetailPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">{customer.name}</h1>
-          <p className="text-muted-foreground">{customer.company || t("customers.noCompany")}</p>
+          <p className="text-slate-500">{customer.company || t("customers.noCompany")}</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <WhatsAppButton
@@ -154,44 +154,44 @@ export default function CustomerDetailPage() {
             <CardContent className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="flex items-center gap-3">
-                  <Building className="h-4 w-4 text-muted-foreground" />
+                  <Building className="h-4 w-4 text-slate-500" />
                   <div>
-                    <p className="text-sm text-muted-foreground">{t("customers.company")}</p>
+                    <p className="text-sm text-slate-500">{t("customers.company")}</p>
                     <p className="font-medium">{customer.company || "-"}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <Mail className="h-4 w-4 text-muted-foreground" />
+                  <Mail className="h-4 w-4 text-slate-500" />
                   <div>
-                    <p className="text-sm text-muted-foreground">{t("customers.email")}</p>
+                    <p className="text-sm text-slate-500">{t("customers.email")}</p>
                     <p className="font-medium">{customer.email || "-"}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <Phone className="h-4 w-4 text-muted-foreground" />
+                  <Phone className="h-4 w-4 text-slate-500" />
                   <div>
-                    <p className="text-sm text-muted-foreground">{t("customers.phone")}</p>
+                    <p className="text-sm text-slate-500">{t("customers.phone")}</p>
                     <p className="font-medium">{customer.phone || "-"}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <MessageSquare className="h-4 w-4 text-muted-foreground" />
+                  <MessageSquare className="h-4 w-4 text-slate-500" />
                   <div>
-                    <p className="text-sm text-muted-foreground">{t("customers.whatsapp")}</p>
+                    <p className="text-sm text-slate-500">{t("customers.whatsapp")}</p>
                     <p className="font-medium">{customer.whatsapp || "-"}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <MapPin className="h-4 w-4 text-muted-foreground" />
+                  <MapPin className="h-4 w-4 text-slate-500" />
                   <div>
-                    <p className="text-sm text-muted-foreground">{t("customers.city")}</p>
+                    <p className="text-sm text-slate-500">{t("customers.city")}</p>
                     <p className="font-medium">{customer.city || "-"}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <Globe className="h-4 w-4 text-muted-foreground" />
+                  <Globe className="h-4 w-4 text-slate-500" />
                   <div>
-                    <p className="text-sm text-muted-foreground">{t("customers.website")}</p>
+                    <p className="text-sm text-slate-500">{t("customers.website")}</p>
                     <p className="font-medium">{customer.website || "-"}</p>
                   </div>
                 </div>
@@ -200,7 +200,7 @@ export default function CustomerDetailPage() {
                 <>
                   <Separator />
                   <div>
-                    <p className="text-sm text-muted-foreground">{t("customers.address")}</p>
+                    <p className="text-sm text-slate-500">{t("customers.address")}</p>
                     <p className="font-medium">{customer.address}</p>
                   </div>
                 </>
@@ -208,19 +208,19 @@ export default function CustomerDetailPage() {
               <Separator />
               <div className="flex gap-4">
                 <div>
-                  <p className="text-sm text-muted-foreground">{t("customers.status")}</p>
+                  <p className="text-sm text-slate-500">{t("customers.status")}</p>
                   <Badge variant={statusColors[customer.status] || "default"} className="mt-1">
                     {customer.status}
                   </Badge>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">{t("customers.pipeline")}</p>
+                  <p className="text-sm text-slate-500">{t("customers.pipeline")}</p>
                   <Badge variant="outline" className="mt-1">
                     {customer.pipeline_stage}
                   </Badge>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">{t("customers.source")}</p>
+                  <p className="text-sm text-slate-500">{t("customers.source")}</p>
                   <p className="font-medium">{customer.source || "-"}</p>
                 </div>
               </div>
@@ -235,17 +235,17 @@ export default function CustomerDetailPage() {
             </CardHeader>
             <CardContent className="space-y-3 text-sm">
               <div>
-                <p className="text-muted-foreground">{t("customers.industry")}</p>
+                <p className="text-slate-500">{t("customers.industry")}</p>
                 <p className="font-medium">{customer.industry || "-"}</p>
               </div>
               <Separator />
               <div>
-                <p className="text-muted-foreground">{t("customers.createdAt")}</p>
+                <p className="text-slate-500">{t("customers.createdAt")}</p>
                 <p className="font-medium">{formatDate(customer.created_at)}</p>
               </div>
               <Separator />
               <div>
-                <p className="text-muted-foreground">{t("customers.updatedAt")}</p>
+                <p className="text-slate-500">{t("customers.updatedAt")}</p>
                 <p className="font-medium">{formatDate(customer.updated_at)}</p>
               </div>
             </CardContent>

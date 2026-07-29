@@ -134,22 +134,22 @@ export default function ActivityLogPage() {
   if (!permLoading && !isAdmin) {
     return (
       <div className="flex flex-col items-center justify-center py-20 animate-fade-in">
-        <ShieldAlert className="h-16 w-16 text-muted-foreground/40 mb-4" />
-        <h2 className="text-xl font-semibold text-foreground">{t("unauthorized.title")}</h2>
-        <p className="text-muted-foreground mt-2 text-center max-w-md">{t("unauthorized.description")}</p>
+        <ShieldAlert className="h-16 w-16 text-slate-500/40 mb-4" />
+        <h2 className="text-xl font-semibold text-slate-900">{t("unauthorized.title")}</h2>
+        <p className="text-slate-500 mt-2 text-center max-w-md">{t("unauthorized.description")}</p>
       </div>
     );
   }
 
   if (loading) {
-    return <div className="flex items-center justify-center h-64"><p className="text-muted-foreground">{t("common.loading")}</p></div>;
+    return <div className="flex items-center justify-center h-64"><p className="text-slate-500">{t("common.loading")}</p></div>;
   }
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">{t("activityLog.title")}</h1>
-        <p className="text-muted-foreground">{t("activityLog.subtitle")}</p>
+        <p className="text-slate-500">{t("activityLog.subtitle")}</p>
       </div>
 
       <ActivityLogList activities={allActivities} />

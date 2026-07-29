@@ -115,15 +115,15 @@ export default function ReportsPage() {
   if (!permLoading && !isAdmin && !isManager) {
     return (
       <div className="flex flex-col items-center justify-center py-20 animate-fade-in">
-        <ShieldAlert className="h-16 w-16 text-muted-foreground/40 mb-4" />
-        <h2 className="text-xl font-semibold text-foreground">{t("unauthorized.title")}</h2>
-        <p className="text-muted-foreground mt-2 text-center max-w-md">{t("unauthorized.description")}</p>
+        <ShieldAlert className="h-16 w-16 text-slate-500/40 mb-4" />
+        <h2 className="text-xl font-semibold text-slate-900">{t("unauthorized.title")}</h2>
+        <p className="text-slate-500 mt-2 text-center max-w-md">{t("unauthorized.description")}</p>
       </div>
     );
   }
 
   if (loading) {
-    return <div className="flex items-center justify-center h-64"><p className="text-muted-foreground">{t("common.loading")}</p></div>;
+    return <div className="flex items-center justify-center h-64"><p className="text-slate-500">{t("common.loading")}</p></div>;
   }
 
   return (
@@ -131,7 +131,7 @@ export default function ReportsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">{t("reports.title")}</h1>
-          <p className="text-muted-foreground">{t("reports.subtitle")}</p>
+          <p className="text-slate-500">{t("reports.subtitle")}</p>
         </div>
         <div className="flex flex-wrap gap-2 no-print">
           <Button variant="outline" onClick={() => {
@@ -158,45 +158,45 @@ export default function ReportsPage() {
         <Card className="hover:shadow-md transition-shadow">
           <CardContent className="p-5">
             <div className="flex items-center justify-between mb-4">
-              <span className="text-sm font-medium text-muted-foreground">{t("reports.totalCustomers")}</span>
-              <div className="p-2.5 rounded-full bg-primary/10">
-                <Users className="h-5 w-5 text-primary" />
+              <span className="text-sm font-medium text-slate-500">{t("reports.totalCustomers")}</span>
+              <div className="p-2.5 rounded-full bg-blue-600/10">
+                <Users className="h-5 w-5 text-blue-600" />
               </div>
             </div>
-            <div className="text-3xl font-bold text-foreground">{stats.totalCustomers}</div>
+            <div className="text-3xl font-bold text-slate-900">{stats.totalCustomers}</div>
           </CardContent>
         </Card>
         <Card className="hover:shadow-md transition-shadow">
           <CardContent className="p-5">
             <div className="flex items-center justify-between mb-4">
-              <span className="text-sm font-medium text-muted-foreground">{t("reports.revenue")}</span>
-              <div className="p-2.5 rounded-full bg-primary/10">
-                <DollarSign className="h-5 w-5 text-primary" />
+              <span className="text-sm font-medium text-slate-500">{t("reports.revenue")}</span>
+              <div className="p-2.5 rounded-full bg-blue-600/10">
+                <DollarSign className="h-5 w-5 text-blue-600" />
               </div>
             </div>
-            <div className="text-3xl font-bold text-foreground">{formatCurrency(stats.totalRevenue)}</div>
+            <div className="text-3xl font-bold text-slate-900">{formatCurrency(stats.totalRevenue)}</div>
           </CardContent>
         </Card>
         <Card className="hover:shadow-md transition-shadow">
           <CardContent className="p-5">
             <div className="flex items-center justify-between mb-4">
-              <span className="text-sm font-medium text-muted-foreground">{t("reports.dealsWon")}</span>
+              <span className="text-sm font-medium text-slate-500">{t("reports.dealsWon")}</span>
               <div className="p-2.5 rounded-full bg-tertiary/10">
                 <TrendingUp className="h-5 w-5 text-tertiary" />
               </div>
             </div>
-            <div className="text-3xl font-bold text-foreground">{stats.dealsWon}</div>
+            <div className="text-3xl font-bold text-slate-900">{stats.dealsWon}</div>
           </CardContent>
         </Card>
         <Card className="hover:shadow-md transition-shadow">
           <CardContent className="p-5">
             <div className="flex items-center justify-between mb-4">
-              <span className="text-sm font-medium text-muted-foreground">{t("reports.dealsLost")}</span>
+              <span className="text-sm font-medium text-slate-500">{t("reports.dealsLost")}</span>
               <div className="p-2.5 rounded-full bg-destructive/10">
                 <TrendingDown className="h-5 w-5 text-destructive" />
               </div>
             </div>
-            <div className="text-3xl font-bold text-foreground">{stats.dealsLost}</div>
+            <div className="text-3xl font-bold text-slate-900">{stats.dealsLost}</div>
           </CardContent>
         </Card>
       </div>
@@ -266,14 +266,14 @@ export default function ReportsPage() {
                 <div className="flex items-center gap-4 p-4 border rounded-lg">
                   <CalendarCheck className="h-8 w-8 text-orange-500" />
                   <div>
-                    <p className="text-sm text-muted-foreground">{t("reports.pending")}</p>
+                    <p className="text-sm text-slate-500">{t("reports.pending")}</p>
                     <p className="text-3xl font-bold">{stats.followUpsPending}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-4 p-4 border rounded-lg">
                   <Activity className="h-8 w-8 text-green-500" />
                   <div>
-                    <p className="text-sm text-muted-foreground">{t("reports.completed")}</p>
+                    <p className="text-sm text-slate-500">{t("reports.completed")}</p>
                     <p className="text-3xl font-bold">{stats.followUpsDone}</p>
                   </div>
                 </div>

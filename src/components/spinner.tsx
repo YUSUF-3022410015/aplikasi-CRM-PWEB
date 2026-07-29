@@ -11,7 +11,7 @@ const sizeMap = { sm: "h-4 w-4", md: "h-6 w-6", lg: "h-8 w-8" };
 export function Spinner({ size = "md", className }: SpinnerProps) {
   return (
     <Loader2
-      className={cn("animate-rotate-scale-up text-primary", sizeMap[size], className)}
+      className={cn("animate-rotate-scale-up text-blue-600", sizeMap[size], className)}
     />
   );
 }
@@ -20,14 +20,14 @@ export function LoadingPage({ text = "Loading..." }: { text?: string }) {
   return (
     <div className="flex flex-col items-center justify-center h-64 animate-fade-in">
       <Spinner size="lg" />
-      <p className="text-sm text-muted-foreground mt-4">{text}</p>
+      <p className="text-sm text-slate-500 mt-4">{text}</p>
     </div>
   );
 }
 
 export function LoadingInline({ text }: { text?: string }) {
   return (
-    <div className="flex items-center gap-2 text-muted-foreground">
+    <div className="flex items-center gap-2 text-slate-500">
       <Spinner size="sm" />
       {text && <span className="text-sm">{text}</span>}
     </div>

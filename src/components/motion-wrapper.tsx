@@ -108,7 +108,7 @@ export function HoverCard({
   return (
     <div
       className={cn(
-        "rounded-xl border bg-card text-card-foreground shadow transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg",
+        "rounded-xl border bg-white text-slate-900 shadow transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg",
         className
       )}
     >

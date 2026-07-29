@@ -92,7 +92,7 @@ export default function LoginPage() {
               {t("auth.email")}
             </label>
             <div className="relative group">
-              <div className={`absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 pointer-events-none transition-colors duration-200 ${fieldErrors.email ? "text-red-400" : "text-gray-400 group-focus-within:text-primary"}`}>
+              <div className={`absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 pointer-events-none transition-colors duration-200 ${fieldErrors.email ? "text-red-400" : "text-gray-400 group-focus-within:text-blue-600"}`}>
                 <Mail className="h-4 w-4" />
               </div>
               <Input
@@ -102,7 +102,7 @@ export default function LoginPage() {
                 className={`pl-10 h-11 text-sm bg-gray-50 transition-all rounded-xl ${
                   fieldErrors.email
                     ? "border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
-                    : "border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20"
+                    : "border-gray-200 focus:border-blue-600 focus:ring-2 focus:ring-blue-500/20"
                 }`}
                 value={email}
                 onChange={(e) => { setEmail(e.target.value); setFieldErrors({}); }}
@@ -130,7 +130,7 @@ export default function LoginPage() {
               </label>
             </div>
             <div className="relative group">
-              <div className={`absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 pointer-events-none transition-colors duration-200 ${fieldErrors.password ? "text-red-400" : "text-gray-400 group-focus-within:text-primary"}`}>
+              <div className={`absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 pointer-events-none transition-colors duration-200 ${fieldErrors.password ? "text-red-400" : "text-gray-400 group-focus-within:text-blue-600"}`}>
                 <Lock className="h-4 w-4" />
               </div>
               <Input
@@ -140,7 +140,7 @@ export default function LoginPage() {
                 className={`pl-10 pr-12 h-11 text-sm bg-gray-50 transition-all rounded-xl ${
                   fieldErrors.password
                     ? "border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
-                    : "border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20"
+                    : "border-gray-200 focus:border-blue-600 focus:ring-2 focus:ring-blue-500/20"
                 }`}
                 value={password}
                 onChange={(e) => { setPassword(e.target.value); setFieldErrors({}); }}

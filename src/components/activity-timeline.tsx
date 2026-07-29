@@ -30,7 +30,7 @@ export function ActivityTimeline({ activities }: { activities: ActivityItem[] })
 
   if (activities.length === 0) {
     return (
-      <p className="text-center py-8 text-muted-foreground">{t("common.noActivities")}</p>
+      <p className="text-center py-8 text-slate-500">{t("common.noActivities")}</p>
     );
   }
 
@@ -49,11 +49,11 @@ export function ActivityTimeline({ activities }: { activities: ActivityItem[] })
                 <div className="flex-1 space-y-1">
                   <div className="flex items-center gap-2">
                     <Badge variant="outline" className="text-xs">{config.label}</Badge>
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-xs text-slate-500">
                       {formatDateTime(activity.created_at)}
                     </span>
                     {activity.user && (
-                      <span className="text-xs text-muted-foreground">
+                      <span className="text-xs text-slate-500">
                         {t("activities.byUser")} {activity.user.fullname}
                       </span>
                     )}

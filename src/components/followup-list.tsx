@@ -180,7 +180,7 @@ export function FollowUpList({
       )}
 
       {followups.length === 0 ? (
-        <p className="text-center py-8 text-muted-foreground">{t("common.noFollowups")}</p>
+        <p className="text-center py-8 text-slate-500">{t("common.noFollowups")}</p>
       ) : (
         <div className="space-y-3">
           {followups.map((fu) => {
@@ -190,10 +190,10 @@ export function FollowUpList({
                 <CardContent className="p-4">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                     <div className="flex items-center gap-3">
-                      <CalendarCheck className="h-4 w-4 text-muted-foreground" />
+                      <CalendarCheck className="h-4 w-4 text-slate-500" />
                       <div>
                         <p className="font-medium text-sm">{fu.note || t("common.followUp")}</p>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-xs text-slate-500">
                           {formatDate(fu.due_date)}
                           {fu.assigned_user && ` - ${fu.assigned_user.fullname}`}
                         </p>

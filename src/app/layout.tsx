@@ -17,7 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="id" className="light" suppressHydrationWarning>
-      <body className="min-h-screen bg-background font-sans antialiased">
+      <body className="min-h-screen bg-white font-sans antialiased">
         <Splash>
           <ThemeProvider>
             <LanguageProvider>

@@ -140,7 +140,7 @@ export function WhatsAppButton({
                 onChange={(e) => setMessage(e.target.value)}
                 rows={6}
               />
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-slate-500">
                 {message.length} {t("common.characters")}
               </p>
             </div>

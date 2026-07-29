@@ -54,7 +54,7 @@ function CustomLegend({ payload }: { payload?: Array<{ value: string; color: str
   return (
     <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 mt-2">
       {payload.map((entry, i) => (
-        <div key={i} className="flex items-center gap-1.5 text-xs text-muted-foreground">
+        <div key={i} className="flex items-center gap-1.5 text-xs text-slate-500">
           <div className="h-2.5 w-2.5 rounded-full shrink-0" style={{ backgroundColor: entry.color }} />
           <span className="truncate">{entry.value}</span>
         </div>
@@ -69,8 +69,8 @@ export function DashboardCharts({ data, activitiesByType = [], customersByStatus
   return (
     <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
       {/* Revenue Chart */}
-      <Card className="md:col-span-2 border-border/50 shadow-sm overflow-hidden">
-        <CardHeader className="pb-3 border-b border-border/50">
+      <Card className="md:col-span-2 border-slate-200/50 shadow-sm overflow-hidden">
+        <CardHeader className="pb-3 border-b border-slate-200/50">
           <CardTitle className="text-base sm:text-lg font-bold">{t("dashboard.monthlyRevenue")}</CardTitle>
         </CardHeader>
         <CardContent className="px-2 sm:px-6 pt-4">
@@ -87,8 +87,8 @@ export function DashboardCharts({ data, activitiesByType = [], customersByStatus
       </Card>
 
       {/* Deals Chart */}
-      <Card className="md:col-span-2 border-border/50 shadow-sm overflow-hidden">
-        <CardHeader className="pb-3 border-b border-border/50">
+      <Card className="md:col-span-2 border-slate-200/50 shadow-sm overflow-hidden">
+        <CardHeader className="pb-3 border-b border-slate-200/50">
           <CardTitle className="text-base sm:text-lg font-bold">{t("dashboard.monthlyDeals")}</CardTitle>
         </CardHeader>
         <CardContent className="px-2 sm:px-6 pt-4">
@@ -115,8 +115,8 @@ export function DashboardCharts({ data, activitiesByType = [], customersByStatus
 
       {/* Activities by Type */}
       {activitiesByType.length > 0 && (
-        <Card className="border-border/50 shadow-sm overflow-hidden">
-          <CardHeader className="pb-3 border-b border-border/50">
+        <Card className="border-slate-200/50 shadow-sm overflow-hidden">
+          <CardHeader className="pb-3 border-b border-slate-200/50">
             <CardTitle className="text-base sm:text-lg font-bold">{t("dashboard.activitiesByType")}</CardTitle>
           </CardHeader>
           <CardContent className="px-2 sm:px-6 pt-4">
@@ -147,8 +147,8 @@ export function DashboardCharts({ data, activitiesByType = [], customersByStatus
 
       {/* Customer by Status */}
       {customersByStatus.length > 0 && (
-        <Card className="border-border/50 shadow-sm overflow-hidden">
-          <CardHeader className="pb-3 border-b border-border/50">
+        <Card className="border-slate-200/50 shadow-sm overflow-hidden">
+          <CardHeader className="pb-3 border-b border-slate-200/50">
             <CardTitle className="text-base sm:text-lg font-bold">{t("dashboard.customersByStatus")}</CardTitle>
           </CardHeader>
           <CardContent className="px-2 sm:px-6 pt-4">

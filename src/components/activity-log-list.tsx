@@ -56,7 +56,7 @@ export function ActivityLogList({ activities }: { activities: ActivityLogItem[] 
 
   if (activities.length === 0) {
     return (
-      <p className="text-center py-8 text-muted-foreground">{t("common.noActivityLog")}</p>
+      <p className="text-center py-8 text-slate-500">{t("common.noActivityLog")}</p>
     );
   }
 
@@ -78,13 +78,13 @@ export function ActivityLogList({ activities }: { activities: ActivityLogItem[] 
                     <Badge variant={moduleColors[activity.module] || "default"} className="text-xs">
                       {activity.module}
                     </Badge>
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-xs text-slate-500">
                       {formatDateTime(activity.created_at)}
                     </span>
                   </div>
                   <p className="text-sm">{activity.description}</p>
                   {activity.user && (
-                    <p className="text-xs text-muted-foreground">{t("activities.byUser")} {activity.user}</p>
+                    <p className="text-xs text-slate-500">{t("activities.byUser")} {activity.user}</p>
                   )}
                 </div>
               </div>

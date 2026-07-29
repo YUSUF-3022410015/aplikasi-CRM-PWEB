@@ -95,7 +95,7 @@ export function Sidebar() {
   return (
     <aside
       className={cn(
-        "no-print relative z-10 flex h-screen flex-col border-r border-border bg-sidebar transition-all duration-300",
+        "no-print relative z-10 flex h-screen flex-col border-r border-slate-200 bg-sidebar transition-all duration-300",
         collapsed ? "w-16" : "w-64"
       )}
     >
@@ -104,20 +104,20 @@ export function Sidebar() {
         "flex h-16 items-center border-b border-sidebar-border",
         collapsed ? "justify-center px-2" : "gap-3 px-4"
       )}>
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-blue-600 text-primary-foreground font-bold text-base shrink-0 shadow-sm">
+        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-700 to-blue-500 text-white font-bold text-base shrink-0 shadow-sm">
           N
         </div>
         {!collapsed && (
           <div className="min-w-0 flex-1">
-            <h1 className="text-sm font-bold text-sidebar-foreground truncate">Nexus CRM</h1>
-            <p className="text-[10px] text-sidebar-foreground/50 truncate font-medium">Enterprise Edition</p>
+            <h1 className="text-sm font-bold text-slate-900 truncate">Nexus CRM</h1>
+            <p className="text-[10px] text-slate-900/50 truncate font-medium">Enterprise Edition</p>
           </div>
         )}
         {!collapsed && (
           <Button
             variant="ghost"
             size="icon"
-            className="h-7 w-7 shrink-0 text-sidebar-foreground/40 hover:text-sidebar-foreground hover:bg-sidebar-accent"
+            className="h-7 w-7 shrink-0 text-slate-900/40 hover:text-slate-900 hover:bg-sidebar-accent"
             onClick={() => setCollapsed(!collapsed)}
           >
             <ChevronLeft className="h-3.5 w-3.5" />
@@ -131,7 +131,7 @@ export function Sidebar() {
           <Button
             variant="ghost"
             size="icon"
-            className="h-7 w-7 text-sidebar-foreground/40 hover:text-sidebar-foreground hover:bg-sidebar-accent"
+            className="h-7 w-7 text-slate-900/40 hover:text-slate-900 hover:bg-sidebar-accent"
             onClick={() => setCollapsed(!collapsed)}
           >
             <ChevronRight className="h-3.5 w-3.5" />
@@ -153,7 +153,7 @@ export function Sidebar() {
                   collapsed && "relative justify-center px-2 py-2.5",
                   isActive
                     ? "bg-sidebar-primary/10 text-sidebar-primary shadow-sm"
-                    : "text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-foreground"
+                    : "text-slate-900/60 hover:bg-sidebar-accent hover:text-slate-900"
                 )}
               >
                 <item.icon className={cn("h-5 w-5 shrink-0", isActive && "text-sidebar-primary")} />

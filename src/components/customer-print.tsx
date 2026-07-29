@@ -51,12 +51,12 @@ export function CustomerPrint({ customer }: CustomerPrintProps) {
       {/* Header */}
       <div className="flex justify-between items-start mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-primary">CRM</h1>
-          <p className="text-sm text-muted-foreground">{t("print.customerDetailReport")}</p>
+          <h1 className="text-2xl font-bold text-blue-600">CRM</h1>
+          <p className="text-sm text-slate-500">{t("print.customerDetailReport")}</p>
         </div>
         <div className="text-right">
           <h2 className="text-xl font-bold">{customer.name}</h2>
-          <p className="text-sm text-muted-foreground">{t("print.printedOn")} {today}</p>
+          <p className="text-sm text-slate-500">{t("print.printedOn")} {today}</p>
         </div>
       </div>
 
@@ -65,55 +65,55 @@ export function CustomerPrint({ customer }: CustomerPrintProps) {
         <h3 className="font-semibold mb-3">{t("print.customerInfo")}</h3>
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
-            <span className="text-muted-foreground">{t("print.name")}</span>
+            <span className="text-slate-500">{t("print.name")}</span>
             <p className="font-medium">{customer.name}</p>
           </div>
           <div>
-            <span className="text-muted-foreground">{t("print.company")}</span>
+            <span className="text-slate-500">{t("print.company")}</span>
             <p className="font-medium">{customer.company || "-"}</p>
           </div>
           <div>
-            <span className="text-muted-foreground">{t("print.emailLabel")}</span>
+            <span className="text-slate-500">{t("print.emailLabel")}</span>
             <p className="font-medium">{customer.email || "-"}</p>
           </div>
           <div>
-            <span className="text-muted-foreground">{t("print.phone")}</span>
+            <span className="text-slate-500">{t("print.phone")}</span>
             <p className="font-medium">{customer.phone || "-"}</p>
           </div>
           <div>
-            <span className="text-muted-foreground">{t("print.whatsapp")}</span>
+            <span className="text-slate-500">{t("print.whatsapp")}</span>
             <p className="font-medium">{customer.whatsapp || "-"}</p>
           </div>
           <div>
-            <span className="text-muted-foreground">{t("print.city")}</span>
+            <span className="text-slate-500">{t("print.city")}</span>
             <p className="font-medium">{customer.city || "-"}</p>
           </div>
           <div>
-            <span className="text-muted-foreground">{t("print.industry")}</span>
+            <span className="text-slate-500">{t("print.industry")}</span>
             <p className="font-medium">{customer.industry || "-"}</p>
           </div>
           <div>
-            <span className="text-muted-foreground">{t("print.website")}</span>
+            <span className="text-slate-500">{t("print.website")}</span>
             <p className="font-medium">{customer.website || "-"}</p>
           </div>
           <div className="col-span-2">
-            <span className="text-muted-foreground">{t("print.address")}</span>
+            <span className="text-slate-500">{t("print.address")}</span>
             <p className="font-medium">{customer.address || "-"}</p>
           </div>
           <div>
-            <span className="text-muted-foreground">{t("print.status")}</span>
+            <span className="text-slate-500">{t("print.status")}</span>
             <p className="font-medium uppercase">{customer.status}</p>
           </div>
           <div>
-            <span className="text-muted-foreground">{t("print.pipeline")}</span>
+            <span className="text-slate-500">{t("print.pipeline")}</span>
             <p className="font-medium uppercase">{customer.pipeline_stage}</p>
           </div>
           <div>
-            <span className="text-muted-foreground">{t("print.source")}</span>
+            <span className="text-slate-500">{t("print.source")}</span>
             <p className="font-medium">{customer.source || "-"}</p>
           </div>
           <div>
-            <span className="text-muted-foreground">{t("print.created")}</span>
+            <span className="text-slate-500">{t("print.created")}</span>
             <p className="font-medium">{formatDate(customer.created_at)}</p>
           </div>
         </div>
@@ -125,7 +125,7 @@ export function CustomerPrint({ customer }: CustomerPrintProps) {
           <h3 className="font-semibold mb-3">{t("print.activityHistory")}</h3>
           <table className="w-full border-collapse text-sm">
             <thead>
-              <tr className="bg-muted">
+              <tr className="bg-slate-100">
                 <th className="border p-2 text-left">{t("print.date")}</th>
                 <th className="border p-2 text-left">{t("print.type")}</th>
                 <th className="border p-2 text-left">{t("print.note")}</th>
@@ -150,7 +150,7 @@ export function CustomerPrint({ customer }: CustomerPrintProps) {
           <h3 className="font-semibold mb-3">{t("common.followUp")}</h3>
           <table className="w-full border-collapse text-sm">
             <thead>
-              <tr className="bg-muted">
+              <tr className="bg-slate-100">
                 <th className="border p-2 text-left">{t("print.date")}</th>
                 <th className="border p-2 text-left">{t("print.status")}</th>
                 <th className="border p-2 text-left">{t("print.note")}</th>
@@ -170,7 +170,7 @@ export function CustomerPrint({ customer }: CustomerPrintProps) {
       )}
 
       {/* Footer */}
-      <div className="mt-12 pt-4 border-t text-xs text-muted-foreground text-center">
+      <div className="mt-12 pt-4 border-t text-xs text-slate-500 text-center">
         {t("print.autoGenerated")}
       </div>
     </div>

@@ -40,17 +40,17 @@ export function EmptyState({
         className
       )}
     >
-      <div className="rounded-full bg-muted p-5 mb-5">
-        <Icon className="h-10 w-10 text-muted-foreground/60" />
+      <div className="rounded-full bg-slate-100 p-5 mb-5">
+        <Icon className="h-10 w-10 text-slate-500/60" />
       </div>
-      <h3 className="text-lg font-semibold text-foreground mb-2">{title}</h3>
+      <h3 className="text-lg font-semibold text-slate-900 mb-2">{title}</h3>
       {description && (
-        <p className="text-sm text-muted-foreground max-w-sm mb-6">{description}</p>
+        <p className="text-sm text-slate-500 max-w-sm mb-6">{description}</p>
       )}
       {actionLabel && actionHref && (
         <Link
           href={actionHref}
-          className="inline-flex items-center justify-center bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 active:scale-[0.98] transition-all rounded-md px-4 py-2 text-sm font-medium"
+          className="inline-flex items-center justify-center bg-blue-600 text-white shadow-sm hover:bg-blue-600/90 active:scale-[0.98] transition-all rounded-md px-4 py-2 text-sm font-medium"
         >
           {actionLabel}
         </Link>
@@ -58,7 +58,7 @@ export function EmptyState({
       {actionLabel && onAction && (
         <Button
           onClick={onAction}
-          className="bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 active:scale-[0.98] transition-all"
+          className="bg-blue-600 text-white shadow-sm hover:bg-blue-600/90 active:scale-[0.98] transition-all"
         >
           {actionLabel}
         </Button>

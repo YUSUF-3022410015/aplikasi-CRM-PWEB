@@ -254,10 +254,10 @@ export default function QuotationsPage() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-foreground md:text-3xl">{t("quotations.title")}</h1>
-          <p className="text-muted-foreground mt-1">{t("quotations.subtitle")}</p>
+          <h1 className="text-2xl font-bold text-slate-900 md:text-3xl">{t("quotations.title")}</h1>
+          <p className="text-slate-500 mt-1">{t("quotations.subtitle")}</p>
         </div>
-        <Button onClick={() => setDialogOpen(true)} className="bg-primary text-primary-foreground shadow-sm">
+        <Button onClick={() => setDialogOpen(true)} className="bg-blue-600 text-white shadow-sm">
           <Plus className="mr-2 h-4 w-4" />
           {t("quotations.createQuotation")}
         </Button>
@@ -269,7 +269,7 @@ export default function QuotationsPage() {
           <div className="overflow-x-auto">
           <Table className="min-w-[500px]">
             <TableHeader>
-              <TableRow className="border-border">
+              <TableRow className="border-slate-200">
                 <TableHead className="font-semibold">{t("quotations.number")}</TableHead>
                 <TableHead className="font-semibold">{t("quotations.customer")}</TableHead>
                 <TableHead className="font-semibold">{t("quotations.total")}</TableHead>
@@ -404,9 +404,9 @@ export default function QuotationsPage() {
           {selectedQuotation && (
             <div className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-                <div><span className="text-muted-foreground">{t("quotations.customer")}:</span> {(selectedQuotation.customer as { name: string })?.name}</div>
+                <div><span className="text-slate-500">{t("quotations.customer")}:</span> {(selectedQuotation.customer as { name: string })?.name}</div>
                 <div className="flex items-center gap-2">
-                  <span className="text-muted-foreground">{t("customers.status")}:</span>
+                  <span className="text-slate-500">{t("customers.status")}:</span>
                   {isManager ? (
                     <Badge variant={statusColors[selectedQuotation.status] || "default"}>{selectedQuotation.status}</Badge>
                   ) : (

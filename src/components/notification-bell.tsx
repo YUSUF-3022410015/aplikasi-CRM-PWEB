@@ -141,21 +141,21 @@ export function NotificationBell({ userId }: { userId: string }) {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         {notifications.length === 0 ? (
-          <div className="py-6 text-center text-sm text-muted-foreground">
+          <div className="py-6 text-center text-sm text-slate-500">
             {t("notification.empty")}
           </div>
         ) : (
           notifications.map((notification) => (
             <DropdownMenuItem
               key={notification.id}
-              className={`flex flex-col items-start gap-1 py-3 cursor-pointer ${!notification.read ? "bg-muted/50" : ""}`}
+              className={`flex flex-col items-start gap-1 py-3 cursor-pointer ${!notification.read ? "bg-slate-100/50" : ""}`}
               onClick={() => handleNotificationClick(notification)}
             >
               <div className="flex w-full items-start justify-between gap-2">
                 <div className="flex-1">
                   <p className="text-sm font-medium">{notification.title}</p>
-                  <p className="text-xs text-muted-foreground line-clamp-2">{notification.message}</p>
-                  <p className="mt-1 text-[10px] text-muted-foreground">{formatDateTime(notification.created_at)}</p>
+                  <p className="text-xs text-slate-500 line-clamp-2">{notification.message}</p>
+                  <p className="mt-1 text-[10px] text-slate-500">{formatDateTime(notification.created_at)}</p>
                 </div>
                 {!notification.read && <div className="h-2 w-2 shrink-0 rounded-full bg-blue-500" />}
               </div>

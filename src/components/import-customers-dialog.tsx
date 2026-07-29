@@ -125,14 +125,14 @@ export function ImportCustomersDialog({
         {state === "idle" && (
           <div className="space-y-4">
             <div
-              className="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer hover:border-primary/50 transition-colors"
+              className="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer hover:border-blue-600/50 transition-colors"
               onClick={() => fileRef.current?.click()}
             >
-              <Upload className="mx-auto h-10 w-10 text-muted-foreground mb-3" />
-              <p className="text-sm text-muted-foreground">
+              <Upload className="mx-auto h-10 w-10 text-slate-500 mb-3" />
+              <p className="text-sm text-slate-500">
                 {t("common.clickToSelect")}
               </p>
-              <p className="text-xs text-muted-foreground mt-1">{t("common.formatXlsx")}</p>
+              <p className="text-xs text-slate-500 mt-1">{t("common.formatXlsx")}</p>
             </div>
             <input
               ref={fileRef}
@@ -154,8 +154,8 @@ export function ImportCustomersDialog({
 
         {state === "parsing" && (
           <div className="py-8 text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4" />
-            <p className="text-sm text-muted-foreground">{t("common.processing")}</p>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4" />
+            <p className="text-sm text-slate-500">{t("common.processing")}</p>
           </div>
         )}
 
@@ -164,15 +164,15 @@ export function ImportCustomersDialog({
             <div className="grid grid-cols-3 gap-3 text-center">
               <div className="rounded-lg border p-3">
                 <p className="text-2xl font-bold">{preview.total}</p>
-                <p className="text-xs text-muted-foreground">{t("common.totalRows")}</p>
+                <p className="text-xs text-slate-500">{t("common.totalRows")}</p>
               </div>
               <div className="rounded-lg border p-3">
                 <p className="text-2xl font-bold text-green-600">{preview.success}</p>
-                <p className="text-xs text-muted-foreground">{t("common.valid")}</p>
+                <p className="text-xs text-slate-500">{t("common.valid")}</p>
               </div>
               <div className="rounded-lg border p-3">
                 <p className="text-2xl font-bold text-red-600">{preview.failed}</p>
-                <p className="text-xs text-muted-foreground">{t("common.error")}</p>
+                <p className="text-xs text-slate-500">{t("common.error")}</p>
               </div>
             </div>
 
@@ -191,8 +191,8 @@ export function ImportCustomersDialog({
 
         {state === "importing" && (
           <div className="py-8 text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4" />
-            <p className="text-sm text-muted-foreground">{t("common.importing")}</p>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4" />
+            <p className="text-sm text-slate-500">{t("common.importing")}</p>
           </div>
         )}
 

@@ -211,7 +211,7 @@ export default function FollowUpsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight md:text-3xl">{t("followups.title")}</h1>
-          <p className="text-muted-foreground mt-1.5">{t("followups.subtitle2")}</p>
+          <p className="text-slate-500 mt-1.5">{t("followups.subtitle2")}</p>
         </div>
         {!isManager && (
           <Button onClick={openCreate} className="shadow-sm">
@@ -228,30 +228,30 @@ export default function FollowUpsPage() {
           { label: t("followups.overdue"), value: overdueCount, gradient: "from-red-500/10 to-red-500/5", iconColor: "text-red-600" },
           { label: t("followups.completed"), value: doneCount, gradient: "from-emerald-500/10 to-emerald-500/5", iconColor: "text-emerald-600" },
         ].map((s, i) => (
-          <Card key={s.label} className="group hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 border-border/50 overflow-hidden" style={{ animationDelay: `${i * 60}ms` }}>
+          <Card key={s.label} className="group hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 border-slate-200/50 overflow-hidden" style={{ animationDelay: `${i * 60}ms` }}>
             <div className={`absolute inset-0 bg-gradient-to-br ${s.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
             <CardContent className="p-5 relative">
               <div className="flex items-center justify-between mb-4">
-                <span className="text-sm font-semibold text-muted-foreground/80 uppercase tracking-wider">{s.label}</span>
+                <span className="text-sm font-semibold text-slate-500/80 uppercase tracking-wider">{s.label}</span>
                 <div className={`p-2.5 rounded-xl bg-gradient-to-br ${s.gradient} group-hover:scale-110 transition-transform duration-300`}>
                   <CalendarCheck className={`h-5 w-5 ${s.iconColor}`} />
                 </div>
               </div>
-              <div className="text-3xl font-bold text-foreground">{s.value}</div>
+              <div className="text-3xl font-bold text-slate-900">{s.value}</div>
             </CardContent>
           </Card>
         ))}
       </div>
 
-      <Card className="border-border/50 shadow-sm overflow-hidden">
-        <CardHeader className="border-b border-border/50 pb-3">
+      <Card className="border-slate-200/50 shadow-sm overflow-hidden">
+        <CardHeader className="border-b border-slate-200/50 pb-3">
           <CardTitle className="text-base font-bold">{t("followups.allFollowups")}</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table className="min-w-[600px]">
               <TableHeader>
-                <TableRow className="bg-muted/50">
+                <TableRow className="bg-slate-100/50">
                   <TableHead className="font-semibold text-xs uppercase tracking-wider">{t("followups.note")}</TableHead>
                   <TableHead className="font-semibold text-xs uppercase tracking-wider">{t("followups.customer")}</TableHead>
                   <TableHead className="font-semibold text-xs uppercase tracking-wider">{t("followups.dueDate")}</TableHead>
@@ -262,28 +262,28 @@ export default function FollowUpsPage() {
               <TableBody>
                 {loading ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">{t("common.loading")}</TableCell>
+                    <TableCell colSpan={5} className="h-24 text-center text-slate-500">{t("common.loading")}</TableCell>
                   </TableRow>
                 ) : followups.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">{t("followups.empty")}</TableCell>
+                    <TableCell colSpan={5} className="h-24 text-center text-slate-500">{t("followups.empty")}</TableCell>
                   </TableRow>
                 ) : (
                   followups.map((f) => {
                     const cfg = getStatusConfig()[f.status] || getStatusConfig().pending;
                     const isOverdue = f.status === "pending" && new Date(f.due_date).toISOString().split("T")[0] < today;
                     return (
-                      <TableRow key={f.id} className="hover:bg-muted/30 transition-colors group">
+                      <TableRow key={f.id} className="hover:bg-slate-100/30 transition-colors group">
                         <TableCell className="font-medium max-w-[250px] truncate">{f.note || "-"}</TableCell>
-                        <TableCell className="text-muted-foreground">
+                        <TableCell className="text-slate-500">
                           {f.customer?.name ? (
-                            <Link href={`/customers/${f.customer_id}`} className="hover:text-primary transition-colors">
+                            <Link href={`/customers/${f.customer_id}`} className="hover:text-blue-600 transition-colors">
                               {f.customer.name}
                             </Link>
                           ) : "-"}
                         </TableCell>
                         <TableCell>
-                          <span className={isOverdue ? "text-red-600 font-semibold" : "text-muted-foreground"}>
+                          <span className={isOverdue ? "text-red-600 font-semibold" : "text-slate-500"}>
                             {isOverdue && <span className="inline-block h-2 w-2 rounded-full bg-red-500 mr-1.5 animate-pulse-soft" />}
                             {formatDate(f.due_date)}
                           </span>
@@ -307,7 +307,7 @@ export default function FollowUpsPage() {
                         <TableCell>
                           <div className="flex gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
                             {!isManager && (
-                              <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-primary/10 hover:text-primary" onClick={() => openEdit(f)}>
+                              <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-blue-600/10 hover:text-blue-600" onClick={() => openEdit(f)}>
                                 <Pencil className="h-4 w-4" />
                               </Button>
                             )}
@@ -341,7 +341,7 @@ export default function FollowUpsPage() {
             <div className="space-y-2">
               <Label className="text-sm font-semibold">{t("followups.customer")} *</Label>
               <Select value={form.customer_id} onValueChange={(v) => setForm({ ...form, customer_id: v })}>
-                <SelectTrigger className="bg-muted/50 focus:bg-background"><SelectValue placeholder={t("customers.title")} /></SelectTrigger>
+                <SelectTrigger className="bg-slate-100/50 focus:bg-white"><SelectValue placeholder={t("customers.title")} /></SelectTrigger>
                 <SelectContent>
                   {customers.map((c) => (
                     <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
@@ -351,16 +351,16 @@ export default function FollowUpsPage() {
             </div>
             <div className="space-y-2">
               <Label className="text-sm font-semibold">{t("followups.dueDate")} *</Label>
-              <Input type="date" value={form.due_date} onChange={(e) => setForm({ ...form, due_date: e.target.value })} className="bg-muted/50 focus:bg-background" />
+              <Input type="date" value={form.due_date} onChange={(e) => setForm({ ...form, due_date: e.target.value })} className="bg-slate-100/50 focus:bg-white" />
             </div>
             <div className="space-y-2">
               <Label className="text-sm font-semibold">{t("followups.note")}</Label>
-              <Textarea value={form.note} onChange={(e) => setForm({ ...form, note: e.target.value })} placeholder={t("followups.notePlaceholder")} rows={3} className="bg-muted/50 focus:bg-background resize-none" />
+              <Textarea value={form.note} onChange={(e) => setForm({ ...form, note: e.target.value })} placeholder={t("followups.notePlaceholder")} rows={3} className="bg-slate-100/50 focus:bg-white resize-none" />
             </div>
             <div className="space-y-2">
               <Label className="text-sm font-semibold">{t("followups.status")}</Label>
               <Select value={form.status} onValueChange={(v) => setForm({ ...form, status: v })}>
-                <SelectTrigger className="bg-muted/50 focus:bg-background"><SelectValue /></SelectTrigger>
+                <SelectTrigger className="bg-slate-100/50 focus:bg-white"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="pending">{t("followups.pending")}</SelectItem>
                   <SelectItem value="done">{t("followups.done")}</SelectItem>

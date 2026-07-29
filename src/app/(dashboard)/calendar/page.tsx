@@ -34,14 +34,14 @@ export default function CalendarPage() {
   }, []);
 
   if (loading) {
-    return <div className="flex items-center justify-center h-64"><p className="text-muted-foreground">{t("common.loading")}</p></div>;
+    return <div className="flex items-center justify-center h-64"><p className="text-slate-500">{t("common.loading")}</p></div>;
   }
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">{t("nav.calendar")}</h1>
-        <p className="text-muted-foreground">{t("followups.subtitle")}</p>
+        <p className="text-slate-500">{t("followups.subtitle")}</p>
       </div>
 
       <CalendarView followUps={followUps} />

@@ -23,7 +23,7 @@ export default async function DashboardLayout({
     .single();
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
+    <div className="flex h-screen overflow-hidden bg-white">
       {/* Sidebar - hidden on mobile, visible on md+ */}
       <div className="hidden md:block flex-shrink-0">
         <Sidebar />

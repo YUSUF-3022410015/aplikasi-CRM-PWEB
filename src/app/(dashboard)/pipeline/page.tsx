@@ -157,7 +157,7 @@ export default function PipelinePage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight md:text-3xl">{t("pipeline.title")}</h1>
-          <p className="text-muted-foreground mt-1.5">{t("pipeline.subtitle")}</p>
+          <p className="text-slate-500 mt-1.5">{t("pipeline.subtitle")}</p>
         </div>
         {!isManager && (
           <Button onClick={() => setDialogOpen(true)} className="shadow-sm">
@@ -171,10 +171,10 @@ export default function PipelinePage() {
         <div className="flex gap-4 overflow-x-auto pb-4">
           {Array.from({ length: 5 }).map((_, i) => (
             <div key={i} className="min-w-[280px] flex-shrink-0">
-              <div className="h-8 w-24 bg-muted rounded-lg animate-pulse-soft mb-4" />
+              <div className="h-8 w-24 bg-slate-100 rounded-lg animate-pulse-soft mb-4" />
               <div className="space-y-3">
                 {Array.from({ length: 3 }).map((_, j) => (
-                  <div key={j} className="h-24 bg-muted rounded-xl animate-pulse-soft" />
+                  <div key={j} className="h-24 bg-slate-100 rounded-xl animate-pulse-soft" />
                 ))}
               </div>
             </div>
@@ -202,14 +202,14 @@ export default function PipelinePage() {
                   <Badge variant="secondary" className="font-bold text-xs">{stageDeals.length}</Badge>
                 </div>
                 {stageTotals[stage.key] > 0 && (
-                  <p className="text-xs text-muted-foreground font-semibold mb-3">
+                  <p className="text-xs text-slate-500 font-semibold mb-3">
                     {formatCurrency(stageTotals[stage.key])}
                   </p>
                 )}
                 <div className="space-y-3 min-h-[120px]">
                   {stageDeals.length === 0 ? (
-                    <div className="flex items-center justify-center h-[80px] rounded-xl border-2 border-dashed border-border/50">
-                      <p className="text-xs text-muted-foreground">{t("pipeline.empty")}</p>
+                    <div className="flex items-center justify-center h-[80px] rounded-xl border-2 border-dashed border-slate-200/50">
+                      <p className="text-xs text-slate-500">{t("pipeline.empty")}</p>
                     </div>
                   ) : (
                     stageDeals.map((deal) => (
@@ -219,20 +219,20 @@ export default function PipelinePage() {
                         onDragStart={(e) => {
                           e.dataTransfer.setData("text/plain", deal.id);
                         }}
-                        className="cursor-grab active:cursor-grabbing hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 bg-card border-border/50"
+                        className="cursor-grab active:cursor-grabbing hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 bg-white border-slate-200/50"
                       >
                         <CardContent className="p-3.5">
                           <div className="flex items-start gap-3">
-                            <div className="mt-1 text-muted-foreground/40">
+                            <div className="mt-1 text-slate-500/40">
                               <GripVertical className="h-4 w-4" />
                             </div>
                             <div className="min-w-0 flex-1">
                               <p className="font-bold text-sm truncate">{deal.name}</p>
-                              <p className="text-xs text-muted-foreground truncate mt-0.5">
+                              <p className="text-xs text-slate-500 truncate mt-0.5">
                                 {(deal.customer as { name: string })?.name || t("pipeline.noCompany")}
                               </p>
                               {deal.value > 0 && (
-                                <p className="text-xs font-semibold text-primary mt-1.5">
+                                <p className="text-xs font-semibold text-blue-600 mt-1.5">
                                   {formatCurrency(deal.value)}
                                 </p>
                               )}
@@ -258,7 +258,7 @@ export default function PipelinePage() {
             <div className="space-y-2">
               <Label className="text-sm font-semibold">{t("pipeline.customer")} *</Label>
               <Select value={form.customer_id} onValueChange={(v) => setForm({ ...form, customer_id: v })}>
-                <SelectTrigger className="bg-muted/50 focus:bg-background">
+                <SelectTrigger className="bg-slate-100/50 focus:bg-white">
                   <SelectValue placeholder={t("customers.title")} />
                 </SelectTrigger>
                 <SelectContent>
@@ -274,7 +274,7 @@ export default function PipelinePage() {
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
                 placeholder={t("pipeline.dealNamePlaceholder")}
-                className="bg-muted/50 focus:bg-background"
+                className="bg-slate-100/50 focus:bg-white"
               />
             </div>
             <div className="space-y-2">
@@ -284,7 +284,7 @@ export default function PipelinePage() {
                 value={form.value || ""}
                 onChange={(e) => setForm({ ...form, value: Number(e.target.value) })}
                 placeholder="0"
-                className="bg-muted/50 focus:bg-background"
+                className="bg-slate-100/50 focus:bg-white"
               />
             </div>
           </div>
