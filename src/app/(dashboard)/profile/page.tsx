@@ -128,7 +128,7 @@ export default function ProfilePage() {
         </div>
       )}
       {error && (
-        <div className="rounded-lg bg-destructive/10 p-4 text-sm text-destructive border border-destructive/20 animate-slide-down">
+        <div className="rounded-lg bg-red-600/10 p-4 text-sm text-red-600 border border-destructive/20 animate-slide-down">
           {error}
         </div>
       )}

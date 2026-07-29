@@ -7,7 +7,7 @@ export function PageErrorBoundary({ children }: { children: React.ReactNode }) {
     <ErrorBoundary
       fallback={
         <div className="flex flex-col items-center justify-center min-h-[60vh] p-8 text-center">
-          <div className="rounded-full bg-destructive/10 p-4 mb-4">
+          <div className="rounded-full bg-red-600/10 p-4 mb-4">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -18,7 +18,7 @@ export function PageErrorBoundary({ children }: { children: React.ReactNode }) {
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="h-8 w-8 text-destructive"
+              className="h-8 w-8 text-red-600"
             >
               <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
               <path d="M12 9v4" />

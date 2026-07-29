@@ -26,8 +26,8 @@ export function ErrorState({
         className
       )}
     >
-      <div className="rounded-full bg-destructive/10 p-5 mb-5">
-        <Icon className="h-10 w-10 text-destructive" />
+      <div className="rounded-full bg-red-600/10 p-5 mb-5">
+        <Icon className="h-10 w-10 text-red-600" />
       </div>
       <h3 className="text-lg font-semibold text-slate-900 mb-2">{title}</h3>
       <p className="text-sm text-slate-500 max-w-sm mb-6">{message}</p>

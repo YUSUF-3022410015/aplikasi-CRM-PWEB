@@ -220,7 +220,7 @@ export function FollowUpList({
                             <Pencil className="h-4 w-4" />
                           </Button>
                           {isAdmin && (
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => setDeleteId(fu.id)}>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-red-600" onClick={() => setDeleteId(fu.id)}>
                               <Trash2 className="h-4 w-4" />
                             </Button>
                           )}

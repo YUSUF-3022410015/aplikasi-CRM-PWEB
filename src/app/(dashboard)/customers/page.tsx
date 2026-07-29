@@ -295,7 +295,7 @@ export default function CustomersPage() {
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive"
+                              className="h-8 w-8 hover:bg-red-600/10 hover:text-red-600"
                               onClick={() => setDeleteId(customer.id)}
                             >
                               <Trash2 className="h-4 w-4" />
@@ -350,7 +350,7 @@ export default function CustomersPage() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} disabled={deleting} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+            <AlertDialogAction onClick={handleDelete} disabled={deleting} className="bg-red-600 text-red-600-foreground hover:bg-red-600/90">
               {deleting ? t("common.loading") : t("common.delete")}
             </AlertDialogAction>
           </AlertDialogFooter>

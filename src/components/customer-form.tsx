@@ -201,7 +201,7 @@ export function CustomerForm({ customer, mode }: CustomerFormProps) {
             <Label htmlFor="name">{t("customers.name")} *</Label>
             <Input id="name" {...register("name")} placeholder={t("customers.namePlaceholder")} />
             {errors.name && (
-              <p className="text-sm text-destructive">{errors.name.message}</p>
+              <p className="text-sm text-red-600">{errors.name.message}</p>
             )}
           </div>
           <div className="space-y-2">
@@ -212,7 +212,7 @@ export function CustomerForm({ customer, mode }: CustomerFormProps) {
             <Label htmlFor="email">{t("customers.email")}</Label>
             <Input id="email" type="email" {...register("email")} placeholder={t("customers.emailPlaceholder")} />
             {errors.email && (
-              <p className="text-sm text-destructive">{errors.email.message}</p>
+              <p className="text-sm text-red-600">{errors.email.message}</p>
             )}
           </div>
           <div className="space-y-2">

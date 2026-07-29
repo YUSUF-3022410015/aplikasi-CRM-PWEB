@@ -297,7 +297,7 @@ export default function QuotationsPage() {
                         <Eye className="h-4 w-4" />
                       </Button>
                       {isAdmin && (
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => handleDelete(q.id)}>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-red-600" onClick={() => handleDelete(q.id)}>
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       )}
@@ -363,7 +363,7 @@ export default function QuotationsPage() {
                     onChange={(e) => updateItem(i, "price", Number(e.target.value))}
                   />
                   {items.length > 1 && (
-                    <Button type="button" variant="ghost" size="icon" className="h-9 w-9 text-destructive" onClick={() => removeItem(i)}>
+                    <Button type="button" variant="ghost" size="icon" className="h-9 w-9 text-red-600" onClick={() => removeItem(i)}>
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   )}

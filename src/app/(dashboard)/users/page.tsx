@@ -260,7 +260,7 @@ export default function UsersPage() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive"
+                            className="h-8 w-8 hover:bg-red-600/10 hover:text-red-600"
                             onClick={() => setDeactivateUserId(u.id)}
                             disabled={isManager && u.role === "admin"}
                             title={isManager && u.role === "admin" ? "Manager tidak dapat menonaktifkan Admin" : ""}
@@ -344,7 +344,7 @@ export default function UsersPage() {
               <p className="font-semibold mt-1">{editUser?.fullname}</p>
               <p className="text-sm text-slate-500">{editUser?.email}</p>
               {isManager && editUser?.role === "admin" && (
-                <p className="text-xs text-destructive mt-2 font-medium">Manager tidak dapat mengubah role Admin</p>
+                <p className="text-xs text-red-600 mt-2 font-medium">Manager tidak dapat mengubah role Admin</p>
               )}
             </div>
             <div className="space-y-2">
@@ -380,8 +380,8 @@ export default function UsersPage() {
       <AlertDialog open={!!deactivateUserId} onOpenChange={(open) => { if (!open && !deactivateLoading) setDeactivateUserId(null); }}>
         <AlertDialogContent className="sm:max-w-md">
           <AlertDialogHeader>
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10 mb-2">
-              <Trash2 className="h-6 w-6 text-destructive" />
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-600/10 mb-2">
+              <Trash2 className="h-6 w-6 text-red-600" />
             </div>
             <AlertDialogTitle className="text-center text-lg">Nonaktifkan Pengguna?</AlertDialogTitle>
             <AlertDialogDescription className="text-center">
@@ -439,7 +439,7 @@ export default function UsersPage() {
                   className="bg-slate-100/50 focus:bg-white"
                 />
                 {newPassword.length > 0 && newPassword.length < 6 && (
-                  <p className="text-xs text-destructive font-medium">Password minimal 6 karakter</p>
+                  <p className="text-xs text-red-600 font-medium">Password minimal 6 karakter</p>
                 )}
               </div>
             )}

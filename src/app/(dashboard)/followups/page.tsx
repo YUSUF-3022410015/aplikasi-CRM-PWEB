@@ -312,7 +312,7 @@ export default function FollowUpsPage() {
                               </Button>
                             )}
                             {isAdmin && (
-                              <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive" onClick={() => setDeleteId(f.id)}>
+                              <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-red-600/10 hover:text-red-600" onClick={() => setDeleteId(f.id)}>
                                 <Trash2 className="h-4 w-4" />
                               </Button>
                             )}
@@ -383,8 +383,8 @@ export default function FollowUpsPage() {
       <Dialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10 mb-2">
-              <Trash2 className="h-6 w-6 text-destructive" />
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-600/10 mb-2">
+              <Trash2 className="h-6 w-6 text-red-600" />
             </div>
             <DialogTitle className="text-center text-lg">{t("followups.deleteTitle")}</DialogTitle>
           </DialogHeader>

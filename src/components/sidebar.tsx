@@ -95,13 +95,13 @@ export function Sidebar() {
   return (
     <aside
       className={cn(
-        "no-print relative z-10 flex h-screen flex-col border-r border-slate-200 bg-sidebar transition-all duration-300",
+        "no-print relative z-10 flex h-screen flex-col border-r border-slate-200 bg-white transition-all duration-300",
         collapsed ? "w-16" : "w-64"
       )}
     >
       {/* Logo */}
       <div className={cn(
-        "flex h-16 items-center border-b border-sidebar-border",
+        "flex h-16 items-center border-b border-slate-200-border",
         collapsed ? "justify-center px-2" : "gap-3 px-4"
       )}>
         <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-700 to-blue-500 text-white font-bold text-base shrink-0 shadow-sm">
@@ -117,7 +117,7 @@ export function Sidebar() {
           <Button
             variant="ghost"
             size="icon"
-            className="h-7 w-7 shrink-0 text-slate-900/40 hover:text-slate-900 hover:bg-sidebar-accent"
+            className="h-7 w-7 shrink-0 text-slate-900/40 hover:text-slate-900 hover:bg-white-accent"
             onClick={() => setCollapsed(!collapsed)}
           >
             <ChevronLeft className="h-3.5 w-3.5" />
@@ -127,11 +127,11 @@ export function Sidebar() {
 
       {/* Expand button when collapsed */}
       {collapsed && (
-        <div className="flex justify-center py-2 border-b border-sidebar-border">
+        <div className="flex justify-center py-2 border-b border-slate-200-border">
           <Button
             variant="ghost"
             size="icon"
-            className="h-7 w-7 text-slate-900/40 hover:text-slate-900 hover:bg-sidebar-accent"
+            className="h-7 w-7 text-slate-900/40 hover:text-slate-900 hover:bg-white-accent"
             onClick={() => setCollapsed(!collapsed)}
           >
             <ChevronRight className="h-3.5 w-3.5" />
@@ -152,19 +152,19 @@ export function Sidebar() {
                   "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 active:scale-[0.97] active:animate-[shake-bottom_0.8s_cubic-bezier(0.455,0.03,0.515,0.955)]",
                   collapsed && "relative justify-center px-2 py-2.5",
                   isActive
-                    ? "bg-sidebar-primary/10 text-sidebar-primary shadow-sm"
-                    : "text-slate-900/60 hover:bg-sidebar-accent hover:text-slate-900"
+                    ? "bg-white-primary/10 text-slate-900-primary shadow-sm"
+                    : "text-slate-900/60 hover:bg-white-accent hover:text-slate-900"
                 )}
               >
-                <item.icon className={cn("h-5 w-5 shrink-0", isActive && "text-sidebar-primary")} />
+                <item.icon className={cn("h-5 w-5 shrink-0", isActive && "text-slate-900-primary")} />
                 {!collapsed && <span className="truncate">{item.label}</span>}
                 {!collapsed && item.href === "/followups" && followUpCount > 0 && (
-                  <Badge className="ml-auto h-5 min-w-5 px-1.5 flex items-center justify-center text-[10px] font-bold bg-sidebar-primary text-sidebar-primary-foreground">
+                  <Badge className="ml-auto h-5 min-w-5 px-1.5 flex items-center justify-center text-[10px] font-bold bg-white-primary text-slate-900-primary-foreground">
                     {followUpCount > 9 ? "9+" : followUpCount}
                   </Badge>
                 )}
                 {collapsed && item.href === "/followups" && followUpCount > 0 && (
-                  <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-destructive text-[8px] font-bold text-destructive-foreground shadow-sm">
+                  <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[8px] font-bold text-red-600-foreground shadow-sm">
                     {followUpCount > 9 ? "9+" : followUpCount}
                   </span>
                 )}
