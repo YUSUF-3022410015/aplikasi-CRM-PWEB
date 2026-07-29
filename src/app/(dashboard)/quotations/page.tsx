@@ -257,10 +257,12 @@ export default function QuotationsPage() {
           <h1 className="text-2xl font-bold text-foreground md:text-3xl">{t("quotations.title")}</h1>
           <p className="text-muted-foreground mt-1">{t("quotations.subtitle")}</p>
         </div>
-        <Button onClick={() => setDialogOpen(true)} className="bg-primary text-primary-foreground shadow-sm">
-          <Plus className="mr-2 h-4 w-4" />
-          {t("quotations.createQuotation")}
-        </Button>
+        {!isManager && (
+          <Button onClick={() => setDialogOpen(true)} className="shadow-sm">
+            <Plus className="mr-2 h-4 w-4" />
+            {t("quotations.createQuotation")}
+          </Button>
+        )}
       </div>
 
       {/* Table Card */}
