@@ -268,14 +268,15 @@ export function FollowUpList({
             {editItem && (
               <div className="space-y-2">
                 <label className="text-sm font-medium">{t("followups.status")}</label>
-                <Select value={status} onValueChange={setStatus}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="pending">{t("followups.pending")}</SelectItem>
-                    <SelectItem value="done">{t("followups.done")}</SelectItem>
-                    <SelectItem value="cancelled">{t("followups.cancelled")}</SelectItem>
-                  </SelectContent>
-                </Select>
+                <select
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value)}
+                  className="flex h-9 w-full items-center rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                >
+                  <option value="pending">{t("followups.pending")}</option>
+                  <option value="done">{t("followups.done")}</option>
+                  <option value="cancelled">{t("followups.cancelled")}</option>
+                </select>
               </div>
             )}
             <DialogFooter>

@@ -355,14 +355,16 @@ export default function FollowUpsPage() {
             )}
             <div className="space-y-2">
               <Label className="text-sm font-semibold">{t("followups.customer")} *</Label>
-              <Select value={form.customer_id} onValueChange={(v) => setForm({ ...form, customer_id: v })}>
-                <SelectTrigger className="bg-slate-100/50 focus:bg-white"><SelectValue placeholder={t("customers.title")} /></SelectTrigger>
-                <SelectContent>
-                  {customers.map((c) => (
-                    <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <select
+                value={form.customer_id}
+                onChange={(e) => setForm({ ...form, customer_id: e.target.value })}
+                className="flex h-9 w-full items-center rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <option value="">{t("customers.title")}</option>
+                {customers.map((c) => (
+                  <option key={c.id} value={c.id}>{c.name}</option>
+                ))}
+              </select>
             </div>
             <div className="space-y-2">
               <Label className="text-sm font-semibold">{t("followups.dueDate")} *</Label>
@@ -374,14 +376,15 @@ export default function FollowUpsPage() {
             </div>
             <div className="space-y-2">
               <Label className="text-sm font-semibold">{t("followups.status")}</Label>
-              <Select value={form.status} onValueChange={(v) => setForm({ ...form, status: v })}>
-                <SelectTrigger className="bg-slate-100/50 focus:bg-white"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="pending">{t("followups.pending")}</SelectItem>
-                  <SelectItem value="done">{t("followups.done")}</SelectItem>
-                  <SelectItem value="cancelled">{t("followups.cancelled")}</SelectItem>
-                </SelectContent>
-              </Select>
+              <select
+                value={form.status}
+                onChange={(e) => setForm({ ...form, status: e.target.value })}
+                className="flex h-9 w-full items-center rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <option value="pending">{t("followups.pending")}</option>
+                <option value="done">{t("followups.done")}</option>
+                <option value="cancelled">{t("followups.cancelled")}</option>
+              </select>
             </div>
           </div>
           <DialogFooter className="gap-2">
