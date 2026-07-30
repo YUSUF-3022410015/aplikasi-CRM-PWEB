@@ -15,7 +15,7 @@ import { ArrowLeft, Loader2, Save } from "lucide-react";
 export default function NewFollowUpPage() {
   const { t } = useLanguage();
   const router = useRouter();
-  const { addToast } = useToast();
+  const { toast } = useToast();
   const [supabase] = useState(() => createClient());
   const [customers, setCustomers] = useState<{ id: string; name: string }[]>([]);
   const [customerId, setCustomerId] = useState("");
@@ -63,7 +63,7 @@ export default function NewFollowUpPage() {
           link: "/followups",
         }).then(() => {}).catch(() => {});
       }
-      addToast(t("common.saved"), "success");
+      toast(t("common.saved"), "success");
       router.push("/followups");
       router.refresh();
     } catch {
