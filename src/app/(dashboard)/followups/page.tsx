@@ -24,6 +24,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { formatDate } from "@/lib/utils";
 import { CalendarCheck, Plus, Pencil, Trash2, Loader2, X } from "lucide-react";
 import { useLanguage } from "@/components/language-provider";
@@ -329,83 +345,73 @@ export default function FollowUpsPage() {
         </CardContent>
       </Card>
 
-      {/* Custom Modal Tambah/Edit - tanpa Radix Dialog */}
-      {dialogOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="fixed inset-0 bg-black/80" onClick={() => setDialogOpen(false)} />
-          <div className="relative z-50 w-full max-w-md mx-4 rounded-lg border border-slate-200 bg-white p-6 shadow-lg">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold">{editItem ? t("followups.editFollowup") : t("followups.addFollowup")}</h2>
-              <button onClick={() => setDialogOpen(false)} className="rounded-sm opacity-70 hover:opacity-100">
-                <X className="h-4 w-4" />
-              </button>
+      {/* Dialog Tambah/Edit - pakai Radix Dialog biar Select portal gak konflik */}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>{editItem ? t("followups.editFollowup") : t("followups.addFollowup")}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            {formError && (
+              <div className="rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">{formError}</div>
+            )}
+            <div className="space-y-2">
+              <Label className="text-sm font-semibold">{t("followups.customer")} *</Label>
+              <Select value={form.customer_id} onValueChange={(v) => setForm({ ...form, customer_id: v })}>
+                <SelectTrigger className="bg-slate-100/50 focus:bg-white">
+                  <SelectValue placeholder={t("customers.title")} />
+                </SelectTrigger>
+                <SelectContent>
+                  {customers.map((c) => (
+                    <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
-            <div className="space-y-4">
-              {formError && (
-                <div className="rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">{formError}</div>
-              )}
-              <div className="space-y-2">
-                <Label className="text-sm font-semibold">{t("followups.customer")} *</Label>
-                <Select value={form.customer_id} onValueChange={(v) => setForm({ ...form, customer_id: v })}>
-                  <SelectTrigger className="bg-slate-100/50 focus:bg-white">
-                    <SelectValue placeholder={t("customers.title")} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {customers.map((c) => (
-                      <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label className="text-sm font-semibold">{t("followups.dueDate")} *</Label>
-                <Input type="date" value={form.due_date} onChange={(e) => setForm({ ...form, due_date: e.target.value })} className="bg-slate-100/50 focus:bg-white" />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-sm font-semibold">{t("followups.note")}</Label>
-                <Textarea value={form.note} onChange={(e) => setForm({ ...form, note: e.target.value })} placeholder={t("followups.notePlaceholder")} rows={3} className="bg-slate-100/50 focus:bg-white resize-none" />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-sm font-semibold">{t("followups.status")}</Label>
-                <Select value={form.status} onValueChange={(v) => setForm({ ...form, status: v })}>
-                  <SelectTrigger className="bg-slate-100/50 focus:bg-white">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="pending">{t("followups.pending")}</SelectItem>
-                    <SelectItem value="done">{t("followups.done")}</SelectItem>
-                    <SelectItem value="cancelled">{t("followups.cancelled")}</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+            <div className="space-y-2">
+              <Label className="text-sm font-semibold">{t("followups.dueDate")} *</Label>
+              <Input type="date" value={form.due_date} onChange={(e) => setForm({ ...form, due_date: e.target.value })} className="bg-slate-100/50 focus:bg-white" />
             </div>
-            <div className="flex justify-end gap-2 mt-6">
-              <Button variant="outline" onClick={() => setDialogOpen(false)}>{t("common.cancel")}</Button>
-              <Button onClick={handleSave} disabled={saving || !form.customer_id || !form.due_date}>
-                {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {t("common.save")}
-              </Button>
+            <div className="space-y-2">
+              <Label className="text-sm font-semibold">{t("followups.note")}</Label>
+              <Textarea value={form.note} onChange={(e) => setForm({ ...form, note: e.target.value })} placeholder={t("followups.notePlaceholder")} rows={3} className="bg-slate-100/50 focus:bg-white resize-none" />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-sm font-semibold">{t("followups.status")}</Label>
+              <Select value={form.status} onValueChange={(v) => setForm({ ...form, status: v })}>
+                <SelectTrigger className="bg-slate-100/50 focus:bg-white">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="pending">{t("followups.pending")}</SelectItem>
+                  <SelectItem value="done">{t("followups.done")}</SelectItem>
+                  <SelectItem value="cancelled">{t("followups.cancelled")}</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
-        </div>
-      )}
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => setDialogOpen(false)}>{t("common.cancel")}</Button>
+            <Button onClick={handleSave} disabled={saving || !form.customer_id || !form.due_date}>
+              {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {t("common.save")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
-      {/* Custom Modal Hapus */}
-      {deleteId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="fixed inset-0 bg-black/80" onClick={() => setDeleteId(null)} />
-          <div className="relative z-50 w-full max-w-sm mx-4 rounded-lg border border-slate-200 bg-white p-6 shadow-lg text-center">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-600/10 mb-4">
-              <Trash2 className="h-6 w-6 text-red-600" />
-            </div>
-            <h2 className="text-lg font-semibold mb-4">{t("followups.deleteTitle")}</h2>
-            <div className="flex justify-center gap-2">
-              <Button variant="outline" onClick={() => setDeleteId(null)} className="w-28">{t("common.cancel")}</Button>
-              <Button variant="destructive" onClick={handleDelete} className="w-28">{t("common.delete")}</Button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Dialog Hapus */}
+      <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("followups.deleteTitle")}</AlertDialogTitle>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} className="bg-red-600 text-white hover:bg-red-700">{t("common.delete")}</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
