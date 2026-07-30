@@ -89,50 +89,65 @@ export function FollowUpList({
     }
     setLoading(true);
 
-    const { data: { user } } = await supabase.auth.getUser();
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
 
-    if (editItem) {
-      await supabase.from("followups").update({
-        note: note.trim(),
-        due_date: dueDate,
-        status,
-      }).eq("id", editItem.id);
-      // Notifikasi edit follow-up
-      if (user) {
-        Promise.resolve(supabase.from("notifications").insert({
-          user_id: user.id,
-          title: "Follow-up Diubah",
-          message: `Follow-up dijadwalkan pada ${dueDate} telah diperbarui`,
-          type: "activity_added",
-          link: `/customers/${customerId}`,
-        })).catch(() => {});
+      if (editItem) {
+        const { error } = await supabase.from("followups").update({
+          note: note.trim(),
+          due_date: dueDate,
+          status,
+        }).eq("id", editItem.id);
+        if (error) {
+          alert(error.message);
+          setLoading(false);
+          return;
+        }
+        // Notifikasi edit follow-up
+        if (user) {
+          Promise.resolve(supabase.from("notifications").insert({
+            user_id: user.id,
+            title: "Follow-up Diubah",
+            message: `Follow-up dijadwalkan pada ${dueDate} telah diperbarui`,
+            type: "activity_added",
+            link: `/customers/${customerId}`,
+          })).catch(() => {});
+        }
+      } else {
+        const { error } = await supabase.from("followups").insert({
+          customer_id: customerId,
+          assigned_to: user?.id || null,
+          note: note.trim(),
+          due_date: dueDate,
+          status: "pending",
+        });
+        if (error) {
+          alert(error.message);
+          setLoading(false);
+          return;
+        }
+        // Notifikasi tambah follow-up
+        if (user) {
+          Promise.resolve(supabase.from("notifications").insert({
+            user_id: user.id,
+            title: "Follow-up Baru",
+            message: `Follow-up dijadwalkan pada ${dueDate}`,
+            type: "followup_reminder",
+            link: `/customers/${customerId}`,
+          })).catch(() => {});
+        }
       }
-    } else {
-      await supabase.from("followups").insert({
-        customer_id: customerId,
-        assigned_to: user?.id || null,
-        note: note.trim(),
-        due_date: dueDate,
-        status: "pending",
-      });
-      // Notifikasi tambah follow-up
-      if (user) {
-        Promise.resolve(supabase.from("notifications").insert({
-          user_id: user.id,
-          title: "Follow-up Baru",
-          message: `Follow-up dijadwalkan pada ${dueDate}`,
-          type: "followup_reminder",
-          link: `/customers/${customerId}`,
-        })).catch(() => {});
-      }
+
+      setNote("");
+      setDueDate("");
+      setStatus("pending");
+      setOpen(false);
+      router.refresh();
+    } catch (err) {
+      alert("Terjadi kesalahan saat menyimpan data");
+    } finally {
+      setLoading(false);
     }
-
-    setNote("");
-    setDueDate("");
-    setStatus("pending");
-    setOpen(false);
-    setLoading(false);
-    router.refresh();
   };
 
   const handleStatusChange = async (id: string, newStatus: string) => {

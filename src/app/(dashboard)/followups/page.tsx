@@ -113,49 +113,64 @@ export default function FollowUpsPage() {
     setFormError("");
     setSaving(true);
 
-    const { data: { user } } = await supabase.auth.getUser();
-    const custName = customers.find((c) => c.id === form.customer_id)?.name || "";
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      const custName = customers.find((c) => c.id === form.customer_id)?.name || "";
 
-    if (editItem) {
-      await supabase.from("followups").update({
-        customer_id: form.customer_id,
-        note: form.note,
-        due_date: form.due_date,
-        status: form.status,
-      }).eq("id", editItem.id);
-      // Notifikasi edit follow-up
-      if (user) {
-        Promise.resolve(supabase.from("notifications").insert({
-          user_id: user.id,
-          title: "Follow-up Diubah",
-          message: `Follow-up untuk ${custName} telah diperbarui`,
-          type: "activity_added",
-          link: "/followups",
-        })).catch(() => {});
+      if (editItem) {
+        const { error } = await supabase.from("followups").update({
+          customer_id: form.customer_id,
+          note: form.note,
+          due_date: form.due_date,
+          status: form.status,
+        }).eq("id", editItem.id);
+        if (error) {
+          setFormError(error.message);
+          setSaving(false);
+          return;
+        }
+        // Notifikasi edit follow-up
+        if (user) {
+          Promise.resolve(supabase.from("notifications").insert({
+            user_id: user.id,
+            title: "Follow-up Diubah",
+            message: `Follow-up untuk ${custName} telah diperbarui`,
+            type: "activity_added",
+            link: "/followups",
+          })).catch(() => {});
+        }
+      } else {
+        const { error } = await supabase.from("followups").insert({
+          customer_id: form.customer_id,
+          assigned_to: user?.id || null,
+          note: form.note,
+          due_date: form.due_date,
+          status: form.status,
+        });
+        if (error) {
+          setFormError(error.message);
+          setSaving(false);
+          return;
+        }
+        // Notifikasi tambah follow-up
+        if (user) {
+          Promise.resolve(supabase.from("notifications").insert({
+            user_id: user.id,
+            title: "Follow-up Baru",
+            message: `Follow-up untuk ${custName} dijadwalkan pada ${form.due_date}`,
+            type: "followup_reminder",
+            link: "/followups",
+          })).catch(() => {});
+        }
       }
-    } else {
-      await supabase.from("followups").insert({
-        customer_id: form.customer_id,
-        assigned_to: user?.id || null,
-        note: form.note,
-        due_date: form.due_date,
-        status: form.status,
-      });
-      // Notifikasi tambah follow-up
-      if (user) {
-        Promise.resolve(supabase.from("notifications").insert({
-          user_id: user.id,
-          title: "Follow-up Baru",
-          message: `Follow-up untuk ${custName} dijadwalkan pada ${form.due_date}`,
-          type: "followup_reminder",
-          link: "/followups",
-        })).catch(() => {});
-      }
+
+      setDialogOpen(false);
+      fetchData();
+    } catch (err) {
+      setFormError("Terjadi kesalahan saat menyimpan data");
+    } finally {
+      setSaving(false);
     }
-
-    setDialogOpen(false);
-    setSaving(false);
-    fetchData();
   };
 
   const handleDelete = async () => {
