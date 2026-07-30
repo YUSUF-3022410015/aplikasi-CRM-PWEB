@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import {
   Table,
@@ -48,6 +49,7 @@ interface FollowUp {
 
 export default function FollowUpsPage() {
   const { t } = useLanguage();
+  const router = useRouter();
   const [followups, setFollowups] = useState<FollowUp[]>([]);
   const [customers, setCustomers] = useState<{ id: string; name: string }[]>([]);
   const [loading, setLoading] = useState(true);
@@ -229,7 +231,7 @@ export default function FollowUpsPage() {
           <p className="text-slate-500 mt-1.5">{t("followups.subtitle2")}</p>
         </div>
         {!isManager && (
-          <Button onClick={openCreate} className="shadow-sm">
+          <Button onClick={() => router.push("/followups/new")} className="shadow-sm">
             <Plus className="mr-2 h-4 w-4" />
             {t("followups.addFollowup")}
           </Button>
