@@ -55,13 +55,13 @@ export default function NewFollowUpPage() {
       }
       if (user) {
         const custName = customers.find((c) => c.id === customerId)?.name || "";
-        supabase.from("notifications").insert({
+        Promise.resolve(supabase.from("notifications").insert({
           user_id: user.id,
           title: "Follow-up Baru",
           message: `Follow-up untuk ${custName} dijadwalkan pada ${dueDate}`,
           type: "followup_reminder",
           link: "/followups",
-        }).then(() => {}).catch(() => {});
+        })).catch(() => {});
       }
       toast(t("common.saved"), "success");
       router.push("/followups");
