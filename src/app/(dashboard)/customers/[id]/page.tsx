@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -58,49 +58,49 @@ export default function CustomerDetailPage() {
   const [followups, setFollowups] = useState<FollowUpType[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const { data: cust } = await supabase
-          .from("customers")
-          .select("*")
-          .eq("id", id)
-          .is("deleted_at", null)
-          .single();
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const { data: cust } = await supabase
+        .from("customers")
+        .select("*")
+        .eq("id", id)
+        .is("deleted_at", null)
+        .single();
 
-        if (!cust) {
-          setCustomer(null);
-          setLoading(false);
-          return;
-        }
-
-        setCustomer(cust);
-
-        const { data: acts } = await supabase
-          .from("activities")
-          .select("*, user:profiles(fullname)")
-          .eq("customer_id", id)
-          .order("created_at", { ascending: false });
-
-        setActivities(acts || []);
-
-        const { data: fups } = await supabase
-          .from("followups")
-          .select("*")
-          .eq("customer_id", id)
-          .order("due_date", { ascending: false });
-
-        setFollowups(fups || []);
-      } catch (error) {
-        console.error("Failed to fetch customer detail:", error);
-      } finally {
+      if (!cust) {
+        setCustomer(null);
         setLoading(false);
+        return;
       }
-    };
 
-    fetchData();
+      setCustomer(cust);
+
+      const { data: acts } = await supabase
+        .from("activities")
+        .select("*, user:profiles(fullname)")
+        .eq("customer_id", id)
+        .order("created_at", { ascending: false });
+
+      setActivities(acts || []);
+
+      const { data: fups } = await supabase
+        .from("followups")
+        .select("*")
+        .eq("customer_id", id)
+        .order("due_date", { ascending: false });
+
+      setFollowups(fups || []);
+    } catch (error) {
+      console.error("Failed to fetch customer detail:", error);
+    } finally {
+      setLoading(false);
+    }
   }, [id, supabase]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   if (loading) {
     return (
@@ -259,11 +259,11 @@ export default function CustomerDetailPage() {
           <TabsTrigger value="followups">{t("customers.followupsTab")}</TabsTrigger>
         </TabsList>
         <TabsContent value="activities" className="space-y-4">
-          {!isManager && <AddActivityForm customerId={customer.id} />}
+          {!isManager && <AddActivityForm customerId={customer.id} onSuccess={fetchData} />}
           <ActivityTimeline activities={activities} />
         </TabsContent>
         <TabsContent value="followups" className="space-y-4">
-          <FollowUpList followups={followups} customerId={customer.id} />
+          <FollowUpList followups={followups} customerId={customer.id} onSuccess={fetchData} />
         </TabsContent>
       </Tabs>
 

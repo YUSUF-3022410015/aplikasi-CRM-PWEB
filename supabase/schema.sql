@@ -52,6 +52,7 @@ CREATE TABLE IF NOT EXISTS deals (
 );
 
 -- 4. Activities - PRD §3.2: id, customer_id, type, note, created_at
+-- Soft delete sesuai PRD §3.4: cascade soft delete saat customer dihapus
 CREATE TABLE IF NOT EXISTS activities (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   customer_id UUID REFERENCES customers(id) ON DELETE CASCADE,
@@ -59,6 +60,7 @@ CREATE TABLE IF NOT EXISTS activities (
   type TEXT NOT NULL CHECK (type IN ('call', 'meeting', 'email', 'whatsapp', 'visit', 'demo', 'proposal', 'closing')),
   note TEXT,
   attachment TEXT,
+  deleted_at TIMESTAMPTZ,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -216,6 +218,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- ============================================
 ALTER TABLE customers ADD COLUMN IF NOT EXISTS assigned_to UUID REFERENCES profiles(id);
 ALTER TABLE customers ADD COLUMN IF NOT EXISTS pipeline_stage TEXT NOT NULL DEFAULT 'lead' CHECK (pipeline_stage IN ('lead', 'qualified', 'contacted', 'meeting', 'proposal', 'negotiation', 'won', 'lost'));
+ALTER TABLE activities ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;
 ALTER TABLE customers ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;
 ALTER TABLE deals ADD COLUMN IF NOT EXISTS assigned_to UUID REFERENCES profiles(id);
 ALTER TABLE deals ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;
@@ -237,6 +240,7 @@ CREATE INDEX IF NOT EXISTS idx_deals_assigned ON deals(assigned_to);
 CREATE INDEX IF NOT EXISTS idx_deals_pipeline ON deals(pipeline_stage);
 CREATE INDEX IF NOT EXISTS idx_deals_deleted ON deals(deleted_at);
 CREATE INDEX IF NOT EXISTS idx_activities_customer ON activities(customer_id);
+CREATE INDEX IF NOT EXISTS idx_activities_deleted ON activities(deleted_at);
 CREATE INDEX IF NOT EXISTS idx_followups_customer ON followups(customer_id);
 CREATE INDEX IF NOT EXISTS idx_followups_due ON followups(due_date);
 CREATE INDEX IF NOT EXISTS idx_quotations_customer ON quotations(customer_id);
@@ -325,10 +329,10 @@ CREATE POLICY "Deals: delete" ON deals FOR DELETE USING (
   auth.uid() IS NOT NULL AND public.get_user_role() = 'admin'
 );
 
--- Activities: role-based access
+-- Activities: soft delete, role-based access
 DROP POLICY IF EXISTS "Activities: read" ON activities;
 CREATE POLICY "Activities: read" ON activities FOR SELECT USING (
-  auth.uid() IS NOT NULL AND (
+  auth.uid() IS NOT NULL AND deleted_at IS NULL AND (
     public.get_user_role() IN ('admin', 'manager')
     OR user_id = auth.uid()
     OR customer_id IN (SELECT id FROM customers WHERE assigned_to = auth.uid())

@@ -52,6 +52,7 @@ export default function SettingsPage() {
   const [values, setValues] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [savedSuccess, setSavedSuccess] = useState(false);
   const [supabase] = useState(() => createClient());
   const { t } = useLanguage();
   const { isAdmin, loading: permLoading } = usePermissions();
@@ -115,6 +116,8 @@ export default function SettingsPage() {
       await supabase.from("settings").insert(toInsert);
     }
     setSaving(false);
+    setSavedSuccess(true);
+    setTimeout(() => setSavedSuccess(false), 3000);
   };
 
   if (loading) {
@@ -147,6 +150,13 @@ export default function SettingsPage() {
           {t("common.save")}
         </Button>
       </div>
+
+      {savedSuccess && (
+        <div className="rounded-xl bg-emerald-50 border border-emerald-200 px-4 py-3 text-sm text-emerald-700 flex items-center gap-2 animate-scale-in">
+          <Check className="h-4 w-4 text-emerald-600" />
+          <span>Pengaturan berhasil disimpan!</span>
+        </div>
+      )}
 
       <Tabs defaultValue="company" className="animate-slide-up" style={{ animationDelay: "0.1s" }}>
         <TabsList className="bg-slate-100 p-1">

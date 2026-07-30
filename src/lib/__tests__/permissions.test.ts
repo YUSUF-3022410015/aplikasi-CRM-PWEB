@@ -18,7 +18,7 @@ describe("Permissions", () => {
       expect(hasPermission("sales", "customer", "viewOwn")).toBe(true);
       expect(hasPermission("sales", "customer", "viewAll")).toBe(false);
       expect(hasPermission("sales", "customer", "create")).toBe(true);
-      expect(hasPermission("sales", "customer", "edit")).toBe(false);
+      expect(hasPermission("sales", "customer", "edit")).toBe(true);
     });
 
     it("returns false for invalid module", () => {

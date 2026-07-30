@@ -38,9 +38,11 @@ interface FollowUpItem {
 export function FollowUpList({
   followups,
   customerId,
+  onSuccess,
 }: {
   followups: FollowUpItem[];
   customerId: string;
+  onSuccess?: () => void;
 }) {
   const { t } = useLanguage();
   const { isAdmin, isManager } = usePermissions();
@@ -142,6 +144,7 @@ export function FollowUpList({
       setDueDate("");
       setStatus("pending");
       setOpen(false);
+      onSuccess?.();
       router.refresh();
     } catch (err) {
       alert("Terjadi kesalahan saat menyimpan data");
@@ -164,6 +167,7 @@ export function FollowUpList({
         link: `/customers/${customerId}`,
       })).catch(() => {});
     }
+    onSuccess?.();
     router.refresh();
   };
 
@@ -182,6 +186,7 @@ export function FollowUpList({
       })).catch(() => {});
     }
     setDeleteId(null);
+    onSuccess?.();
     router.refresh();
   };
 

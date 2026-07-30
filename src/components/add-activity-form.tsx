@@ -16,7 +16,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus, Loader2 } from "lucide-react";
 import { useLanguage } from "@/components/language-provider";
 
-export function AddActivityForm({ customerId }: { customerId: string }) {
+export function AddActivityForm({ customerId, onSuccess }: { customerId: string; onSuccess?: () => void }) {
   const { t } = useLanguage();
   const [type, setType] = useState("call");
   const [note, setNote] = useState("");
@@ -75,6 +75,7 @@ export function AddActivityForm({ customerId }: { customerId: string }) {
     setType("call");
     setOpen(false);
     setLoading(false);
+    onSuccess?.();
     router.refresh();
   };
 

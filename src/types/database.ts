@@ -84,7 +84,6 @@ export interface FollowUp {
   id: string;
   customer_id: string;
   assigned_to: string;
-  title: string;
   due_date: string;
   reminder?: string;
   status: FollowUpStatus;
