@@ -265,63 +265,67 @@ export function FollowUpList({
         </div>
       )}
 
-      {/* Dialog Tambah/Edit */}
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{editItem ? t("followups.editFollowup") : t("followups.newFollowup")}</DialogTitle>
-          </DialogHeader>
-          <form onSubmit={handleSave} className="space-y-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium">{t("followups.dueDate")} *</label>
-              <Input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} required />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium">{t("followups.note")}</label>
-              <Textarea placeholder={t("followups.notePlaceholder")} value={note} onChange={(e) => setNote(e.target.value)} rows={2} />
-            </div>
-            {editItem && (
+      {/* Dialog Tambah/Edit — render cuma pas perlu */}
+      {open && (
+        <Dialog open={open} onOpenChange={(o) => { if (!o) setOpen(false); }}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>{editItem ? t("followups.editFollowup") : t("followups.newFollowup")}</DialogTitle>
+            </DialogHeader>
+            <form onSubmit={handleSave} className="space-y-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium">{t("followups.status")}</label>
-                <select
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value)}
-                  className="flex h-9 w-full items-center rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-                >
-                  <option value="pending">{t("followups.pending")}</option>
-                  <option value="done">{t("followups.done")}</option>
-                  <option value="cancelled">{t("followups.cancelled")}</option>
-                </select>
+                <label className="text-sm font-medium">{t("followups.dueDate")} *</label>
+                <Input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} required />
               </div>
-            )}
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setOpen(false)}>{t("common.cancel")}</Button>
-              <Button type="submit" disabled={loading || !dueDate}>
-                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {t("common.save")}
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">{t("followups.note")}</label>
+                <Textarea placeholder={t("followups.notePlaceholder")} value={note} onChange={(e) => setNote(e.target.value)} rows={2} />
+              </div>
+              {editItem && (
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">{t("followups.status")}</label>
+                  <select
+                    value={status}
+                    onChange={(e) => setStatus(e.target.value)}
+                    className="flex h-9 w-full items-center rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  >
+                    <option value="pending">{t("followups.pending")}</option>
+                    <option value="done">{t("followups.done")}</option>
+                    <option value="cancelled">{t("followups.cancelled")}</option>
+                  </select>
+                </div>
+              )}
+              <DialogFooter>
+                <Button type="button" variant="outline" onClick={() => setOpen(false)}>{t("common.cancel")}</Button>
+                <Button type="submit" disabled={loading || !dueDate}>
+                  {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  {t("common.save")}
+                </Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
+      )}
 
-      {/* AlertDialog Hapus */}
-      <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
-        <AlertDialogContent>
-          <AlertHeader>
-            <AlertTitle>{t("followups.deleteTitle")}</AlertTitle>
-            <AlertDialogDescription>
-              Apakah Anda yakin ingin menghapus follow-up ini? Tindakan ini tidak dapat dibatalkan.
-            </AlertDialogDescription>
-          </AlertHeader>
-          <AlertFooter>
-            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-red-600 text-white hover:bg-red-700">
-              {t("common.delete")}
-            </AlertDialogAction>
-          </AlertFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      {/* AlertDialog Hapus — render cuma pas perlu */}
+      {!!deleteId && (
+        <AlertDialog open={true} onOpenChange={(o) => { if (!o) setDeleteId(null); }}>
+          <AlertDialogContent>
+            <AlertHeader>
+              <AlertTitle>{t("followups.deleteTitle")}</AlertTitle>
+              <AlertDialogDescription>
+                Apakah Anda yakin ingin menghapus follow-up ini? Tindakan ini tidak dapat dibatalkan.
+              </AlertDialogDescription>
+            </AlertHeader>
+            <AlertFooter>
+              <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
+              <AlertDialogAction onClick={handleDelete} className="bg-red-600 text-white hover:bg-red-700">
+                {t("common.delete")}
+              </AlertDialogAction>
+            </AlertFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      )}
     </div>
   );
 }
