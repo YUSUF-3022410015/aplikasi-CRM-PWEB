@@ -14,24 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter as AlertFooter,
-  AlertDialogHeader as AlertHeader,
-  AlertDialogTitle as AlertTitle,
-} from "@/components/ui/alert-dialog";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus, Loader2, CalendarCheck, Pencil, Trash2 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { useLanguage } from "@/components/language-provider";
@@ -56,13 +39,14 @@ export function FollowUpList({
 }) {
   const { t } = useLanguage();
   const { isAdmin, isManager } = usePermissions();
-  const [open, setOpen] = useState(false);
+  const [showForm, setShowForm] = useState(false);
   const [editItem, setEditItem] = useState<FollowUpItem | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [note, setNote] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [status, setStatus] = useState("pending");
   const [loading, setLoading] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const [supabase] = useState(() => createClient());
   const router = useRouter();
 
@@ -77,7 +61,7 @@ export function FollowUpList({
     setNote("");
     setDueDate("");
     setStatus("pending");
-    setOpen(true);
+    setShowForm(true);
   };
 
   const openEdit = (fu: FollowUpItem) => {
@@ -85,13 +69,12 @@ export function FollowUpList({
     setNote(fu.note || "");
     setDueDate(fu.due_date?.split("T")[0] || "");
     setStatus(fu.status);
-    setOpen(true);
+    setShowForm(true);
   };
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!dueDate) return;
-    // PRD §2.2: due_date tidak boleh tanggal lampau
     if (!editItem) {
       const today = new Date().toISOString().split("T")[0];
       if (dueDate < today) {
@@ -115,7 +98,6 @@ export function FollowUpList({
           setLoading(false);
           return;
         }
-        // Notifikasi edit follow-up
         if (user) {
           Promise.resolve(supabase.from("notifications").insert({
             user_id: user.id,
@@ -138,7 +120,6 @@ export function FollowUpList({
           setLoading(false);
           return;
         }
-        // Notifikasi tambah follow-up
         if (user) {
           Promise.resolve(supabase.from("notifications").insert({
             user_id: user.id,
@@ -153,7 +134,7 @@ export function FollowUpList({
       setNote("");
       setDueDate("");
       setStatus("pending");
-      setOpen(false);
+      setShowForm(false);
       onSuccess?.();
       router.refresh();
     } catch (err) {
@@ -166,7 +147,6 @@ export function FollowUpList({
   const handleStatusChange = async (id: string, newStatus: string) => {
     const { data: { user } } = await supabase.auth.getUser();
     await supabase.from("followups").update({ status: newStatus }).eq("id", id);
-    // Notifikasi ubah status
     if (user) {
       const statusLabel = newStatus === "done" ? "Selesai" : newStatus === "cancelled" ? "Dibatalkan" : "Ditunda";
       Promise.resolve(supabase.from("notifications").insert({
@@ -185,7 +165,6 @@ export function FollowUpList({
     if (!deleteId) return;
     const { data: { user } } = await supabase.auth.getUser();
     await supabase.from("followups").delete().eq("id", deleteId);
-    // Notifikasi hapus follow-up
     if (user) {
       Promise.resolve(supabase.from("notifications").insert({
         user_id: user.id,
@@ -196,17 +175,61 @@ export function FollowUpList({
       })).catch(() => {});
     }
     setDeleteId(null);
+    setConfirmDelete(false);
     onSuccess?.();
     router.refresh();
   };
 
   return (
     <div className="space-y-4">
-      {!isManager && (
+      {!isManager && !showForm && (
         <Button variant="outline" onClick={openCreate}>
           <Plus className="mr-2 h-4 w-4" />
           {t("followups.addFollowup")}
         </Button>
+      )}
+
+      {showForm && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">{editItem ? t("followups.editFollowup") : t("followups.addFollowup")}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSave} className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">{t("followups.dueDate")} *</label>
+                <Input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} required />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">{t("followups.note")}</label>
+                <Textarea placeholder={t("followups.notePlaceholder")} value={note} onChange={(e) => setNote(e.target.value)} rows={2} />
+              </div>
+              {editItem && (
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">{t("followups.status")}</label>
+                  <select
+                    value={status}
+                    onChange={(e) => setStatus(e.target.value)}
+                    className="flex h-9 w-full items-center rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  >
+                    <option value="pending">{t("followups.pending")}</option>
+                    <option value="done">{t("followups.done")}</option>
+                    <option value="cancelled">{t("followups.cancelled")}</option>
+                  </select>
+                </div>
+              )}
+              <div className="flex gap-2">
+                <Button type="submit" disabled={loading || !dueDate}>
+                  {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  {t("common.save")}
+                </Button>
+                <Button type="button" variant="outline" onClick={() => { setShowForm(false); setEditItem(null); }}>
+                  {t("common.cancel")}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
       )}
 
       {followups.length === 0 ? (
@@ -250,7 +273,7 @@ export function FollowUpList({
                             <Pencil className="h-4 w-4" />
                           </Button>
                           {isAdmin && (
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-red-600" onClick={() => setDeleteId(fu.id)}>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-red-600" onClick={() => { setDeleteId(fu.id); setConfirmDelete(true); }}>
                               <Trash2 className="h-4 w-4" />
                             </Button>
                           )}
@@ -265,66 +288,21 @@ export function FollowUpList({
         </div>
       )}
 
-      {/* Dialog Tambah/Edit — render cuma pas perlu */}
-      {open && (
-        <Dialog open={open} onOpenChange={(o) => { if (!o) setOpen(false); }}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>{editItem ? t("followups.editFollowup") : t("followups.newFollowup")}</DialogTitle>
-            </DialogHeader>
-            <form onSubmit={handleSave} className="space-y-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">{t("followups.dueDate")} *</label>
-                <Input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} required />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">{t("followups.note")}</label>
-                <Textarea placeholder={t("followups.notePlaceholder")} value={note} onChange={(e) => setNote(e.target.value)} rows={2} />
-              </div>
-              {editItem && (
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">{t("followups.status")}</label>
-                  <select
-                    value={status}
-                    onChange={(e) => setStatus(e.target.value)}
-                    className="flex h-9 w-full items-center rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  >
-                    <option value="pending">{t("followups.pending")}</option>
-                    <option value="done">{t("followups.done")}</option>
-                    <option value="cancelled">{t("followups.cancelled")}</option>
-                  </select>
-                </div>
-              )}
-              <DialogFooter>
-                <Button type="button" variant="outline" onClick={() => setOpen(false)}>{t("common.cancel")}</Button>
-                <Button type="submit" disabled={loading || !dueDate}>
-                  {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  {t("common.save")}
-                </Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
-      )}
-
-      {/* AlertDialog Hapus — render cuma pas perlu */}
-      {!!deleteId && (
-        <AlertDialog open={true} onOpenChange={(o) => { if (!o) setDeleteId(null); }}>
-          <AlertDialogContent>
-            <AlertHeader>
-              <AlertTitle>{t("followups.deleteTitle")}</AlertTitle>
-              <AlertDialogDescription>
-                Apakah Anda yakin ingin menghapus follow-up ini? Tindakan ini tidak dapat dibatalkan.
-              </AlertDialogDescription>
-            </AlertHeader>
-            <AlertFooter>
-              <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
-              <AlertDialogAction onClick={handleDelete} className="bg-red-600 text-white hover:bg-red-700">
-                {t("common.delete")}
-              </AlertDialogAction>
-            </AlertFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+      {confirmDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="fixed inset-0 bg-black/80" onClick={() => { setConfirmDelete(false); setDeleteId(null); }} />
+          <div className="relative w-full max-w-sm mx-4 rounded-xl border bg-white p-6 shadow-xl text-center">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-600/10 mb-4">
+              <Trash2 className="h-6 w-6 text-red-600" />
+            </div>
+            <h2 className="text-lg font-semibold mb-2">{t("followups.deleteTitle")}</h2>
+            <p className="text-sm text-slate-500 mb-6">Apakah Anda yakin ingin menghapus follow-up ini?</p>
+            <div className="flex justify-center gap-2">
+              <Button variant="outline" onClick={() => { setConfirmDelete(false); setDeleteId(null); }} className="w-28">{t("common.cancel")}</Button>
+              <Button variant="destructive" onClick={handleDelete} className="w-28">{t("common.delete")}</Button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
