@@ -350,7 +350,7 @@ export default function CustomersPage() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} disabled={deleting} className="bg-red-600 text-red-600-foreground hover:bg-red-600/90">
+            <AlertDialogAction onClick={handleDelete} disabled={deleting} className="bg-red-600 text-white hover:bg-red-600/90">
               {deleting ? t("common.loading") : t("common.delete")}
             </AlertDialogAction>
           </AlertDialogFooter>

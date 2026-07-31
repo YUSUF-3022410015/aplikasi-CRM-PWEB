@@ -264,7 +264,7 @@ export default function ProductsPage() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
-            <AlertDialogAction onClick={() => { if (deleteId) handleDelete(deleteId); setDeleteId(null); }} className="bg-red-600 text-red-600-foreground hover:bg-red-600/90">
+            <AlertDialogAction onClick={() => { if (deleteId) handleDelete(deleteId); setDeleteId(null); }} className="bg-red-600 text-white hover:bg-red-600/90">
               {t("common.delete")}
             </AlertDialogAction>
           </AlertDialogFooter>

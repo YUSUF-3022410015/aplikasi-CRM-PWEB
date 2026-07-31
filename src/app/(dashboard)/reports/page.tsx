@@ -181,8 +181,8 @@ export default function ReportsPage() {
           <CardContent className="p-5">
             <div className="flex items-center justify-between mb-4">
               <span className="text-sm font-medium text-slate-500">{t("reports.dealsWon")}</span>
-              <div className="p-2.5 rounded-full bg-tertiary/10">
-                <TrendingUp className="h-5 w-5 text-tertiary" />
+              <div className="p-2.5 rounded-full bg-emerald-600/10">
+                <TrendingUp className="h-5 w-5 text-emerald-600" />
               </div>
             </div>
             <div className="text-3xl font-bold text-slate-900">{stats.dealsWon}</div>
