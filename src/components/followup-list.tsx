@@ -21,6 +21,16 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter as AlertFooter,
+  AlertDialogHeader as AlertHeader,
+  AlertDialogTitle as AlertTitle,
+} from "@/components/ui/alert-dialog";
 import { Card, CardContent } from "@/components/ui/card";
 import { Plus, Loader2, CalendarCheck, Pencil, Trash2 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
@@ -295,18 +305,23 @@ export function FollowUpList({
         </DialogContent>
       </Dialog>
 
-      {/* Dialog Hapus */}
-      <Dialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{t("followups.deleteTitle")}</DialogTitle>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleteId(null)}>{t("common.cancel")}</Button>
-            <Button variant="destructive" onClick={handleDelete}>{t("common.delete")}</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* AlertDialog Hapus */}
+      <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
+        <AlertDialogContent>
+          <AlertHeader>
+            <AlertTitle>{t("followups.deleteTitle")}</AlertTitle>
+            <AlertDialogDescription>
+              Apakah Anda yakin ingin menghapus follow-up ini? Tindakan ini tidak dapat dibatalkan.
+            </AlertDialogDescription>
+          </AlertHeader>
+          <AlertFooter>
+            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} className="bg-red-600 text-white hover:bg-red-700">
+              {t("common.delete")}
+            </AlertDialogAction>
+          </AlertFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
