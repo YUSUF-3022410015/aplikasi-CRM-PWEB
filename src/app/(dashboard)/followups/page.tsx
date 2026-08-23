@@ -246,10 +246,25 @@ export default function FollowUpsPage() {
           <p className="text-slate-500 mt-1.5">{t("followups.subtitle2")}</p>
         </div>
         {!isManager && (
-          <Button type="button" onClick={openCreate} className="shadow-sm">
+            <button
+              type="button"
+            onClick={() => {
+              console.log("ADD FOLLOW-UP DIKLIK");
+              setEditItem(null);
+              setForm({
+                customer_id: "",
+                note: "",
+                due_date: "",
+                status: "pending",
+              });
+              setFormError("");
+              setDialogOpen(true);
+            }}
+            className="inline-flex h-10 items-center justify-center rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-slate-800"
+          >
             <Plus className="mr-2 h-4 w-4" />
             {t("followups.addFollowup")}
-          </Button>
+          </button>
         )}
       </div>
 
