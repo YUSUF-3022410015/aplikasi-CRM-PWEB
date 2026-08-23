@@ -276,7 +276,7 @@ export default function FollowUpsPage() {
           { label: t("followups.completed"), value: doneCount, gradient: "from-emerald-500/10 to-emerald-500/5", iconColor: "text-emerald-600" },
         ].map((s, i) => (
           <Card key={s.label} className="group hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 border-slate-200/50 overflow-hidden" style={{ animationDelay: `${i * 60}ms` }}>
-            <div className={`absolute inset-0 bg-gradient-to-br ${s.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
+            <div className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${s.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
             <CardContent className="p-5 relative">
               <div className="flex items-center justify-between mb-4">
                 <span className="text-sm font-semibold text-slate-500/80 uppercase tracking-wider">{s.label}</span>
