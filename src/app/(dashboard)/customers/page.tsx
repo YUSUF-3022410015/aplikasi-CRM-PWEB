@@ -169,11 +169,11 @@ export default function CustomersPage() {
           <p className="text-slate-500 mt-1.5">{t("customers.subtitle")}</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button variant="outline" size="sm" onClick={handleExport} disabled={exporting} className="border-slate-300 text-slate-700 shadow-sm hover:bg-slate-100">
+          <Button variant="outline" size="sm" onClick={handleExport} disabled={exporting}>
             <Download className="mr-1.5 h-4 w-4" />
             {exporting ? t("common.loading") : t("common.export")}
           </Button>
-          <Button variant="outline" size="sm" onClick={() => setImportOpen(true)} className="border-slate-300 text-slate-700 shadow-sm hover:bg-slate-100">
+          <Button variant="outline" size="sm" onClick={() => setImportOpen(true)}>
             <Upload className="mr-1.5 h-4 w-4" />
             {t("common.import")}
           </Button>
@@ -323,7 +323,6 @@ export default function CustomersPage() {
               size="sm"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="border-slate-300 text-slate-700 shadow-sm hover:bg-slate-100"
             >
               {t("common.previous")}
             </Button>
@@ -332,7 +331,6 @@ export default function CustomersPage() {
               size="sm"
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
-              className="border-slate-300 text-slate-700 shadow-sm hover:bg-slate-100"
             >
               {t("common.next")}
             </Button>
