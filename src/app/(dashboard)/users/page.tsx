@@ -236,7 +236,7 @@ export default function UsersPage() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 hover:bg-blue-600/10 hover:text-blue-600"
+                            className="h-8 w-8 bg-amber-50 text-amber-600 hover:bg-amber-100 hover:text-amber-700"
                             title="Reset Password"
                             onClick={() => {
                               setResetUser(u);
@@ -249,7 +249,7 @@ export default function UsersPage() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 hover:bg-blue-600/10 hover:text-blue-600"
+                            className="h-8 w-8 bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-700"
                             onClick={() => {
                               setEditUser(u);
                               setEditRole(u.role);
@@ -260,7 +260,7 @@ export default function UsersPage() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 hover:bg-red-600/10 hover:text-red-600"
+                            className="h-8 w-8 bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700"
                             onClick={() => setDeactivateUserId(u.id)}
                             disabled={isManager && u.role === "admin"}
                             title={isManager && u.role === "admin" ? "Manager tidak dapat menonaktifkan Admin" : ""}
@@ -319,7 +319,7 @@ export default function UsersPage() {
             </div>
           </div>
           <DialogFooter className="gap-2">
-            <Button variant="outline" onClick={() => setDialogOpen(false)}>{t("common.cancel")}</Button>
+            <Button variant="outline" onClick={() => setDialogOpen(false)} className="border-slate-300 text-slate-700 hover:bg-slate-100">{t("common.cancel")}</Button>
             <Button onClick={handleInvite} disabled={inviteLoading || !email || !fullname || !password}>
               {inviteLoading ? t("common.loading") : t("users.inviteUser")}
             </Button>
@@ -364,7 +364,7 @@ export default function UsersPage() {
             </div>
           </div>
           <DialogFooter className="gap-2">
-            <Button variant="outline" onClick={() => setEditUser(null)}>{t("common.cancel")}</Button>
+            <Button variant="outline" onClick={() => setEditUser(null)} className="border-slate-300 text-slate-700 hover:bg-slate-100">{t("common.cancel")}</Button>
             <Button
               onClick={handleEditRole}
               disabled={editLoading || !editRole || (isManager && editUser?.role === "admin")}
@@ -449,7 +449,7 @@ export default function UsersPage() {
               setResetUser(null);
               setNewPassword("");
               setResetSuccess(false);
-            }}>
+            }} className="border-slate-300 text-slate-700 hover:bg-slate-100">
               {t("common.close")}
             </Button>
             {!resetSuccess && (

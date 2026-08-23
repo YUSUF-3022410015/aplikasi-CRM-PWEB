@@ -189,10 +189,10 @@ export default function ProductsPage() {
                     <div className="flex gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
                       {isAdmin && (
                         <>
-                          <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-blue-600/10 hover:text-blue-600" onClick={() => openEdit(p)}>
+                          <Button variant="ghost" size="icon" className="h-8 w-8 bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-700" onClick={() => openEdit(p)}>
                             <Edit className="h-4 w-4" />
                           </Button>
-                          <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-red-600/10 hover:text-red-600" onClick={() => setDeleteId(p.id)}>
+                          <Button variant="ghost" size="icon" className="h-8 w-8 bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700" onClick={() => setDeleteId(p.id)}>
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </>
@@ -248,7 +248,7 @@ export default function ProductsPage() {
             </div>
           </div>
           <DialogFooter className="gap-2">
-            <Button variant="outline" onClick={() => setDialogOpen(false)}>{t("common.cancel")}</Button>
+            <Button variant="outline" onClick={() => setDialogOpen(false)} className="border-slate-300 text-slate-700 hover:bg-slate-100">{t("common.cancel")}</Button>
             <Button onClick={handleSave} disabled={!form.name}>{t("common.save")}</Button>
           </DialogFooter>
         </DialogContent>

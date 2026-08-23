@@ -169,11 +169,11 @@ export default function CustomersPage() {
           <p className="text-slate-500 mt-1.5">{t("customers.subtitle")}</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button variant="outline" size="sm" onClick={handleExport} disabled={exporting} className="border-slate-200 shadow-sm">
+          <Button variant="outline" size="sm" onClick={handleExport} disabled={exporting} className="border-slate-300 text-slate-700 shadow-sm hover:bg-slate-100">
             <Download className="mr-1.5 h-4 w-4" />
             {exporting ? t("common.loading") : t("common.export")}
           </Button>
-          <Button variant="outline" size="sm" onClick={() => setImportOpen(true)} className="border-slate-200 shadow-sm">
+          <Button variant="outline" size="sm" onClick={() => setImportOpen(true)} className="border-slate-300 text-slate-700 shadow-sm hover:bg-slate-100">
             <Upload className="mr-1.5 h-4 w-4" />
             {t("common.import")}
           </Button>
@@ -286,7 +286,7 @@ export default function CustomersPage() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 hover:bg-blue-600/10 hover:text-blue-600"
+                            className="h-8 w-8 bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-700"
                             onClick={() => router.push(`/customers/${customer.id}/edit`)}
                           >
                             <Edit className="h-4 w-4" />
@@ -295,7 +295,7 @@ export default function CustomersPage() {
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="h-8 w-8 hover:bg-red-600/10 hover:text-red-600"
+                              className="h-8 w-8 bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700"
                               onClick={() => setDeleteId(customer.id)}
                             >
                               <Trash2 className="h-4 w-4" />
@@ -323,7 +323,7 @@ export default function CustomersPage() {
               size="sm"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="shadow-sm"
+              className="border-slate-300 text-slate-700 shadow-sm hover:bg-slate-100"
             >
               {t("common.previous")}
             </Button>
@@ -332,7 +332,7 @@ export default function CustomersPage() {
               size="sm"
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
-              className="shadow-sm"
+              className="border-slate-300 text-slate-700 shadow-sm hover:bg-slate-100"
             >
               {t("common.next")}
             </Button>

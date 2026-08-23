@@ -295,11 +295,11 @@ export default function QuotationsPage() {
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
-                      <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-blue-600/10 hover:text-blue-600" onClick={() => openDetail(q)}>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-700" onClick={() => openDetail(q)}>
                         <Eye className="h-4 w-4" />
                       </Button>
                       {isAdmin && (
-                        <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-red-600/10 hover:text-red-600" onClick={() => handleDelete(q.id)}>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700" onClick={() => handleDelete(q.id)}>
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       )}
@@ -335,7 +335,7 @@ export default function QuotationsPage() {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label>{t("quotations.items")}</Label>
-                <Button type="button" variant="outline" size="sm" onClick={addItem}>
+                <Button type="button" variant="outline" size="sm" onClick={addItem} className="border-slate-300 text-slate-700 hover:bg-slate-100">
                   <Plus className="mr-1 h-3 w-3" /> {t("quotations.addItem")}
                 </Button>
               </div>
@@ -365,7 +365,7 @@ export default function QuotationsPage() {
                     onChange={(e) => updateItem(i, "price", Number(e.target.value))}
                   />
                   {items.length > 1 && (
-                    <Button type="button" variant="ghost" size="icon" className="h-9 w-9 hover:bg-red-600/10 hover:text-red-600" onClick={() => removeItem(i)}>
+                    <Button type="button" variant="ghost" size="icon" className="h-9 w-9 bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700" onClick={() => removeItem(i)}>
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   )}
@@ -388,7 +388,7 @@ export default function QuotationsPage() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)}>{t("common.cancel")}</Button>
+            <Button variant="outline" onClick={() => setDialogOpen(false)} className="border-slate-300 text-slate-700 hover:bg-slate-100">{t("common.cancel")}</Button>
             <Button onClick={handleSave} disabled={!customerId}>{t("common.save")}</Button>
           </DialogFooter>
         </DialogContent>
@@ -461,14 +461,14 @@ export default function QuotationsPage() {
             </div>
           )}
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDetailOpen(false)}>{t("common.close")}</Button>
+            <Button variant="outline" onClick={() => setDetailOpen(false)} className="border-slate-300 text-slate-700 hover:bg-slate-100">{t("common.close")}</Button>
             {selectedQuotation?.id && (
-              <Button variant="outline" onClick={() => handleSendEmail(selectedQuotation.id)}>
+              <Button variant="outline" onClick={() => handleSendEmail(selectedQuotation.id)} className="border-slate-300 text-slate-700 hover:bg-slate-100">
                 <Mail className="mr-2 h-4 w-4" />
                 {t("quotations.sendEmail")}
               </Button>
             )}
-            <Button variant="outline" onClick={printQuotation}>
+            <Button variant="outline" onClick={printQuotation} className="border-slate-300 text-slate-700 hover:bg-slate-100">
               <Printer className="mr-2 h-4 w-4" />
               {t("quotations.printPDF")}
             </Button>

@@ -365,7 +365,7 @@ export default function PipelinePage() {
             </div>
           </div>
           <DialogFooter className="gap-2">
-            <Button variant="outline" onClick={() => setDialogOpen(false)}>{t("common.cancel")}</Button>
+            <Button variant="outline" onClick={() => setDialogOpen(false)} className="border-slate-300 text-slate-700 hover:bg-slate-100">{t("common.cancel")}</Button>
             <Button onClick={handleCreate} disabled={saving || !form.customer_id || !form.name || form.value <= 0}>
               {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {t("common.save")}
@@ -384,7 +384,7 @@ export default function PipelinePage() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-red-600 hover:bg-red-600/10 hover:text-red-600"
+                  className="bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700"
                   onClick={() => setDeleteDealId(selectedDeal.id)}
                 >
                   <Trash2 className="h-4 w-4 mr-1" />
@@ -451,7 +451,7 @@ export default function PipelinePage() {
             </div>
           </div>
           <DialogFooter className="gap-2">
-            <Button variant="outline" onClick={() => setEditDialogOpen(false)}>{t("common.cancel")}</Button>
+            <Button variant="outline" onClick={() => setEditDialogOpen(false)} className="border-slate-300 text-slate-700 hover:bg-slate-100">{t("common.cancel")}</Button>
             {!isManager && (
               <Button onClick={handleUpdateDeal} disabled={updating || !editForm.customer_id || !editForm.name || editForm.value <= 0}>
                 {updating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

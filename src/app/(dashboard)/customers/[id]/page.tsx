@@ -130,7 +130,7 @@ export default function CustomerDetailPage() {
             phone={customer.phone || customer.whatsapp || ""}
             customerName={customer.name}
           />
-          <Button variant="outline" onClick={printCustomer}>
+          <Button variant="outline" onClick={printCustomer} className="border-slate-300 text-slate-700 hover:bg-slate-100">
             <Printer className="mr-2 h-4 w-4" />
             {t("customers.printPdf")}
           </Button>
