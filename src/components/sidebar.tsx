@@ -95,7 +95,10 @@ export function Sidebar() {
       .lte("due_date", today);
     const filtered = (data || []).filter((f: any) => !f.customer || !f.customer.deleted_at);
     setFollowUpCount(filtered.length);
-    setFollowUps(filtered as FollowUpItem[]);
+    setFollowUps(filtered.map((f: any) => ({
+      ...f,
+      customer: Array.isArray(f.customer) ? f.customer[0] : f.customer,
+    })) as FollowUpItem[]);
   };
 
   useEffect(() => {
