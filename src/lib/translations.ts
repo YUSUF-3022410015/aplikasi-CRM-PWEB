@@ -54,6 +54,7 @@ export const translations = {
     inactive: { id: "Nonaktif", en: "Inactive" },
     dealsWon: { id: "Pelanggan Setuju", en: "Deals Won" },
     changePassword: { id: "Ganti Password", en: "Change Password" },
+    viewAll: { id: "Lihat Semua", en: "View All" },
     dayNames: {
       id: ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"],
       en: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
