@@ -57,16 +57,6 @@ export default function SettingsPage() {
   const { t } = useLanguage();
   const { isAdmin, loading: permLoading } = usePermissions();
 
-  if (!permLoading && !isAdmin) {
-    return (
-      <div className="flex flex-col items-center justify-center py-20 animate-fade-in">
-        <ShieldAlert className="h-16 w-16 text-slate-500/40 mb-4" />
-        <h2 className="text-xl font-semibold text-slate-900">{t("unauthorized.title")}</h2>
-        <p className="text-slate-500 mt-2 text-center max-w-md">{t("unauthorized.description")}</p>
-      </div>
-    );
-  }
-
   const fetchSettings = useCallback(async () => {
     setLoading(true);
     try {
@@ -120,7 +110,17 @@ export default function SettingsPage() {
     setTimeout(() => setSavedSuccess(false), 3000);
   };
 
-  if (loading) {
+  if (!permLoading && !isAdmin) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 animate-fade-in">
+        <ShieldAlert className="h-16 w-16 text-slate-500/40 mb-4" />
+        <h2 className="text-xl font-semibold text-slate-900">{t("unauthorized.title")}</h2>
+        <p className="text-slate-500 mt-2 text-center max-w-md">{t("unauthorized.description")}</p>
+      </div>
+    );
+  }
+
+  if (loading || permLoading) {
     return (
       <div className="space-y-4 animate-fade-in">
         <div className="h-8 w-48 bg-slate-100 rounded-md animate-pulse-soft" />

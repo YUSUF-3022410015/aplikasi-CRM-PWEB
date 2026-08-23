@@ -22,6 +22,7 @@ export default function EditCustomerPage() {
           .from("customers")
           .select("*")
           .eq("id", id)
+          .is("deleted_at", null)
           .single();
         setCustomer(data);
       } catch (error) {
@@ -31,7 +32,7 @@ export default function EditCustomerPage() {
       }
     };
     fetchCustomer();
-  }, [id]);
+  }, [id, supabase]);
 
   if (loading) {
     return <div className="flex items-center justify-center h-64"><p className="text-slate-500">{t("common.loading")}</p></div>;

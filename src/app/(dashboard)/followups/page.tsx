@@ -96,8 +96,15 @@ export default function FollowUpsPage() {
   useEffect(() => { fetchData(); }, [fetchData]);
 
   const openCreate = () => {
-    setEditItem(null);
-    setForm({ customer_id: "", note: "", due_date: "", status: "pending" });
+  console.log("Tombol Tambah Tindak Lanjut diklik");
+
+  setEditItem(null);
+  setForm({
+    customer_id: "",
+    note: "",
+    due_date: "",
+    status: "pending",
+    });
     setFormError("");
     setDialogOpen(true);
   };

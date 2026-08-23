@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -34,7 +34,7 @@ export function CustomerForm({ customer, mode }: CustomerFormProps) {
   const [supabase] = useState(() => createClient());
   const [salesUsers, setSalesUsers] = useState<{ id: string; fullname: string }[]>([]);
 
-  const customerSchema = z.object({
+  const customerSchema = useMemo(() => z.object({
     name: z.string().min(3, t("customers.nameMinLength")),
     company: z.string().optional(),
     email: z.string().email(t("common.invalidEmail")).optional().or(z.literal("")),
@@ -57,7 +57,7 @@ export function CustomerForm({ customer, mode }: CustomerFormProps) {
       "won",
       "lost",
     ]),
-  });
+  }), [t]);
 
   type CustomerFormData = z.infer<typeof customerSchema>;
 

@@ -22,6 +22,11 @@ export default async function DashboardLayout({
     .eq("id", user.id)
     .single();
 
+  // PRD §3.4: User nonaktif (is_active = false) tidak boleh mengakses data
+  if (profile && profile.is_active === false) {
+    redirect("/login");
+  }
+
   return (
     <div className="flex h-screen overflow-hidden bg-white">
       {/* Sidebar - hidden on mobile, visible on md+ */}
