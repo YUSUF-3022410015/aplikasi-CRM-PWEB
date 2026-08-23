@@ -254,6 +254,29 @@ export function FollowUpList({
                     </div>
                     <div className="flex items-center gap-2 ml-7 sm:ml-0">
                       {isManager ? (
+                        <Badge variant={cfg.variant}>{cfg.label}</Badge>
+                      ) : (
+                        <>
+                          <Select value={fu.status} onValueChange={(v) => handleStatusChange(fu.id, v)}>
+                            <SelectTrigger className="w-full sm:w-[150px] h-8 text-xs pr-7">
+                              <Badge variant={cfg.variant}>{cfg.label}</Badge>
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="pending">{t("followups.pending")}</SelectItem>
+                              <SelectItem value="done">{t("followups.done")}</SelectItem>
+                              <SelectItem value="cancelled">{t("followups.cancelled")}</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(fu)}>
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          {isAdmin && (
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-red-600" onClick={() => { setDeleteId(fu.id); setConfirmDelete(true); }}>
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          )}
+                        </>
+                      )}
                     </div>
                   </div>
                 </CardContent>
