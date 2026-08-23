@@ -1,50 +1,62 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Calistoga:ital@0;1&family=Inter:wght@300;400;500;600;700&display=swap');
 
 @custom-variant dark (&:is(.dark *));
 
+@theme {
+  --font-display: 'Calistoga', serif;
+  --font-body: 'Inter', sans-serif;
+  --color-brand-blue: #2563EB;
+  --color-brand-green: #059669;
+  --color-brand-sky: #3B82F6;
+  --color-brand-red: #DC2626;
+  --color-brand-amber: #D97706;
+  --color-brand-violet: #7C3AED;
+}
+
 :root {
-  --color-background: #ffffff;
-  --color-foreground: #0f172a;
+  --color-background: #F8FAFC;
+  --color-foreground: #0F172A;
   --color-card: #ffffff;
-  --color-card-foreground: #0f172a;
+  --color-card-foreground: #0F172A;
   --color-popover: #ffffff;
-  --color-popover-foreground: #0f172a;
-  --color-primary: #2563eb;
+  --color-popover-foreground: #0F172A;
+  --color-primary: #2563EB;
   --color-primary-foreground: #ffffff;
-  --color-secondary: #f1f5f9;
-  --color-secondary-foreground: #0f172a;
-  --color-muted: #f1f5f9;
-  --color-muted-foreground: #64748b;
-  --color-accent: #f1f5f9;
-  --color-accent-foreground: #0f172a;
-  --color-destructive: #dc2626;
+  --color-secondary: #F1F5FD;
+  --color-secondary-foreground: #0F172A;
+  --color-muted: #F1F5FD;
+  --color-muted-foreground: #64748B;
+  --color-accent: #059669;
+  --color-accent-foreground: #ffffff;
+  --color-destructive: #DC2626;
   --color-destructive-foreground: #ffffff;
-  --color-border: #e2e8f0;
-  --color-input: #e2e8f0;
-  --color-ring: #2563eb;
+  --color-border: #E4ECFC;
+  --color-input: #E4ECFC;
+  --color-ring: #2563EB;
   --radius: 0.5rem;
 }
 
 .dark {
-  --color-background: #0f172a;
-  --color-foreground: #f1f5f9;
-  --color-card: #0f172a;
-  --color-card-foreground: #f1f5f9;
-  --color-popover: #0f172a;
-  --color-popover-foreground: #f1f5f9;
-  --color-primary: #3b82f6;
+  --color-background: #0F172A;
+  --color-foreground: #F1F5F9;
+  --color-card: #1E293B;
+  --color-card-foreground: #F1F5F9;
+  --color-popover: #1E293B;
+  --color-popover-foreground: #F1F5F9;
+  --color-primary: #3B82F6;
   --color-primary-foreground: #ffffff;
-  --color-secondary: #1e293b;
-  --color-secondary-foreground: #f1f5f9;
-  --color-muted: #1e293b;
-  --color-muted-foreground: #94a3b8;
-  --color-accent: #1e293b;
-  --color-accent-foreground: #f1f5f9;
-  --color-destructive: #7f1d1d;
-  --color-destructive-foreground: #fef2f2;
+  --color-secondary: #1E293B;
+  --color-secondary-foreground: #F1F5F9;
+  --color-muted: #1E293B;
+  --color-muted-foreground: #94A3B8;
+  --color-accent: #059669;
+  --color-accent-foreground: #ffffff;
+  --color-destructive: #EF4444;
+  --color-destructive-foreground: #ffffff;
   --color-border: #334155;
   --color-input: #334155;
-  --color-ring: #3b82f6;
+  --color-ring: #3B82F6;
 }
 
 @keyframes fade-in {
@@ -96,3 +108,13 @@
 .animate-slide-up { animation: slide-up 0.5s ease-out; }
 .animate-scale-in { animation: scale-in 0.3s ease-out; }
 .animate-pulse-soft { animation: pulse-soft 2s infinite; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.font-display {
+  font-family: 'Calistoga', serif;
+}

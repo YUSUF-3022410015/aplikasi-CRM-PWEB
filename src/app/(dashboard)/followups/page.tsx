@@ -246,41 +246,26 @@ export default function FollowUpsPage() {
           <p className="text-slate-500 mt-1.5">{t("followups.subtitle2")}</p>
         </div>
         {!isManager && (
-            <button
-              type="button"
-            onClick={() => {
-              console.log("ADD FOLLOW-UP DIKLIK");
-              setEditItem(null);
-              setForm({
-                customer_id: "",
-                note: "",
-                due_date: "",
-                status: "pending",
-              });
-              setFormError("");
-              setDialogOpen(true);
-            }}
-            className="inline-flex h-10 items-center justify-center rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-slate-800"
-          >
+          <Button onClick={openCreate} className="shadow-sm">
             <Plus className="mr-2 h-4 w-4" />
             {t("followups.addFollowup")}
-          </button>
+          </Button>
         )}
       </div>
 
       {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-3">
         {[
-          { label: t("followups.pending"), value: pendingCount, gradient: "from-amber-500/10 to-amber-500/5", iconColor: "text-amber-600" },
-          { label: t("followups.overdue"), value: overdueCount, gradient: "from-red-500/10 to-red-500/5", iconColor: "text-red-600" },
-          { label: t("followups.completed"), value: doneCount, gradient: "from-emerald-500/10 to-emerald-500/5", iconColor: "text-emerald-600" },
+          { label: t("followups.pending"), value: pendingCount, gradient: "from-amber-500/15 to-amber-500/5", iconBg: "bg-amber-500/10", iconColor: "text-amber-600" },
+          { label: t("followups.overdue"), value: overdueCount, gradient: "from-red-500/15 to-red-500/5", iconBg: "bg-red-500/10", iconColor: "text-red-600" },
+          { label: t("followups.completed"), value: doneCount, gradient: "from-emerald-500/15 to-emerald-500/5", iconBg: "bg-emerald-500/10", iconColor: "text-emerald-600" },
         ].map((s, i) => (
           <Card key={s.label} className="group hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 border-slate-200/50 overflow-hidden" style={{ animationDelay: `${i * 60}ms` }}>
             <div className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${s.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
             <CardContent className="p-5 relative">
               <div className="flex items-center justify-between mb-4">
-                <span className="text-sm font-semibold text-slate-500/80 uppercase tracking-wider">{s.label}</span>
-                <div className={`p-2.5 rounded-xl bg-gradient-to-br ${s.gradient} group-hover:scale-110 transition-transform duration-300`}>
+                <span className="text-sm font-semibold text-slate-600 uppercase tracking-wider">{s.label}</span>
+                <div className={`p-2.5 rounded-xl ${s.iconBg} group-hover:scale-110 transition-transform duration-300`}>
                   <CalendarCheck className={`h-5 w-5 ${s.iconColor}`} />
                 </div>
               </div>

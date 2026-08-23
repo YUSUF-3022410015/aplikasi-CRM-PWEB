@@ -157,14 +157,14 @@ export function Sidebar() {
         {!collapsed && (
           <div className="min-w-0 flex-1">
             <h1 className="text-sm font-bold text-slate-900 truncate">Nexus CRM</h1>
-            <p className="text-[10px] text-slate-900/50 truncate font-medium">Enterprise Edition</p>
+            <p className="text-[10px] text-slate-500 truncate font-medium">Enterprise Edition</p>
           </div>
         )}
         {!collapsed && (
           <Button
             variant="ghost"
             size="icon"
-            className="h-7 w-7 shrink-0 text-slate-900/40 hover:text-slate-900 hover:bg-slate-100"
+            className="h-7 w-7 shrink-0 text-slate-500 hover:text-slate-900 hover:bg-slate-100"
             onClick={() => setCollapsed(!collapsed)}
           >
             <ChevronLeft className="h-3.5 w-3.5" />
@@ -178,7 +178,7 @@ export function Sidebar() {
           <Button
             variant="ghost"
             size="icon"
-            className="h-7 w-7 text-slate-900/40 hover:text-slate-900 hover:bg-slate-100"
+            className="h-7 w-7 text-slate-500 hover:text-slate-900 hover:bg-slate-100"
             onClick={() => setCollapsed(!collapsed)}
           >
             <ChevronRight className="h-3.5 w-3.5" />
@@ -201,7 +201,7 @@ export function Sidebar() {
                     collapsed && "relative justify-center px-2 py-2.5",
                     isActive
                       ? "bg-blue-600/10 text-slate-900 shadow-sm"
-                      : "text-slate-900/60 hover:bg-slate-100 hover:text-slate-900"
+                      : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                   )}
                 >
                   <item.icon className={cn("h-5 w-5 shrink-0", isActive && "text-blue-600")} />

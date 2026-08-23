@@ -125,14 +125,14 @@ export default function DashboardPage() {
   }
 
   const statCards = [
-    { title: t("dashboard.totalCustomers"), value: stats.totalCustomers, icon: Users, gradient: "from-blue-500/10 to-blue-500/5", iconColor: "text-blue-600" },
-    { title: t("dashboard.newCustomers"), value: stats.newCustomers, icon: UserPlus, gradient: "from-emerald-500/10 to-emerald-500/5", iconColor: "text-emerald-600" },
-    { title: t("dashboard.revenue"), value: formatCurrency(stats.totalRevenue), icon: DollarSign, gradient: "from-violet-500/10 to-violet-500/5", iconColor: "text-violet-600" },
-    { title: t("dashboard.dealsWon"), value: stats.dealsWon, icon: TrendingUp, gradient: "from-emerald-500/10 to-emerald-500/5", iconColor: "text-emerald-600" },
-    { title: t("dashboard.dealsLost"), value: stats.dealsLost, icon: TrendingDown, gradient: "from-red-500/10 to-red-500/5", iconColor: "text-red-600" },
-    { title: t("dashboard.followUpsToday"), value: stats.followUpsToday, icon: CalendarCheck, gradient: "from-amber-500/10 to-amber-500/5", iconColor: "text-amber-600" },
-    { title: t("dashboard.followUpsOverdue"), value: stats.followUpsOverdue, icon: AlertTriangle, gradient: "from-red-500/10 to-red-500/5", iconColor: "text-red-600" },
-    { title: t("dashboard.pipelineValue"), value: formatCurrency(stats.pipelineValue), icon: Package, gradient: "from-blue-500/10 to-blue-500/5", iconColor: "text-blue-600" },
+    { title: t("dashboard.totalCustomers"), value: stats.totalCustomers, icon: Users, gradient: "from-blue-500/15 to-blue-500/5", iconBg: "bg-blue-500/10", iconColor: "text-blue-600" },
+    { title: t("dashboard.newCustomers"), value: stats.newCustomers, icon: UserPlus, gradient: "from-emerald-500/15 to-emerald-500/5", iconBg: "bg-emerald-500/10", iconColor: "text-emerald-600" },
+    { title: t("dashboard.revenue"), value: formatCurrency(stats.totalRevenue), icon: DollarSign, gradient: "from-violet-500/15 to-violet-500/5", iconBg: "bg-violet-500/10", iconColor: "text-violet-600" },
+    { title: t("dashboard.dealsWon"), value: stats.dealsWon, icon: TrendingUp, gradient: "from-green-500/15 to-green-500/5", iconBg: "bg-green-500/10", iconColor: "text-green-600" },
+    { title: t("dashboard.dealsLost"), value: stats.dealsLost, icon: TrendingDown, gradient: "from-red-500/15 to-red-500/5", iconBg: "bg-red-500/10", iconColor: "text-red-600" },
+    { title: t("dashboard.followUpsToday"), value: stats.followUpsToday, icon: CalendarCheck, gradient: "from-amber-500/15 to-amber-500/5", iconBg: "bg-amber-500/10", iconColor: "text-amber-600" },
+    { title: t("dashboard.followUpsOverdue"), value: stats.followUpsOverdue, icon: AlertTriangle, gradient: "from-red-500/15 to-red-500/5", iconBg: "bg-red-500/10", iconColor: "text-red-600" },
+    { title: t("dashboard.pipelineValue"), value: formatCurrency(stats.pipelineValue), icon: Package, gradient: "from-blue-500/15 to-blue-500/5", iconBg: "bg-blue-500/10", iconColor: "text-blue-600" },
   ];
 
   return (
@@ -154,8 +154,8 @@ export default function DashboardPage() {
             <div className={`absolute inset-0 bg-gradient-to-br ${stat.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
             <CardContent className="p-3 sm:p-5 relative">
               <div className="flex items-center justify-between mb-3 sm:mb-4">
-                <span className="text-xs sm:text-sm font-semibold text-slate-500/80 truncate uppercase tracking-wider">{stat.title}</span>
-                <div className={`p-2 sm:p-2.5 rounded-xl bg-gradient-to-br ${stat.gradient} shrink-0 group-hover:scale-110 transition-transform duration-300`}>
+                <span className="text-xs sm:text-sm font-semibold text-slate-600 truncate uppercase tracking-wider">{stat.title}</span>
+                <div className={`p-2 sm:p-2.5 rounded-xl ${stat.iconBg} shrink-0 group-hover:scale-110 transition-transform duration-300`}>
                   <stat.icon className={`h-4 w-4 sm:h-5 sm:w-5 ${stat.iconColor}`} />
                 </div>
               </div>

@@ -271,12 +271,12 @@ export default function QuotationsPage() {
           <div className="overflow-x-auto">
           <Table className="min-w-[500px]">
             <TableHeader>
-              <TableRow className="border-slate-200">
-                <TableHead className="font-semibold">{t("quotations.number")}</TableHead>
-                <TableHead className="font-semibold">{t("quotations.customer")}</TableHead>
-                <TableHead className="font-semibold">{t("quotations.total")}</TableHead>
-                <TableHead className="font-semibold">{t("customers.status")}</TableHead>
-                <TableHead className="w-[100px] font-semibold">{t("common.edit")}</TableHead>
+              <TableRow className="bg-slate-100/50">
+                <TableHead className="font-semibold text-xs uppercase tracking-wider">{t("quotations.number")}</TableHead>
+                <TableHead className="font-semibold text-xs uppercase tracking-wider">{t("quotations.customer")}</TableHead>
+                <TableHead className="font-semibold text-xs uppercase tracking-wider">{t("quotations.total")}</TableHead>
+                <TableHead className="font-semibold text-xs uppercase tracking-wider">{t("customers.status")}</TableHead>
+                <TableHead className="w-[100px] font-semibold text-xs uppercase tracking-wider">{t("common.edit")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -294,12 +294,12 @@ export default function QuotationsPage() {
                     <Badge variant={statusColors[q.status] || "default"}>{q.status}</Badge>
                   </TableCell>
                   <TableCell>
-                    <div className="flex gap-1">
-                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openDetail(q)}>
+                    <div className="flex gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
+                      <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-blue-600/10 hover:text-blue-600" onClick={() => openDetail(q)}>
                         <Eye className="h-4 w-4" />
                       </Button>
                       {isAdmin && (
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-red-600" onClick={() => handleDelete(q.id)}>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-red-600/10 hover:text-red-600" onClick={() => handleDelete(q.id)}>
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       )}
@@ -365,7 +365,7 @@ export default function QuotationsPage() {
                     onChange={(e) => updateItem(i, "price", Number(e.target.value))}
                   />
                   {items.length > 1 && (
-                    <Button type="button" variant="ghost" size="icon" className="h-9 w-9 text-red-600" onClick={() => removeItem(i)}>
+                    <Button type="button" variant="ghost" size="icon" className="h-9 w-9 hover:bg-red-600/10 hover:text-red-600" onClick={() => removeItem(i)}>
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   )}

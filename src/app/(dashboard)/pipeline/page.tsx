@@ -269,12 +269,12 @@ export default function PipelinePage() {
               >
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
-                    <h3 className="font-bold text-sm tracking-wide">{stage.label}</h3>
+                    <h3 className="font-bold text-sm tracking-wide text-slate-900">{stage.label}</h3>
                   </div>
-                  <Badge variant="secondary" className="font-bold text-xs">{stageDeals.length}</Badge>
+                  <Badge variant="secondary" className="font-bold text-xs bg-slate-900/10 text-slate-900">{stageDeals.length}</Badge>
                 </div>
                 {stageTotals[stage.key] > 0 && (
-                  <p className="text-xs text-slate-500 font-semibold mb-3">
+                  <p className="text-xs text-slate-600 font-semibold mb-3">
                     {formatCurrency(stageTotals[stage.key])}
                   </p>
                 )}
@@ -384,7 +384,7 @@ export default function PipelinePage() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-red-600 hover:bg-red-50 hover:text-red-700"
+                  className="text-red-600 hover:bg-red-600/10 hover:text-red-600"
                   onClick={() => setDeleteDealId(selectedDeal.id)}
                 >
                   <Trash2 className="h-4 w-4 mr-1" />
