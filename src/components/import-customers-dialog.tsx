@@ -143,7 +143,7 @@ export function ImportCustomersDialog({
             />
             <Button
               variant="outline"
-              className="w-full"
+              className="w-full border-slate-300 text-slate-700 hover:bg-slate-100"
               onClick={handleDownloadTemplate}
             >
               <Download className="mr-2 h-4 w-4" />
@@ -212,7 +212,7 @@ export function ImportCustomersDialog({
         <DialogFooter>
           {state === "preview" && (
             <>
-              <Button variant="outline" onClick={handleClose}>
+              <Button variant="outline" onClick={handleClose} className="border-slate-300 text-slate-700 hover:bg-slate-100">
                 {t("common.cancel")}
               </Button>
               <Button onClick={handleImport} disabled={preview?.success === 0}>

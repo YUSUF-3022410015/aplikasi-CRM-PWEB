@@ -47,7 +47,7 @@ export class ErrorBoundary extends Component<Props, State> {
           <p className="text-slate-500 mb-4 max-w-md">
             {this.state.error?.message || "Something went wrong"}
           </p>
-          <Button onClick={this.handleReset} variant="outline">
+          <Button onClick={this.handleReset} variant="outline" className="border-slate-300 text-slate-700 hover:bg-slate-100">
             <RefreshCw className="mr-2 h-4 w-4" />
             Coba Lagi
           </Button>
