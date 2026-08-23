@@ -83,7 +83,13 @@ export default function FollowUpsPage() {
         supabase.from("followups").select("*, customer:customers(name, deleted_at)").order("due_date", { ascending: true }),
         supabase.from("customers").select("id, name").is("deleted_at", null).order("name"),
       ]);
-      const filteredFollowups = (fRes.data || []).filter((f: any) => f.customer && !f.customer.deleted_at);
+      const filteredFollowups = (fRes.data || [])
+        .map((f: any) => ({
+          ...f,
+          customer: Array.isArray(f.customer) ? f.customer[0] ?? null : f.customer ?? null,
+        }))
+        .filter((f: any) => f.customer && !f.customer.deleted_at);
+
       setFollowups(filteredFollowups);
       setCustomers(cRes.data || []);
     } catch (error) {
@@ -240,7 +246,7 @@ export default function FollowUpsPage() {
           <p className="text-slate-500 mt-1.5">{t("followups.subtitle2")}</p>
         </div>
         {!isManager && (
-          <Button onClick={openCreate} className="shadow-sm">
+          <Button type="button" onClick={openCreate} className="shadow-sm">
             <Plus className="mr-2 h-4 w-4" />
             {t("followups.addFollowup")}
           </Button>
