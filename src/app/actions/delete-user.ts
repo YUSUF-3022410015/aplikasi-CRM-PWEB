@@ -10,14 +10,10 @@ function getSupabaseAdmin() {
     throw new Error("Konfigurasi server Supabase belum lengkap (SUPABASE_SERVICE_ROLE_KEY)");
   }
 
-  return createClient(
-    url,
-    serviceRoleKey,
-  {
+  return createClient(url, serviceRoleKey, {
     auth: {
       autoRefreshToken: false,
       persistSession: false,
-    },
     },
   });
 }
