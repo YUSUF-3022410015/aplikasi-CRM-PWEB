@@ -412,7 +412,7 @@ export default function FollowUpsPage() {
             )}
           </div>
           <DialogFooter className="gap-2 px-6 pb-6">
-            <Button variant="outline" onClick={() => setDialogOpen(false)} className="border-slate-300 text-slate-700 hover:bg-slate-100">{t("common.cancel")}</Button>
+            <Button variant="outline" onClick={() => setDialogOpen(false)} className="border-blue-200 text-blue-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800">{t("common.cancel")}</Button>
             <Button onClick={handleSave} disabled={saving || !form.customer_id || !form.due_date}>
               {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {t("common.save")}

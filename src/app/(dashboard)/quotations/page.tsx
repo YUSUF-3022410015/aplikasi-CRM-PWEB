@@ -335,7 +335,7 @@ export default function QuotationsPage() {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label>{t("quotations.items")}</Label>
-                <Button type="button" variant="outline" size="sm" onClick={addItem} className="border-slate-300 text-slate-700 hover:bg-slate-100">
+                <Button type="button" variant="outline" size="sm" onClick={addItem} className="border-blue-200 text-blue-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800">
                   <Plus className="mr-1 h-3 w-3" /> {t("quotations.addItem")}
                 </Button>
               </div>
@@ -388,7 +388,7 @@ export default function QuotationsPage() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)} className="border-slate-300 text-slate-700 hover:bg-slate-100">{t("common.cancel")}</Button>
+            <Button variant="outline" onClick={() => setDialogOpen(false)} className="border-blue-200 text-blue-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800">{t("common.cancel")}</Button>
             <Button onClick={handleSave} disabled={!customerId}>{t("common.save")}</Button>
           </DialogFooter>
         </DialogContent>
@@ -461,14 +461,14 @@ export default function QuotationsPage() {
             </div>
           )}
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDetailOpen(false)} className="border-slate-300 text-slate-700 hover:bg-slate-100">{t("common.close")}</Button>
+            <Button variant="outline" onClick={() => setDetailOpen(false)} className="border-blue-200 text-blue-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800">{t("common.close")}</Button>
             {selectedQuotation?.id && (
-              <Button variant="outline" onClick={() => handleSendEmail(selectedQuotation.id)} className="border-slate-300 text-slate-700 hover:bg-slate-100">
+              <Button variant="outline" onClick={() => handleSendEmail(selectedQuotation.id)} className="border-blue-200 text-blue-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800">
                 <Mail className="mr-2 h-4 w-4" />
                 {t("quotations.sendEmail")}
               </Button>
             )}
-            <Button variant="outline" onClick={printQuotation} className="border-slate-300 text-slate-700 hover:bg-slate-100">
+            <Button variant="outline" onClick={printQuotation} className="border-blue-200 text-blue-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800">
               <Printer className="mr-2 h-4 w-4" />
               {t("quotations.printPDF")}
             </Button>

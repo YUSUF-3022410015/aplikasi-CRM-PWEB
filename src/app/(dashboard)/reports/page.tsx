@@ -142,11 +142,11 @@ export default function ReportsPage() {
             a.download = `laporan_${new Date().toISOString().split("T")[0]}.xlsx`;
             a.click();
             URL.revokeObjectURL(url);
-          }} className="border-slate-300 text-slate-700 hover:bg-slate-100">
+          }} className="border-blue-200 text-blue-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800">
             <Download className="mr-2 h-4 w-4" />
             {t("reports.exportExcel")}
           </Button>
-          <Button variant="outline" onClick={exportReportToPDF} className="border-slate-300 text-slate-700 hover:bg-slate-100">
+          <Button variant="outline" onClick={exportReportToPDF} className="border-blue-200 text-blue-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800">
             <FileText className="mr-2 h-4 w-4" />
             {t("reports.exportPDF")}
           </Button>

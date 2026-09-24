@@ -126,10 +126,10 @@ export function CalendarView({ followUps, onDateClick, onFollowUpClick }: Calend
           {months[month]} {year}
         </h2>
         <div className="flex gap-2">
-          <Button variant="outline" size="icon" onClick={prevMonth} className="border-slate-300 text-slate-700 hover:bg-slate-100">
+          <Button variant="outline" size="icon" onClick={prevMonth} className="border-blue-200 text-blue-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800">
             <ChevronLeft className="h-4 w-4" />
           </Button>
-          <Button variant="outline" size="icon" onClick={nextMonth} className="border-slate-300 text-slate-700 hover:bg-slate-100">
+          <Button variant="outline" size="icon" onClick={nextMonth} className="border-blue-200 text-blue-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800">
             <ChevronRight className="h-4 w-4" />
           </Button>
         </div>

@@ -98,7 +98,7 @@ export function WhatsAppButton({
 
   return (
     <>
-      <Button variant="outline" onClick={() => setOpen(true)} className="border-green-300 text-green-700 hover:bg-green-50">
+      <Button variant="outline" onClick={() => setOpen(true)} className="border-blue-200 text-blue-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800">
         <MessageSquare className="mr-2 h-4 w-4" />
         WhatsApp
       </Button>
@@ -147,7 +147,7 @@ export function WhatsAppButton({
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setOpen(false)} className="border-slate-300 text-slate-700 hover:bg-slate-100">
+            <Button variant="outline" onClick={() => setOpen(false)} className="border-blue-200 text-blue-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800">
               {t("common.cancel")}
             </Button>
             <Button

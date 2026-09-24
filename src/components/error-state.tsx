@@ -35,7 +35,7 @@ export function ErrorState({
         <Button
           onClick={onRetry}
           variant="outline"
-          className="border-slate-300 text-slate-700 hover:bg-slate-100 active:scale-[0.98] transition-all"
+          className="border-blue-200 text-blue-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800 active:scale-[0.98] transition-all"
         >
           <RefreshCw className="mr-2 h-4 w-4" />
           Coba Lagi

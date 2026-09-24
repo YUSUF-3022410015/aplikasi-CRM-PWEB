@@ -81,7 +81,7 @@ export function AddActivityForm({ customerId, onSuccess }: { customerId: string;
 
   if (!open) {
     return (
-      <Button variant="outline" onClick={() => setOpen(true)} className="border-slate-300 text-slate-700 hover:bg-slate-100">
+      <Button variant="outline" onClick={() => setOpen(true)} className="border-blue-200 text-blue-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800">
         <Plus className="mr-2 h-4 w-4" />
         {t("activities.addActivity")}
       </Button>
@@ -120,7 +120,7 @@ export function AddActivityForm({ customerId, onSuccess }: { customerId: string;
               {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
               {t("common.save")}
             </Button>
-            <Button type="button" variant="outline" onClick={() => setOpen(false)} className="border-slate-300 text-slate-700 hover:bg-slate-100">
+            <Button type="button" variant="outline" onClick={() => setOpen(false)} className="border-blue-200 text-blue-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800">
               {t("common.cancel")}
             </Button>
           </div>

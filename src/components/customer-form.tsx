@@ -295,7 +295,7 @@ export function CustomerForm({ customer, mode }: CustomerFormProps) {
       </Card>
 
       <div className="flex justify-end gap-4">
-        <Button type="button" variant="outline" onClick={() => router.back()}>
+        <Button type="button" variant="outline" onClick={() => router.back()} className="border-blue-200 text-blue-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800">
           {t("common.cancel")}
         </Button>
         <Button type="submit" disabled={isSubmitting}>
