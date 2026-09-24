@@ -258,7 +258,7 @@ export default function QuotationsPage() {
           <p className="text-slate-500 mt-1">{t("quotations.subtitle")}</p>
         </div>
         {!isManager && (
-          <Button onClick={() => setDialogOpen(true)} className="bg-blue-600 text-white shadow-sm">
+          <Button onClick={() => setDialogOpen(true)} variant="action">
             <Plus className="mr-2 h-4 w-4" />
             {t("quotations.createQuotation")}
           </Button>

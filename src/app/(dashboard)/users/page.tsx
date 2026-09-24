@@ -195,7 +195,7 @@ export default function UsersPage() {
           <p className="text-slate-500 mt-1.5">{t("users.subtitle")}</p>
         </div>
         {isAdmin && (
-          <Button onClick={() => setDialogOpen(true)} className="shadow-sm">
+          <Button variant="action" onClick={() => setDialogOpen(true)}>
             <Plus className="mr-2 h-4 w-4" />
             {t("users.inviteUser")}
           </Button>

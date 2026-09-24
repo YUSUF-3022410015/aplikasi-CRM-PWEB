@@ -244,7 +244,7 @@ export default function FollowUpsPage() {
           <p className="text-slate-500 mt-1.5">{t("followups.subtitle2")}</p>
         </div>
         {!isManager && (
-          <Button onClick={openCreate} className="shadow-sm">
+          <Button variant="action" onClick={openCreate}>
             <Plus className="mr-2 h-4 w-4" />
             {t("followups.addFollowup")}
           </Button>

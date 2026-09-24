@@ -179,7 +179,7 @@ export default function CustomersPage() {
           </Button>
           {!isManager && (
             <Link href="/customers/new">
-              <Button size="sm" className="shadow-sm">
+              <Button variant="action" size="sm">
                 <Plus className="mr-1.5 h-4 w-4" />
                 {t("common.add")}
               </Button>

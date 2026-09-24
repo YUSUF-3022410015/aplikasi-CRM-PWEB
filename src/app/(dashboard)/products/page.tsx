@@ -142,7 +142,7 @@ export default function ProductsPage() {
           <p className="text-slate-500 mt-1.5">{t("products.subtitle")}</p>
         </div>
         {isAdmin && (
-          <Button onClick={openCreate} className="shadow-sm">
+          <Button variant="action" onClick={openCreate}>
             <Plus className="mr-2 h-4 w-4" />
             {t("products.addProduct")}
           </Button>
