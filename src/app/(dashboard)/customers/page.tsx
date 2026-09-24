@@ -286,7 +286,7 @@ export default function CustomersPage() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-700"
+                            className="bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-700"
                             onClick={() => router.push(`/customers/${customer.id}/edit`)}
                           >
                             <Edit className="h-4 w-4" />
@@ -295,7 +295,7 @@ export default function CustomersPage() {
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="h-8 w-8 bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700"
+                              className="bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700"
                               onClick={() => setDeleteId(customer.id)}
                             >
                               <Trash2 className="h-4 w-4" />

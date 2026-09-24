@@ -251,7 +251,7 @@ export default function UsersPage() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-700"
+                            className="bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-700"
                             onClick={() => {
                               setEditUser(u);
                               setEditRole(u.role);
@@ -262,7 +262,7 @@ export default function UsersPage() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700"
+                            className="bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700"
                             onClick={() => setDeactivateUserId(u.id)}
                             disabled={isManager && u.role === "admin"}
                             title={isManager && u.role === "admin" ? "Manager tidak dapat menonaktifkan Admin" : ""}

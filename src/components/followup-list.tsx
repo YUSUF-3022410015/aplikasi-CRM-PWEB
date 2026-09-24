@@ -267,11 +267,11 @@ export function FollowUpList({
                               <SelectItem value="cancelled">{t("followups.cancelled")}</SelectItem>
                             </SelectContent>
                           </Select>
-                          <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-blue-600/10 hover:text-blue-600" onClick={() => openEdit(fu)}>
+                          <Button variant="ghost" size="icon" className="hover:bg-blue-600/10 hover:text-blue-600" onClick={() => openEdit(fu)}>
                             <Pencil className="h-4 w-4" />
                           </Button>
                           {isAdmin && (
-                            <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-red-600/10 hover:text-red-600" onClick={() => { setDeleteId(fu.id); setConfirmDelete(true); }}>
+                            <Button variant="ghost" size="icon" className="hover:bg-red-600/10 hover:text-red-600" onClick={() => { setDeleteId(fu.id); setConfirmDelete(true); }}>
                               <Trash2 className="h-4 w-4" />
                             </Button>
                           )}

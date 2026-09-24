@@ -343,12 +343,12 @@ export default function FollowUpsPage() {
                         <TableCell>
                           <div className="flex gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
                             {!isManager && (
-                              <Button variant="ghost" size="icon" className="h-8 w-8 bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-700" onClick={() => openEdit(f)}>
+                              <Button variant="ghost" size="icon" className="bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-700" onClick={() => openEdit(f)}>
                                 <Pencil className="h-4 w-4" />
                               </Button>
                             )}
                             {isAdmin && (
-                              <Button variant="ghost" size="icon" className="h-8 w-8 bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700" onClick={() => setDeleteId(f.id)}>
+                              <Button variant="ghost" size="icon" className="bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700" onClick={() => setDeleteId(f.id)}>
                                 <Trash2 className="h-4 w-4" />
                               </Button>
                             )}

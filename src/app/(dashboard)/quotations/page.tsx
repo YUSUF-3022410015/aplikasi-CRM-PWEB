@@ -295,11 +295,11 @@ export default function QuotationsPage() {
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
-                      <Button variant="ghost" size="icon" className="h-8 w-8 bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-700" onClick={() => openDetail(q)}>
+                      <Button variant="ghost" size="icon" className="bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-700" onClick={() => openDetail(q)}>
                         <Eye className="h-4 w-4" />
                       </Button>
                       {isAdmin && (
-                        <Button variant="ghost" size="icon" className="h-8 w-8 bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700" onClick={() => handleDelete(q.id)}>
+                        <Button variant="ghost" size="icon" className="bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700" onClick={() => handleDelete(q.id)}>
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       )}
@@ -365,7 +365,7 @@ export default function QuotationsPage() {
                     onChange={(e) => updateItem(i, "price", Number(e.target.value))}
                   />
                   {items.length > 1 && (
-                    <Button type="button" variant="ghost" size="icon" className="h-9 w-9 bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700" onClick={() => removeItem(i)}>
+                    <Button type="button" variant="ghost" size="icon" className="bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700" onClick={() => removeItem(i)}>
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   )}
