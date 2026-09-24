@@ -209,7 +209,7 @@ export default function ProfilePage() {
             />
           </div>
           <div className="animate-slide-up" style={{ animationDelay: "0.3s" }}>
-            <Button onClick={handleChangePassword} disabled={changingPassword || !newPassword} >
+            <Button variant="action" onClick={handleChangePassword} disabled={changingPassword || !newPassword}>
               {changingPassword ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Lock className="mr-2 h-4 w-4" />}
               {t("common.changePassword")}
             </Button>

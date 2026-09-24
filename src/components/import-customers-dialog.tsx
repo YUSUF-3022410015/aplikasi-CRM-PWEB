@@ -215,7 +215,7 @@ export function ImportCustomersDialog({
               <Button variant="outline" onClick={handleClose} className="border-blue-200 text-blue-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800">
                 {t("common.cancel")}
               </Button>
-              <Button onClick={handleImport} disabled={preview?.success === 0}>
+              <Button variant="action" onClick={handleImport} disabled={preview?.success === 0}>
                 <Upload className="mr-2 h-4 w-4" />
                 {t("common.import")} {preview?.success} Data
               </Button>
