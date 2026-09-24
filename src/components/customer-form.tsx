@@ -298,7 +298,7 @@ export function CustomerForm({ customer, mode }: CustomerFormProps) {
         <Button type="button" variant="outline" onClick={() => router.back()} className="border-blue-200 text-blue-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800">
           {t("common.cancel")}
         </Button>
-        <Button type="submit" disabled={isSubmitting}>
+        <Button variant="action" type="submit" disabled={isSubmitting}>
           {isSubmitting ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />

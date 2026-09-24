@@ -366,7 +366,7 @@ export default function PipelinePage() {
           </div>
           <DialogFooter className="gap-2">
             <Button variant="outline" onClick={() => setDialogOpen(false)} className="border-blue-200 text-blue-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800">{t("common.cancel")}</Button>
-            <Button onClick={handleCreate} disabled={saving || !form.customer_id || !form.name || form.value <= 0}>
+            <Button variant="action" onClick={handleCreate} disabled={saving || !form.customer_id || !form.name || form.value <= 0}>
               {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {t("common.save")}
             </Button>

@@ -389,7 +389,7 @@ export default function QuotationsPage() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDialogOpen(false)} className="border-blue-200 text-blue-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800">{t("common.cancel")}</Button>
-            <Button onClick={handleSave} disabled={!customerId}>{t("common.save")}</Button>
+            <Button variant="action" onClick={handleSave} disabled={!customerId}>{t("common.save")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

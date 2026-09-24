@@ -177,7 +177,7 @@ export default function ProfilePage() {
             <p className="text-xs text-slate-500">{t("profile.emailCannotBeChanged")}</p>
           </div>
           <div className="animate-slide-up" style={{ animationDelay: "0.3s" }}>
-            <Button onClick={handleSave} disabled={saving} className="shadow-sm hover:shadow-md transition-shadow">
+            <Button variant="action" onClick={handleSave} disabled={saving} className="shadow-sm hover:shadow-md transition-shadow">
               {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
               {t("common.save")}
             </Button>

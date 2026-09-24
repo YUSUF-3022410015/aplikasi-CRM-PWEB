@@ -322,7 +322,7 @@ export default function UsersPage() {
           </div>
           <DialogFooter className="gap-2">
             <Button variant="outline" onClick={() => setDialogOpen(false)} className="border-blue-200 text-blue-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800">{t("common.cancel")}</Button>
-            <Button onClick={handleInvite} disabled={inviteLoading || !email || !fullname || !password}>
+            <Button variant="action" onClick={handleInvite} disabled={inviteLoading || !email || !fullname || !password}>
               {inviteLoading ? t("common.loading") : t("users.inviteUser")}
             </Button>
           </DialogFooter>
