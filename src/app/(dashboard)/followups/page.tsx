@@ -102,8 +102,6 @@ export default function FollowUpsPage() {
   useEffect(() => { fetchData(); }, [fetchData]);
 
   const openCreate = () => {
-  console.log("Tombol Tambah Tindak Lanjut diklik");
-
   setEditItem(null);
   setForm({
     customer_id: "",

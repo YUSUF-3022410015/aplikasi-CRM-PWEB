@@ -85,10 +85,10 @@ export default function DashboardPage() {
         customersByStatus,
       });
       setLoading(false);
-      } catch (error) {
-        console.error("Failed to fetch dashboard stats:", error);
-        setLoading(false);
-      }
+    } catch (error) {
+      console.error("Failed to fetch dashboard stats:", error);
+      setLoading(false);
+    }
     };
 
     fetchStats();

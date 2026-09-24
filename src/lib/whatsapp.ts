@@ -1,17 +1,6 @@
 // WhatsApp API Utility
 // Supports: WhatsApp Web URL (default) or WhatsApp Business API
 
-interface WhatsAppConfig {
-  useApi: boolean;
-  apiUrl?: string;
-  apiKey?: string;
-}
-
-// Default config - use WhatsApp Web URL
-const config: WhatsAppConfig = {
-  useApi: false,
-};
-
 // Format phone number for WhatsApp
 export function formatPhoneForWhatsApp(phone: string): string {
   // Remove non-numeric characters
@@ -30,14 +19,16 @@ export function formatPhoneForWhatsApp(phone: string): string {
 }
 
 // Send WhatsApp message via Web URL (opens WhatsApp)
+// Security: noopener,noreferrer prevents tab-napping attack
 export function sendWhatsAppMessage(phone: string, message: string): void {
   const formattedPhone = formatPhoneForWhatsApp(phone);
   const encodedMessage = encodeURIComponent(message);
   const url = `https://wa.me/${formattedPhone}?text=${encodedMessage}`;
-  window.open(url, "_blank");
+  window.open(url, "_blank", "noopener,noreferrer");
 }
 
 // Send WhatsApp message via API (requires API provider)
+// ponytail: store apiKey in env var (WHATSAPP_API_KEY) when integrating real provider
 export async function sendWhatsAppAPI(
   phone: string,
   message: string,

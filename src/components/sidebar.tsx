@@ -24,7 +24,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { getAccessibleRoutes, type Role } from "@/lib/permissions";
 import { useLanguage } from "@/components/language-provider";
@@ -86,7 +86,7 @@ export function Sidebar() {
   }, []);
 
   // Fetch follow-up count & details (FR5: badge reminder di sidebar)
-  const fetchFollowUps = async () => {
+  const fetchFollowUps = useCallback(async () => {
     const today = new Date().toISOString().split("T")[0];
     const { data } = await supabase
       .from("followups")
@@ -99,13 +99,13 @@ export function Sidebar() {
       ...f,
       customer: Array.isArray(f.customer) ? f.customer[0] : f.customer,
     })) as FollowUpItem[]);
-  };
+  }, [supabase]);
 
   useEffect(() => {
     fetchFollowUps();
     const interval = setInterval(fetchFollowUps, 30000);
     return () => clearInterval(interval);
-  }, [supabase]);
+  }, [fetchFollowUps]);
 
   // Close popup when clicking outside
   useEffect(() => {

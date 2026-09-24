@@ -108,9 +108,9 @@ export default function CustomersPage() {
     setDeleting(true);
     const customer = customers.find(c => c.id === deleteId);
     const now = new Date().toISOString();
-    // PRD §3.4: cascade soft delete — hide associated deals, activities, and follow-ups too
+    // PRD §3.4: cascade soft delete — hide associated deals; hard delete activities & follow-ups
     await supabase.from("deals").update({ deleted_at: now }).eq("customer_id", deleteId).is("deleted_at", null);
-    await supabase.from("activities").update({ deleted_at: now }).eq("customer_id", deleteId).is("deleted_at", null);
+    await supabase.from("activities").delete().eq("customer_id", deleteId);
     await supabase.from("followups").delete().eq("customer_id", deleteId);
     await supabase.from("customers").update({ deleted_at: now }).eq("id", deleteId);
     if (customer) {
