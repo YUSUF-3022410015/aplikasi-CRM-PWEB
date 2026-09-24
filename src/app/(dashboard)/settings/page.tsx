@@ -145,7 +145,7 @@ export default function SettingsPage() {
           <h1 className="text-2xl font-bold text-slate-900 md:text-3xl">{t("settings.title")}</h1>
           <p className="text-slate-500 mt-1">{t("settings.subtitle")}</p>
         </div>
-        <Button variant="action" onClick={handleSave} disabled={saving} className="bg-blue-600 text-white shadow-sm hover:shadow-md transition-shadow">
+        <Button variant="action" onClick={handleSave} disabled={saving} >
           {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
           {t("common.save")}
         </Button>

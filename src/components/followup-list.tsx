@@ -183,7 +183,7 @@ export function FollowUpList({
   return (
     <div className="space-y-4">
       {!isManager && !showForm && (
-        <Button variant="outline" onClick={openCreate} className="border-blue-200 text-blue-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800">
+        <Button variant="action" onClick={openCreate}>
           <Plus className="mr-2 h-4 w-4" />
           {t("followups.addFollowup")}
         </Button>

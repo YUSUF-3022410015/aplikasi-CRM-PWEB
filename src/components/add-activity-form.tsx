@@ -81,7 +81,7 @@ export function AddActivityForm({ customerId, onSuccess }: { customerId: string;
 
   if (!open) {
     return (
-      <Button variant="outline" onClick={() => setOpen(true)} className="border-blue-200 text-blue-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800">
+      <Button variant="action" onClick={() => setOpen(true)}>
         <Plus className="mr-2 h-4 w-4" />
         {t("activities.addActivity")}
       </Button>
