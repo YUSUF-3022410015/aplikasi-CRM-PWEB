@@ -96,6 +96,7 @@ export default function UsersPage() {
       const { data } = await supabase
         .from("profiles")
         .select("*")
+        .eq("is_active", true)
         .order("created_at", { ascending: false });
       setUsers(data || []);
     } catch (error) {
