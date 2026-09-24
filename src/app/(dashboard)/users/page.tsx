@@ -31,6 +31,7 @@ import {
 } from "@/components/ui/select";
 import { Plus, UserCog, Shield, Pencil, Trash2, Loader2, KeyRound, ShieldAlert } from "lucide-react";
 import { useLanguage } from "@/components/language-provider";
+import { useToast } from "@/components/toast";
 import { resetUserPassword, inviteUser, editUserRole } from "@/app/actions/admin";
 import { deactivateUser } from "@/app/actions/delete-user";
 import { usePermissions } from "@/hooks/use-permissions";
@@ -72,6 +73,7 @@ export default function UsersPage() {
   const [editRole, setEditRole] = useState("");
   const [editLoading, setEditLoading] = useState(false);
   const { t } = useLanguage();
+  const { toast } = useToast();
   const [deactivateUserId, setDeactivateUserId] = useState<string | null>(null);
   const [deactivateLoading, setDeactivateLoading] = useState(false);
   const [resetUser, setResetUser] = useState<UserProfile | null>(null);
@@ -148,9 +150,10 @@ export default function UsersPage() {
 
     if (result.success) {
       setDeactivateUserId(null);
+      toast("Pengguna berhasil dinonaktifkan", "success");
       fetchUsers();
     } else {
-      console.error("Gagal menonaktifkan user:", result.error);
+      toast(result.error || "Gagal menonaktifkan pengguna", "error");
     }
 
     setDeactivateLoading(false);

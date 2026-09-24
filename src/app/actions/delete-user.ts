@@ -3,16 +3,24 @@
 import { createClient } from "@supabase/supabase-js";
 import { createClient as createServerClient } from "@/lib/supabase/server";
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
+function getSupabaseAdmin() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !serviceRoleKey) {
+    throw new Error("Konfigurasi server Supabase belum lengkap (SUPABASE_SERVICE_ROLE_KEY)");
+  }
+
+  return createClient(
+    url,
+    serviceRoleKey,
   {
     auth: {
       autoRefreshToken: false,
       persistSession: false,
     },
-  }
-);
+    },
+  });
+}
 
 async function checkAdminOnly(): Promise<string | null> {
   try {
@@ -41,6 +49,7 @@ export async function deactivateUser(userId: string) {
   if (authError) return { success: false, error: authError };
 
   try {
+    const supabaseAdmin = getSupabaseAdmin();
     // Ambil data user sebelum dinonaktifkan
     const { data: targetUser } = await supabaseAdmin.from("profiles").select("fullname").eq("id", userId).single();
 
