@@ -216,6 +216,10 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- ============================================
 -- Ensure all columns exist (safe re-run)
 -- ============================================
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT true;
+UPDATE profiles SET is_active = true WHERE is_active IS NULL;
+ALTER TABLE profiles ALTER COLUMN is_active SET DEFAULT true;
+ALTER TABLE profiles ALTER COLUMN is_active SET NOT NULL;
 ALTER TABLE customers ADD COLUMN IF NOT EXISTS assigned_to UUID REFERENCES profiles(id);
 ALTER TABLE customers ADD COLUMN IF NOT EXISTS pipeline_stage TEXT NOT NULL DEFAULT 'lead' CHECK (pipeline_stage IN ('lead', 'qualified', 'contacted', 'meeting', 'proposal', 'negotiation', 'won', 'lost'));
 ALTER TABLE activities ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;
