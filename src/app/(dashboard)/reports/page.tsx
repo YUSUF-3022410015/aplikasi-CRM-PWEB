@@ -154,7 +154,7 @@ export default function ReportsPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <Card className="hover:shadow-md transition-shadow">
           <CardContent className="p-5">
             <div className="flex items-center justify-between mb-4">
@@ -174,7 +174,7 @@ export default function ReportsPage() {
                 <DollarSign className="h-5 w-5 text-blue-600" />
               </div>
             </div>
-            <div className="text-3xl font-bold text-slate-900">{formatCurrency(stats.totalRevenue)}</div>
+            <div className="min-w-0 truncate text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl" title={formatCurrency(stats.totalRevenue)}>{formatCurrency(stats.totalRevenue)}</div>
           </CardContent>
         </Card>
         <Card className="hover:shadow-md transition-shadow">
