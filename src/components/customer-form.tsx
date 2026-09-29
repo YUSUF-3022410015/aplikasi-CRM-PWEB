@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/client";
@@ -33,6 +33,8 @@ export function CustomerForm({ customer, mode }: CustomerFormProps) {
   const router = useRouter();
   const [supabase] = useState(() => createClient());
   const [salesUsers, setSalesUsers] = useState<{ id: string; fullname: string }[]>([]);
+  const [saving, setSaving] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
 
   const customerSchema = useMemo(() => z.object({
     name: z.string().min(3, t("customers.nameMinLength")),
@@ -65,13 +67,13 @@ export function CustomerForm({ customer, mode }: CustomerFormProps) {
     supabase.from("profiles").select("id, fullname").order("fullname").then(({ data }) => {
       setSalesUsers(data || []);
     });
-  }, []);
+  }, [supabase]);
 
   const {
     register,
     handleSubmit,
     setValue,
-    watch,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<CustomerFormData>({
     resolver: zodResolver(customerSchema),
@@ -92,7 +94,13 @@ export function CustomerForm({ customer, mode }: CustomerFormProps) {
     },
   });
 
+  const assignedTo = useWatch({ control, name: "assigned_to" });
+  const statusValue = useWatch({ control, name: "status" });
+  const pipelineStageValue = useWatch({ control, name: "pipeline_stage" });
+
   const onSubmit = async (data: CustomerFormData) => {
+    setSaving(true);
+    setFormError(null);
     const { data: { user } } = await supabase.auth.getUser();
 
     // PRD §2.2: validasi unik email dan phone
@@ -104,7 +112,8 @@ export function CustomerForm({ customer, mode }: CustomerFormProps) {
         .is("deleted_at", null)
         .maybeSingle();
       if (existingEmail && existingEmail.id !== customer?.id) {
-        alert("Email sudah digunakan oleh customer lain");
+        setSaving(false);
+        setFormError("Email sudah digunakan oleh customer lain");
         return;
       }
     }
@@ -116,7 +125,8 @@ export function CustomerForm({ customer, mode }: CustomerFormProps) {
         .is("deleted_at", null)
         .maybeSingle();
       if (existingPhone && existingPhone.id !== customer?.id) {
-        alert("Nomor telepon sudah digunakan oleh customer lain");
+        setSaving(false);
+        setFormError("Nomor telepon sudah digunakan oleh customer lain");
         return;
       }
     }
@@ -137,17 +147,19 @@ export function CustomerForm({ customer, mode }: CustomerFormProps) {
         }).select("id").single();
         if (error) {
           console.error(error);
+          setFormError("Gagal menyimpan pelanggan. Silakan coba lagi.");
           return;
         }
         logAudit("create", "customers", inserted.id, null, data as unknown as Record<string, unknown>);
         if (user) {
-          Promise.resolve(supabase.from("notifications").insert({
+          const { error: notifError } = await supabase.from("notifications").insert({
             user_id: user.id,
             title: "Pelanggan Baru",
             message: `Pelanggan ${data.name} berhasil ditambahkan`,
             type: "activity_added",
             link: "/customers",
-          })).catch(() => {});
+          });
+          if (notifError) console.error("Gagal membuat notifikasi pelanggan baru:", notifError.message);
         }
       } else {
         const oldData = { ...customer };
@@ -171,27 +183,39 @@ export function CustomerForm({ customer, mode }: CustomerFormProps) {
           .eq("id", customer!.id);
         if (error) {
           console.error(error);
+          setFormError("Gagal memperbarui pelanggan. Silakan coba lagi.");
           return;
         }
         logAudit("update", "customers", customer!.id, oldData as unknown as Record<string, unknown>, data as unknown as Record<string, unknown>);
         if (user) {
-          Promise.resolve(supabase.from("notifications").insert({
+          const { error: notifError } = await supabase.from("notifications").insert({
             user_id: user.id,
             title: "Pelanggan Diperbarui",
             message: `Data pelanggan ${data.name} telah diperbarui`,
             type: "activity_added",
             link: `/customers/${customer!.id}`,
-          })).catch(() => {});
+          });
+          if (notifError) console.error("Gagal membuat notifikasi pelanggan diperbarui:", notifError.message);
         }
       }
-    } finally {
+      // Navigasi HANYA setelah operasi database berhasil
       router.push("/customers");
       router.refresh();
+    } catch (err) {
+      console.error(err);
+      setFormError("Terjadi kesalahan tak terduga saat menyimpan data.");
+    } finally {
+      setSaving(false);
     }
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      {formError && (
+        <div role="alert" className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {formError}
+        </div>
+      )}
       <Card>
         <CardHeader>
           <CardTitle>{t("customers.info")}</CardTitle>
@@ -245,7 +269,7 @@ export function CustomerForm({ customer, mode }: CustomerFormProps) {
           </div>
           <div className="space-y-2">
             <Label>{t("customers.assignedSales")}</Label>
-            <Select value={watch("assigned_to") || "none"} onValueChange={(v) => setValue("assigned_to", v === "none" ? "" : v)}>
+            <Select value={assignedTo || "none"} onValueChange={(v) => setValue("assigned_to", v === "none" ? "" : v)}>
               <SelectTrigger><SelectValue placeholder={t("customers.assignedSales")} /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="none">{t("customers.notAssigned")}</SelectItem>
@@ -257,7 +281,7 @@ export function CustomerForm({ customer, mode }: CustomerFormProps) {
           </div>
           <div className="space-y-2">
             <Label htmlFor="status">{t("customers.status")}</Label>
-            <Select value={watch("status")} onValueChange={(v) => setValue("status", v as CustomerFormData["status"])}>
+            <Select value={statusValue} onValueChange={(v) => setValue("status", v as CustomerFormData["status"])}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
@@ -273,7 +297,7 @@ export function CustomerForm({ customer, mode }: CustomerFormProps) {
           <div className="space-y-2">
             <Label htmlFor="pipeline_stage">{t("customers.pipeline")}</Label>
             <Select
-              value={watch("pipeline_stage")}
+              value={pipelineStageValue}
               onValueChange={(v) => setValue("pipeline_stage", v as CustomerFormData["pipeline_stage"])}
             >
               <SelectTrigger>
@@ -298,8 +322,8 @@ export function CustomerForm({ customer, mode }: CustomerFormProps) {
         <Button type="button" variant="outline" onClick={() => router.back()} className="border-blue-200 text-blue-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800">
           {t("common.cancel")}
         </Button>
-        <Button variant="action" type="submit" disabled={isSubmitting}>
-          {isSubmitting ? (
+        <Button variant="action" type="submit" disabled={isSubmitting || saving}>
+          {isSubmitting || saving ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               {t("common.saving")}

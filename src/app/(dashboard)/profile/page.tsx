@@ -50,7 +50,12 @@ export default function ProfilePage() {
     }
   }, [supabase]);
 
-  useEffect(() => { fetchProfile(); }, [fetchProfile]);
+  useEffect(() => {
+    const run = async () => {
+      await fetchProfile();
+    };
+    void run();
+  }, [fetchProfile]);
 
   const handleSave = async () => {
     setSaving(true);
@@ -58,7 +63,11 @@ export default function ProfilePage() {
     setSuccess("");
 
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+    if (!user) {
+      setError(t("auth.sessionExpired"));
+      setSaving(false);
+      return;
+    }
 
     const { error: updateError } = await supabase
       .from("profiles")

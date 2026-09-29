@@ -63,7 +63,6 @@ export default function ReportsPage() {
     const deals = dealsRes.data || [];
 
     const wonQuotations = quotations.filter((q) => q.status === "approved");
-    const lostQuotations = quotations.filter((q) => q.status === "rejected");
     const dealsWon = deals.filter((d) => d.status === "won").length;
     const dealsLost = deals.filter((d) => d.status === "lost").length;
     const totalRevenue = wonQuotations.reduce((s, q) => s + (q.total || 0), 0);
@@ -110,7 +109,12 @@ export default function ReportsPage() {
     }
   }, [supabase, tArray]);
 
-  useEffect(() => { fetchData(); }, [fetchData]);
+  useEffect(() => {
+    const run = async () => {
+      await fetchData();
+    };
+    void run();
+  }, [fetchData]);
 
   if (!permLoading && !isAdmin && !isManager) {
     return (

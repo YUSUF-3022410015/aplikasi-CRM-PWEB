@@ -20,7 +20,6 @@ import {
   UserCog,
   Activity,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/language-provider";
 import { usePermissions } from "@/hooks/use-permissions";
 import { getAccessibleRoutes, type Role } from "@/lib/permissions";
@@ -55,7 +54,10 @@ export function MobileNav() {
     : [];
 
   useEffect(() => {
-    setMounted(true);
+    const init = async () => {
+      setMounted(true);
+    };
+    void init();
   }, []);
 
   // Prevent body scroll when sidebar is open
@@ -69,9 +71,11 @@ export function MobileNav() {
   }, [open]);
 
   // Close on route change
-  useEffect(() => {
+  const [lastPathname, setLastPathname] = useState(pathname);
+  if (lastPathname !== pathname) {
+    setLastPathname(pathname);
     setOpen(false);
-  }, [pathname]);
+  }
 
   const sidebarContent = (
     <>
@@ -137,6 +141,7 @@ export function MobileNav() {
           </div>
           <button
             type="button"
+            aria-label={t("common.close")}
             onClick={() => setOpen(false)}
             style={{
               display: "flex",

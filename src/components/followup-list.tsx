@@ -12,9 +12,18 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Plus, Loader2, CalendarCheck, Pencil, Trash2 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { useLanguage } from "@/components/language-provider";
@@ -99,13 +108,14 @@ export function FollowUpList({
           return;
         }
         if (user) {
-          Promise.resolve(supabase.from("notifications").insert({
+          const { error: notifError } = await supabase.from("notifications").insert({
             user_id: user.id,
             title: "Follow-up Diubah",
             message: `Follow-up dijadwalkan pada ${dueDate} telah diperbarui`,
             type: "activity_added",
             link: `/customers/${customerId}`,
-          })).catch(() => {});
+          });
+          if (notifError) console.error("Gagal membuat notifikasi follow-up:", notifError.message);
         }
       } else {
         const { error } = await supabase.from("followups").insert({
@@ -121,13 +131,14 @@ export function FollowUpList({
           return;
         }
         if (user) {
-          Promise.resolve(supabase.from("notifications").insert({
+          const { error: notifError } = await supabase.from("notifications").insert({
             user_id: user.id,
             title: "Follow-up Baru",
             message: `Follow-up dijadwalkan pada ${dueDate}`,
             type: "followup_reminder",
             link: `/customers/${customerId}`,
-          })).catch(() => {});
+          });
+          if (notifError) console.error("Gagal membuat notifikasi follow-up:", notifError.message);
         }
       }
 
@@ -138,6 +149,7 @@ export function FollowUpList({
       onSuccess?.();
       router.refresh();
     } catch (err) {
+      console.error("Gagal menyimpan follow-up:", err);
       alert("Terjadi kesalahan saat menyimpan data");
     } finally {
       setLoading(false);
@@ -146,16 +158,21 @@ export function FollowUpList({
 
   const handleStatusChange = async (id: string, newStatus: string) => {
     const { data: { user } } = await supabase.auth.getUser();
-    await supabase.from("followups").update({ status: newStatus }).eq("id", id);
+    const { error } = await supabase.from("followups").update({ status: newStatus }).eq("id", id);
+    if (error) {
+      alert(error.message);
+      return;
+    }
     if (user) {
       const statusLabel = newStatus === "done" ? "Selesai" : newStatus === "cancelled" ? "Dibatalkan" : "Ditunda";
-      Promise.resolve(supabase.from("notifications").insert({
+      const { error: notifError } = await supabase.from("notifications").insert({
         user_id: user.id,
         title: "Status Follow-up Diubah",
         message: `Status follow-up diubah ke "${statusLabel}"`,
         type: "activity_added",
         link: `/customers/${customerId}`,
-      })).catch(() => {});
+      });
+      if (notifError) console.error("Gagal membuat notifikasi status follow-up:", notifError.message);
     }
     onSuccess?.();
     router.refresh();
@@ -164,15 +181,20 @@ export function FollowUpList({
   const handleDelete = async () => {
     if (!deleteId) return;
     const { data: { user } } = await supabase.auth.getUser();
-    await supabase.from("followups").delete().eq("id", deleteId);
+    const { error } = await supabase.from("followups").delete().eq("id", deleteId);
+    if (error) {
+      alert(error.message);
+      return;
+    }
     if (user) {
-      Promise.resolve(supabase.from("notifications").insert({
+      const { error: notifError } = await supabase.from("notifications").insert({
         user_id: user.id,
         title: "Follow-up Dihapus",
         message: "Follow-up telah dihapus",
         type: "activity_added",
         link: `/customers/${customerId}`,
-      })).catch(() => {});
+      });
+      if (notifError) console.error("Gagal membuat notifikasi hapus follow-up:", notifError.message);
     }
     setDeleteId(null);
     setConfirmDelete(false);
@@ -286,22 +308,34 @@ export function FollowUpList({
         </div>
       )}
 
-      {confirmDelete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="fixed inset-0 bg-black/80" onClick={() => { setConfirmDelete(false); setDeleteId(null); }} />
-          <div className="relative w-full max-w-sm mx-4 rounded-xl border bg-white p-6 shadow-xl text-center">
+      <AlertDialog
+        open={confirmDelete}
+        onOpenChange={(open) => {
+          setConfirmDelete(open);
+          if (!open) setDeleteId(null);
+        }}
+      >
+        <AlertDialogContent className="max-w-sm">
+          <AlertDialogHeader className="items-center text-center sm:text-center">
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-600/10 mb-4">
               <Trash2 className="h-6 w-6 text-red-600" />
             </div>
-            <h2 className="text-lg font-semibold mb-2">{t("followups.deleteTitle")}</h2>
-            <p className="text-sm text-slate-500 mb-6">Apakah Anda yakin ingin menghapus follow-up ini?</p>
-            <div className="flex justify-center gap-2">
-              <Button variant="outline" onClick={() => { setConfirmDelete(false); setDeleteId(null); }} className="w-28 border-blue-200 text-blue-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800">{t("common.cancel")}</Button>
-              <Button variant="destructive" onClick={handleDelete} className="w-28">{t("common.delete")}</Button>
-            </div>
-          </div>
-        </div>
-      )}
+            <AlertDialogTitle>{t("followups.deleteTitle")}</AlertDialogTitle>
+            <AlertDialogDescription>
+              Apakah Anda yakin ingin menghapus follow-up ini?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="sm:justify-center">
+            <AlertDialogCancel className="w-28">{t("common.cancel")}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              className="w-28 bg-red-600 text-white hover:bg-red-700"
+            >
+              {t("common.delete")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

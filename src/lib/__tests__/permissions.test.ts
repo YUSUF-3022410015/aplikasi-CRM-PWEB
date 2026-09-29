@@ -22,7 +22,7 @@ describe("Permissions", () => {
     });
 
     it("returns false for invalid module", () => {
-      expect(hasPermission("admin", "invalidModule" as any, "view")).toBe(false);
+      expect(hasPermission("admin", "invalidModule", "view")).toBe(false);
     });
 
     it("returns false for invalid action", () => {

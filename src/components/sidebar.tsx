@@ -82,8 +82,8 @@ export function Sidebar() {
       }
     };
 
-    fetchRole();
-  }, []);
+    void fetchRole();
+  }, [supabase]);
 
   // Fetch follow-up count & details (FR5: badge reminder di sidebar)
   const fetchFollowUps = useCallback(async () => {
@@ -93,17 +93,30 @@ export function Sidebar() {
       .select("id, note, due_date, status, customer_id, customer:customers(name, deleted_at)")
       .eq("status", "pending")
       .lte("due_date", today);
-    const filtered = (data || []).filter((f: any) => !f.customer || !f.customer.deleted_at);
+    type RawFollowUp = FollowUpItem & {
+      customer?: { name: string; deleted_at?: string | null } | { name: string; deleted_at?: string | null }[] | null;
+    };
+    const filtered = ((data || []) as unknown as RawFollowUp[]).filter((f) => {
+      const c = Array.isArray(f.customer) ? f.customer[0] : f.customer;
+      return !c || !c.deleted_at;
+    });
     setFollowUpCount(filtered.length);
-    setFollowUps(filtered.map((f: any) => ({
-      ...f,
-      customer: Array.isArray(f.customer) ? f.customer[0] : f.customer,
-    })) as FollowUpItem[]);
+    setFollowUps(
+      filtered.map((f) => {
+        const c = Array.isArray(f.customer) ? f.customer[0] : f.customer;
+        return { ...f, customer: c ? { name: c.name } : null };
+      })
+    );
   }, [supabase]);
 
   useEffect(() => {
-    fetchFollowUps();
-    const interval = setInterval(fetchFollowUps, 30000);
+    const run = async () => {
+      await fetchFollowUps();
+    };
+    void run();
+    const interval = setInterval(() => {
+      void fetchFollowUps();
+    }, 30000);
     return () => clearInterval(interval);
   }, [fetchFollowUps]);
 
@@ -121,9 +134,11 @@ export function Sidebar() {
   }, [showFollowUpPopup]);
 
   // Close popup on route change
-  useEffect(() => {
+  const [lastPathname, setLastPathname] = useState(pathname);
+  if (lastPathname !== pathname) {
+    setLastPathname(pathname);
     setShowFollowUpPopup(false);
-  }, [pathname]);
+  }
 
   const navItems = allNavItems.filter((item) =>
     accessibleRoutes.includes(item.href)
@@ -164,6 +179,7 @@ export function Sidebar() {
           <Button
             variant="ghost"
             size="icon"
+            aria-label="Collapse sidebar"
             className="h-7 w-7 shrink-0 text-slate-500 hover:text-slate-900 hover:bg-slate-100"
             onClick={() => setCollapsed(!collapsed)}
           >
@@ -178,6 +194,7 @@ export function Sidebar() {
           <Button
             variant="ghost"
             size="icon"
+            aria-label="Expand sidebar"
             className="h-7 w-7 text-slate-500 hover:text-slate-900 hover:bg-slate-100"
             onClick={() => setCollapsed(!collapsed)}
           >
@@ -206,26 +223,30 @@ export function Sidebar() {
                 >
                   <item.icon className={cn("h-5 w-5 shrink-0", isActive && "text-blue-600")} />
                   {!collapsed && <span className="truncate">{item.label}</span>}
-                  {!collapsed && isFollowUp && followUpCount > 0 && (
-                    <button
-                      type="button"
-                      onClick={handleFollowUpBadgeClick}
-                      className="ml-auto cursor-pointer"
-                    >
-                      <Badge className="h-5 min-w-5 px-1.5 flex items-center justify-center text-[10px] font-bold bg-red-600 text-white hover:bg-red-700 transition-colors">
-                        {followUpCount > 9 ? "9+" : followUpCount}
-                      </Badge>
-                    </button>
-                  )}
-                  {collapsed && isFollowUp && followUpCount > 0 && (
-                    <span
-                      className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[8px] font-bold text-white shadow-sm cursor-pointer"
-                      onClick={handleFollowUpBadgeClick}
-                    >
-                      {followUpCount > 9 ? "9+" : followUpCount}
-                    </span>
-                  )}
                 </Link>
+
+                {!collapsed && isFollowUp && followUpCount > 0 && (
+                  <button
+                    type="button"
+                    aria-label={`${t("nav.followups")}: ${followUpCount}`}
+                    onClick={handleFollowUpBadgeClick}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer"
+                  >
+                    <Badge className="h-5 min-w-5 px-1.5 flex items-center justify-center text-[10px] font-bold bg-red-600 text-white hover:bg-red-700 transition-colors">
+                      {followUpCount > 9 ? "9+" : followUpCount}
+                    </Badge>
+                  </button>
+                )}
+                {collapsed && isFollowUp && followUpCount > 0 && (
+                  <button
+                    type="button"
+                    aria-label={`${t("nav.followups")}: ${followUpCount}`}
+                    onClick={handleFollowUpBadgeClick}
+                    className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[8px] font-bold text-white shadow-sm cursor-pointer"
+                  >
+                    {followUpCount > 9 ? "9+" : followUpCount}
+                  </button>
+                )}
 
                 {/* Follow-up Popup */}
                 {isFollowUp && showFollowUpPopup && !collapsed && (
@@ -244,6 +265,7 @@ export function Sidebar() {
                       </div>
                       <button
                         type="button"
+                        aria-label={t("common.close")}
                         onClick={() => setShowFollowUpPopup(false)}
                         className="p-1 rounded-md hover:bg-slate-200 transition-colors"
                       >

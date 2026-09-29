@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
 import { LanguageProvider } from "@/components/language-provider";
 import { ToastProvider } from "@/components/toast";
 import { Splash } from "@/components/splash-screen";
@@ -19,13 +18,11 @@ export default function RootLayout({
     <html lang="id" className="light" suppressHydrationWarning>
       <body className="min-h-screen bg-white font-sans antialiased">
         <Splash>
-          <ThemeProvider>
-            <LanguageProvider>
-              <ToastProvider>
-                {children}
-              </ToastProvider>
-            </LanguageProvider>
-          </ThemeProvider>
+          <LanguageProvider>
+            <ToastProvider>
+              {children}
+            </ToastProvider>
+          </LanguageProvider>
         </Splash>
       </body>
     </html>

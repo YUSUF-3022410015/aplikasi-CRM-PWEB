@@ -2,15 +2,30 @@
 
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Users, UserPlus, TrendingUp, CalendarCheck, DollarSign, AlertTriangle, Package, TrendingDown } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 import { DashboardCharts } from "@/components/dashboard-charts";
 import { useLanguage } from "@/components/language-provider";
 
+interface DashboardStatsData {
+  totalCustomers: number;
+  newCustomers: number;
+  totalRevenue: number;
+  dealsWon: number;
+  dealsLost: number;
+  followUpsToday: number;
+  followUpsOverdue: number;
+  pipelineValue: number;
+  monthlyData: { name: string; revenue: number; deals: number }[];
+  activitiesByType: { name: string; value: number }[];
+  customersByStatus: { name: string; value: number }[];
+}
+
 export default function DashboardPage() {
-  const [stats, setStats] = useState<any>(null);
+  const [stats, setStats] = useState<DashboardStatsData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const { t, tArray } = useLanguage();
   const [supabase] = useState(() => createClient());
 
@@ -84,15 +99,16 @@ export default function DashboardPage() {
         activitiesByType,
         customersByStatus,
       });
-      setLoading(false);
     } catch (error) {
       console.error("Failed to fetch dashboard stats:", error);
+      setLoadError(t("dashboard.loadError"));
+    } finally {
       setLoading(false);
     }
     };
 
     fetchStats();
-  }, [supabase, tArray]);
+  }, [supabase, tArray, t]);
 
   if (loading) {
     return (
@@ -120,6 +136,15 @@ export default function DashboardPage() {
             </div>
           ))}
         </div>
+      </div>
+    );
+  }
+
+  if (loadError || !stats) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 animate-fade-in">
+        <AlertTriangle className="h-12 w-12 text-amber-500 mb-4" />
+        <h2 className="text-lg font-semibold text-slate-900">{loadError || t("dashboard.loadError")}</h2>
       </div>
     );
   }

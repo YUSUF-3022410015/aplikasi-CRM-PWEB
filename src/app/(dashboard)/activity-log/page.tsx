@@ -7,10 +7,19 @@ import { ActivityLogList } from "@/components/activity-log-list";
 import { usePermissions } from "@/hooks/use-permissions";
 import { ShieldAlert } from "lucide-react";
 
+interface ActivityLogEntry {
+  id: string;
+  type: string;
+  description: string;
+  module: string;
+  user?: string;
+  created_at: string;
+}
+
 export default function ActivityLogPage() {
   const { t } = useLanguage();
   const { isAdmin, loading: permLoading } = usePermissions();
-  const [allActivities, setAllActivities] = useState<any[]>([]);
+  const [allActivities, setAllActivities] = useState<ActivityLogEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [supabase] = useState(() => createClient());
 
@@ -129,7 +138,7 @@ export default function ActivityLogPage() {
     };
 
     fetchData();
-  }, [t]);
+  }, [t, supabase]);
 
   if (!permLoading && !isAdmin) {
     return (

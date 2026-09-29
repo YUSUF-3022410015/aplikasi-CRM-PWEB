@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { hasPermission, getAccessibleRoutes, permissions, type Role } from "@/lib/permissions";
+import { hasPermission, getAccessibleRoutes, type Role } from "@/lib/permissions";
 
 interface UserProfile {
   id: string;
@@ -31,7 +31,7 @@ export function usePermissions() {
         .single();
 
       // PRD §3.4: User nonaktif (is_active = false) tidak boleh mengakses data
-      if (data && (data as any).is_active === false) {
+      if (data && (data as { is_active?: boolean }).is_active === false) {
         setProfile(null);
         setLoading(false);
         return;
@@ -42,11 +42,11 @@ export function usePermissions() {
     };
 
     fetchProfile();
-  }, []);
+  }, [supabase]);
 
   const checkPermission = (module: string, action: string) => {
     if (!profile) return false;
-    return hasPermission(profile.role, module as keyof typeof permissions, action);
+    return hasPermission(profile.role, module, action);
   };
 
   const canAccess = (route: string) => {

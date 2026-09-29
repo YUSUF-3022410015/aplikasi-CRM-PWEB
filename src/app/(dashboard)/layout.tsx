@@ -22,8 +22,8 @@ export default async function DashboardLayout({
     .eq("id", user.id)
     .single();
 
-  // PRD §3.4: User nonaktif (is_active = false) tidak boleh mengakses data
-  if (profile && profile.is_active === false) {
+  // Fail-closed: tanpa baris profil, pemeriksaan is_active tidak bisa dipercaya
+  if (!profile || profile.is_active === false) {
     redirect("/login");
   }
 

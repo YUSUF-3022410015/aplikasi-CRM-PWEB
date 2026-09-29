@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { MessageSquare, Loader2 } from "lucide-react";
+import { Label } from "@/components/ui/label";
 import { sendWhatsAppMessage, messageTemplates } from "@/lib/whatsapp";
 import { useLanguage } from "@/components/language-provider";
 
@@ -117,9 +118,9 @@ export function WhatsAppButton({
 
           <div className="space-y-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium">{t("whatsapp.template")}</label>
+              <Label htmlFor="whatsapp-template" className="text-sm font-medium">{t("whatsapp.template")}</Label>
               <Select value={template} onValueChange={handleTemplateChange}>
-                <SelectTrigger>
+                <SelectTrigger id="whatsapp-template">
                   <SelectValue placeholder={t("whatsapp.selectTemplate")} />
                 </SelectTrigger>
                 <SelectContent>
@@ -133,8 +134,9 @@ export function WhatsAppButton({
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium">{t("whatsapp.message")}</label>
+              <Label htmlFor="whatsapp-message" className="text-sm font-medium">{t("whatsapp.message")}</Label>
               <Textarea
+                id="whatsapp-message"
                 placeholder={t("whatsapp.writeMessage")}
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}

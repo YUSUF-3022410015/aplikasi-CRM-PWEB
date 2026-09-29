@@ -12,7 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Upload, Download, FileSpreadsheet, CheckCircle, XCircle, AlertCircle } from "lucide-react";
+import { Upload, Download, CheckCircle, AlertCircle } from "lucide-react";
 import { useLanguage } from "@/components/language-provider";
 
 interface ImportCustomersDialogProps {
@@ -30,7 +30,6 @@ export function ImportCustomersDialog({
 }: ImportCustomersDialogProps) {
   const { t } = useLanguage();
   const [state, setState] = useState<ImportState>("idle");
-  const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<{
     total: number;
     success: number;
@@ -54,9 +53,10 @@ export function ImportCustomersDialog({
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files?.[0];
+    // Reset value input supaya memilih file yang sama lagi tetap memicu onChange.
+    e.target.value = "";
     if (!selected) return;
 
-    setFile(selected);
     setState("parsing");
 
     try {
@@ -72,7 +72,6 @@ export function ImportCustomersDialog({
     } catch (err) {
       console.error("Excel parse error:", err);
       setState("idle");
-      setFile(null);
     }
   };
 
@@ -83,29 +82,34 @@ export function ImportCustomersDialog({
     let imported = 0;
     let errors = 0;
 
-    const { data: { user } } = await supabase.auth.getUser();
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
 
-    // Import in batches of 50
-    for (let i = 0; i < preview.data.length; i += 50) {
-      const batch = preview.data.slice(i, i + 50).map((row) => ({
-        ...row,
-        assigned_to: user?.id || null,
-      }));
-      const { error } = await supabase.from("customers").insert(batch);
-      if (error) {
-        errors += batch.length;
-      } else {
-        imported += batch.length;
+      // Import in batches of 50
+      for (let i = 0; i < preview.data.length; i += 50) {
+        const batch = preview.data.slice(i, i + 50).map((row) => ({
+          ...row,
+          assigned_to: user?.id || null,
+        }));
+        const { error } = await supabase.from("customers").insert(batch);
+        if (error) {
+          errors += batch.length;
+        } else {
+          imported += batch.length;
+        }
       }
-    }
 
-    setResult({ imported, errors });
-    setState("done");
-    onSuccess();
+      setResult({ imported, errors });
+      setState("done");
+      onSuccess();
+    } catch (err) {
+      console.error("Import error:", err);
+      setResult({ imported, errors: errors + (preview.data.length - imported) });
+      setState("done");
+    }
   };
 
   const handleClose = () => {
-    setFile(null);
     setPreview(null);
     setResult(null);
     setState("idle");
@@ -124,20 +128,23 @@ export function ImportCustomersDialog({
 
         {state === "idle" && (
           <div className="space-y-4">
-            <div
-              className="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer hover:border-blue-600/50 transition-colors"
+            <button
+              type="button"
               onClick={() => fileRef.current?.click()}
+              className="w-full border-2 border-dashed rounded-lg p-8 text-center cursor-pointer hover:border-blue-600/50 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             >
               <Upload className="mx-auto h-10 w-10 text-slate-500 mb-3" />
               <p className="text-sm text-slate-500">
                 {t("common.clickToSelect")}
               </p>
               <p className="text-xs text-slate-500 mt-1">{t("common.formatXlsx")}</p>
-            </div>
+            </button>
             <input
               ref={fileRef}
+              id="import-customers-file"
               type="file"
               accept=".xlsx,.xls"
+              aria-label={t("common.clickToSelect")}
               className="hidden"
               onChange={handleFileChange}
             />

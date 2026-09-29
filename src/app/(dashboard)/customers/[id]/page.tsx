@@ -99,7 +99,10 @@ export default function CustomerDetailPage() {
   }, [id, supabase]);
 
   useEffect(() => {
-    fetchData();
+    const run = async () => {
+      await fetchData();
+    };
+    void run();
   }, [fetchData]);
 
   if (loading) {

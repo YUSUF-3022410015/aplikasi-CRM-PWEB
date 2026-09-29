@@ -3,8 +3,32 @@
 import { createClient } from "@/lib/supabase/server";
 import { sendQuotationEmail, sendFollowUpReminder } from "@/lib/email";
 
+// Manager bersifat read-only (PRD §3.3), jadi hanya admin/sales yang boleh
+// memicu aksi tulis-samping seperti kirim email penawaran. Server action bisa
+// dipanggil langsung, jadi cek otorisasi wajib di sini, bukan hanya di UI.
+async function requireWriteAccess(): Promise<{ userId: string } | { error: string }> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Unauthorized" };
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role, is_active")
+    .eq("id", user.id)
+    .single();
+
+  if (!profile || profile.is_active === false) return { error: "Unauthorized" };
+  if (profile.role !== "admin" && profile.role !== "sales") {
+    return { error: "Forbidden: aksi ini tidak diizinkan untuk role Anda" };
+  }
+  return { userId: user.id };
+}
+
 // Send quotation email
 export async function sendQuotationEmailAction(quotationId: string) {
+  const access = await requireWriteAccess();
+  if ("error" in access) return { success: false, error: access.error };
+
   const supabase = await createClient();
 
   // Get quotation with customer and items
@@ -47,15 +71,15 @@ export async function sendQuotationEmailAction(quotationId: string) {
     notes: quotation.notes || undefined,
   });
 
-  // Log activity if email sent successfully
+  // Hanya catat aktivitas bila email benar-benar terkirim
   if (result.success) {
-    const { data: { user } } = await supabase.auth.getUser();
-    await supabase.from("activities").insert({
+    const { error: activityError } = await supabase.from("activities").insert({
       customer_id: quotation.customer_id,
-      user_id: user?.id || "",
+      user_id: access.userId,
       type: "email",
       note: `Email penawaran ${quotation.quotation_number} dikirim ke ${customer.email}`,
     });
+    if (activityError) console.error("Gagal mencatat aktivitas email:", activityError.message);
   }
 
   return result;
@@ -63,6 +87,9 @@ export async function sendQuotationEmailAction(quotationId: string) {
 
 // Send follow-up reminder email
 export async function sendFollowUpReminderAction(followUpId: string) {
+  const access = await requireWriteAccess();
+  if ("error" in access) return { success: false, error: access.error };
+
   const supabase = await createClient();
 
   // Get follow-up with customer and assigned user

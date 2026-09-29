@@ -56,6 +56,10 @@ interface FollowUp {
   customer?: { name: string } | null;
 }
 
+interface FollowUpRow extends Omit<FollowUp, "customer"> {
+  customer?: { name: string; deleted_at?: string | null } | { name: string; deleted_at?: string | null }[] | null;
+}
+
 export default function FollowUpsPage() {
   const { t } = useLanguage();
   const [followups, setFollowups] = useState<FollowUp[]>([]);
@@ -83,12 +87,12 @@ export default function FollowUpsPage() {
         supabase.from("followups").select("*, customer:customers(name, deleted_at)").order("due_date", { ascending: true }),
         supabase.from("customers").select("id, name").is("deleted_at", null).order("name"),
       ]);
-      const filteredFollowups = (fRes.data || [])
-        .map((f: any) => ({
+      const filteredFollowups = ((fRes.data || []) as unknown as FollowUpRow[])
+        .map((f) => ({
           ...f,
           customer: Array.isArray(f.customer) ? f.customer[0] ?? null : f.customer ?? null,
         }))
-        .filter((f: any) => f.customer && !f.customer.deleted_at);
+        .filter((f) => f.customer && !f.customer.deleted_at);
 
       setFollowups(filteredFollowups);
       setCustomers(cRes.data || []);
@@ -99,7 +103,12 @@ export default function FollowUpsPage() {
     }
   }, [supabase]);
 
-  useEffect(() => { fetchData(); }, [fetchData]);
+  useEffect(() => {
+    const run = async () => {
+      await fetchData();
+    };
+    void run();
+  }, [fetchData]);
 
   const openCreate = () => {
   setEditItem(null);
@@ -149,13 +158,14 @@ export default function FollowUpsPage() {
           return;
         }
         if (user) {
-          Promise.resolve(supabase.from("notifications").insert({
+          const { error: notifError } = await supabase.from("notifications").insert({
             user_id: user.id,
             title: "Follow-up Diubah",
             message: `Follow-up untuk ${custName} telah diperbarui`,
             type: "activity_added",
             link: "/followups",
-          })).catch(() => {});
+          });
+          if (notifError) console.error("Gagal membuat notifikasi ubah follow-up:", notifError.message);
         }
       } else {
         const { error } = await supabase.from("followups").insert({
@@ -171,19 +181,20 @@ export default function FollowUpsPage() {
           return;
         }
         if (user) {
-          Promise.resolve(supabase.from("notifications").insert({
+          const { error: notifError } = await supabase.from("notifications").insert({
             user_id: user.id,
             title: "Follow-up Baru",
             message: `Follow-up untuk ${custName} dijadwalkan pada ${form.due_date}`,
             type: "followup_reminder",
             link: "/followups",
-          })).catch(() => {});
+          });
+          if (notifError) console.error("Gagal membuat notifikasi follow-up baru:", notifError.message);
         }
       }
 
       setDialogOpen(false);
-      fetchData();
-    } catch (err) {
+      await fetchData();
+    } catch {
       setFormError("Terjadi kesalahan saat menyimpan data");
     } finally {
       setSaving(false);
@@ -194,16 +205,21 @@ export default function FollowUpsPage() {
     if (!deleteId) return;
     const { data: { user } } = await supabase.auth.getUser();
     const deleted = followups.find((f) => f.id === deleteId);
-    await supabase.from("followups").delete().eq("id", deleteId);
+    const { error } = await supabase.from("followups").delete().eq("id", deleteId);
+    if (error) {
+      alert(error.message);
+      return;
+    }
     if (user && deleted) {
       const custName = customers.find((c) => c.id === deleted.customer_id)?.name || "";
-      Promise.resolve(supabase.from("notifications").insert({
+      const { error: notifError } = await supabase.from("notifications").insert({
         user_id: user.id,
         title: "Follow-up Dihapus",
         message: `Follow-up untuk ${custName} telah dihapus`,
         type: "activity_added",
         link: "/followups",
-      })).catch(() => {});
+      });
+      if (notifError) console.error("Gagal membuat notifikasi hapus follow-up:", notifError.message);
     }
     setDeleteId(null);
     fetchData();
@@ -212,17 +228,22 @@ export default function FollowUpsPage() {
   const handleStatusChange = async (id: string, status: string) => {
     const { data: { user } } = await supabase.auth.getUser();
     const fu = followups.find((f) => f.id === id);
-    await supabase.from("followups").update({ status }).eq("id", id);
+    const { error } = await supabase.from("followups").update({ status }).eq("id", id);
+    if (error) {
+      alert(error.message);
+      return;
+    }
     if (user && fu) {
       const custName = customers.find((c) => c.id === fu.customer_id)?.name || "";
       const statusLabel = status === "done" ? "Selesai" : status === "cancelled" ? "Dibatalkan" : "Ditunda";
-      Promise.resolve(supabase.from("notifications").insert({
+      const { error: notifError } = await supabase.from("notifications").insert({
         user_id: user.id,
         title: "Status Follow-up Diubah",
         message: `Follow-up untuk ${custName} diubah ke "${statusLabel}"`,
         type: "activity_added",
         link: "/followups",
-      })).catch(() => {});
+      });
+      if (notifError) console.error("Gagal membuat notifikasi status follow-up:", notifError.message);
     }
     fetchData();
   };

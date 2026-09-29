@@ -55,6 +55,8 @@ export const translations = {
     dealsWon: { id: "Pelanggan Setuju", en: "Deals Won" },
     changePassword: { id: "Ganti Password", en: "Change Password" },
     viewAll: { id: "Lihat Semua", en: "View All" },
+    deleteConfirm: { id: "Hapus Data?", en: "Delete Data?" },
+    deleteDescription: { id: "Tindakan ini tidak dapat dibatalkan. Data akan dihapus secara permanen.", en: "This action cannot be undone. The data will be permanently deleted." },
     dayNames: {
       id: ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"],
       en: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
@@ -116,6 +118,7 @@ export const translations = {
     monthlyDeals: { id: "Deal Bulanan", en: "Monthly Deals" },
     activitiesByType: { id: "Aktivitas per Tipe", en: "Activities by Type" },
     customersByStatus: { id: "Pelanggan per Status", en: "Customers by Status" },
+    loadError: { id: "Gagal memuat data dashboard. Silakan muat ulang halaman.", en: "Failed to load dashboard data. Please reload the page." },
   },
   // Customers
   customers: {
@@ -198,6 +201,7 @@ export const translations = {
     notePlaceholder: { id: "Catatan aktivitas...", en: "Activity note..." },
     history: { id: "Riwayat semua aktivitas komunikasi", en: "History of all communications" },
     byUser: { id: "oleh", en: "by" },
+    customer: { id: "Pelanggan", en: "Customer" },
   },
   // Follow-ups
   followups: {
@@ -246,6 +250,8 @@ export const translations = {
     newQuotationNotif: { id: "Penawaran Baru", en: "New Quotation" },
     emailSent: { id: "Email berhasil dikirim!", en: "Email sent successfully!" },
     emailFailed: { id: "Gagal mengirim email", en: "Failed to send email" },
+    approved: { id: "Disetujui", en: "Approved" },
+    rejected: { id: "Ditolak", en: "Rejected" },
   },
   // Settings
   settings: {
@@ -264,6 +270,7 @@ export const translations = {
     currency: { id: "Mata Uang", en: "Currency" },
     timezone: { id: "Zona Waktu", en: "Timezone" },
     logo: { id: "Logo Perusahaan", en: "Company Logo" },
+    saveSuccess: { id: "Pengaturan berhasil disimpan!", en: "Settings saved successfully!" },
   },
   // Auth
   auth: {
@@ -284,6 +291,7 @@ export const translations = {
     hasAccount: { id: "Sudah punya akun?", en: "Already have an account?" },
     passwordMismatch: { id: "Kata sandi tidak cocok", en: "Passwords do not match" },
     passwordMinLength: { id: "Kata sandi minimal 6 karakter", en: "Password must be at least 6 characters" },
+    sessionExpired: { id: "Sesi Anda berakhir. Silakan masuk kembali.", en: "Your session has expired. Please sign in again." },
     invalidLink: { id: "Tautan Tidak Valid", en: "Invalid Link" },
     forgotPasswordDesc: { id: "Masukkan email Anda untuk menerima tautan atur ulang kata sandi", en: "Enter your email to receive a reset password link" },
     resetLinkSent: { id: "Tautan atur ulang kata sandi telah dikirim ke", en: "Reset password link has been sent to" },
@@ -432,14 +440,14 @@ export const translations = {
 // Helper function to get translation
 export function t(key: string, locale: Locale = "id"): string {
   const keys = key.split(".");
-  let value: any = translations;
+  let value: unknown = translations;
 
   for (const k of keys) {
-    value = value?.[k];
+    value = (value as Record<string, unknown> | undefined)?.[k];
   }
 
   if (value && typeof value === "object" && locale in value) {
-    return value[locale];
+    return (value as Record<string, string>)[locale];
   }
 
   return key;
@@ -448,15 +456,15 @@ export function t(key: string, locale: Locale = "id"): string {
 // Helper to get array translations (months, days, etc.)
 export function tArray(key: string, locale: Locale = "id"): string[] {
   const keys = key.split(".");
-  let value: any = translations;
+  let value: unknown = translations;
 
   for (const k of keys) {
-    value = value?.[k];
+    value = (value as Record<string, unknown> | undefined)?.[k];
   }
 
   if (value && typeof value === "object" && locale in value) {
-    const result = value[locale];
-    if (Array.isArray(result)) return result;
+    const result = (value as Record<string, unknown>)[locale];
+    if (Array.isArray(result)) return result as string[];
   }
 
   return [];

@@ -1,22 +1,5 @@
 import * as XLSX from "xlsx";
 import type { Customer, CustomerStatus, PipelineStage } from "@/types/database";
-
-// Kolom Excel -> Database
-const COLUMN_MAP: Record<string, keyof Customer> = {
-  "Nama": "name",
-  "Perusahaan": "company",
-  "Email": "email",
-  "Telepon": "phone",
-  "WhatsApp": "whatsapp",
-  "Industri": "industry",
-  "Kota": "city",
-  "Alamat": "address",
-  "Website": "website",
-  "Sumber Lead": "source",
-  "Status": "status",
-  "Pipeline Stage": "pipeline_stage",
-};
-
 const VALID_STATUSES: CustomerStatus[] = ["lead", "prospect", "active", "inactive", "archived"];
 const VALID_PIPELINES: PipelineStage[] = ["lead", "qualified", "contacted", "meeting", "proposal", "negotiation", "won", "lost"];
 

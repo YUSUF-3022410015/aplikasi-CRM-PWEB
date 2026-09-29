@@ -74,7 +74,7 @@ export interface Activity {
   user_id: string;
   type: ActivityType;
   note: string;
-  attachment_url?: string;
+  attachment?: string;
   created_at: string;
   user?: User;
   customer?: Customer;

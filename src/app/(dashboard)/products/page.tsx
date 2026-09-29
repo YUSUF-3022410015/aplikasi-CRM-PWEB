@@ -56,6 +56,8 @@ export default function ProductsPage() {
   const [form, setForm] = useState({ sku: "", name: "", category: "", price: 0, description: "", status: "active" as "active" | "inactive" });
   const [supabase] = useState(() => createClient());
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -73,7 +75,10 @@ export default function ProductsPage() {
   }, [supabase]);
 
   useEffect(() => {
-    fetchData();
+    const run = async () => {
+      await fetchData();
+    };
+    void run();
   }, [fetchData]);
 
   const openCreate = () => {
@@ -89,30 +94,41 @@ export default function ProductsPage() {
   };
 
   const handleSave = async () => {
+    setFormError(null);
     const { data: { user } } = await supabase.auth.getUser();
-    if (editProduct) {
-      await supabase.from("products").update(form).eq("id", editProduct.id);
-      if (user) {
-        await supabase.from("notifications").insert({
-          user_id: user.id,
-          title: "Produk Diperbarui",
-          message: `Produk ${form.name} telah diperbarui`,
-          type: "activity_added",
-          link: "/products",
-        });
-      }
-    } else {
-      await supabase.from("products").insert(form);
-      if (user) {
-        await supabase.from("notifications").insert({
-          user_id: user.id,
-          title: "Produk Baru",
-          message: `Produk ${form.name} berhasil ditambahkan`,
-          type: "activity_added",
-          link: "/products",
-        });
-      }
+
+    if (!form.name.trim()) {
+      setFormError("Nama produk wajib diisi.");
+      return;
     }
+
+    setSaving(true);
+
+    const { error } = editProduct
+      ? await supabase.from("products").update(form).eq("id", editProduct.id)
+      : await supabase.from("products").insert(form);
+
+    if (error) {
+      console.error("Gagal menyimpan produk:", error.message);
+      setFormError(error.message);
+      setSaving(false);
+      return;
+    }
+
+    if (user) {
+      const { error: notifError } = await supabase.from("notifications").insert({
+        user_id: user.id,
+        title: editProduct ? "Produk Diperbarui" : "Produk Baru",
+        message: editProduct
+          ? `Produk ${form.name} telah diperbarui`
+          : `Produk ${form.name} berhasil ditambahkan`,
+        type: "activity_added",
+        link: "/products",
+      });
+      if (notifError) console.error("Gagal membuat notifikasi produk:", notifError.message);
+    }
+
+    setSaving(false);
     setDialogOpen(false);
     fetchData();
   };
@@ -120,15 +136,21 @@ export default function ProductsPage() {
   const handleDelete = async (id: string) => {
     const { data: { user } } = await supabase.auth.getUser();
     const product = products.find((p) => p.id === id);
-    await supabase.from("products").delete().eq("id", id);
+    const { error } = await supabase.from("products").delete().eq("id", id);
+    if (error) {
+      console.error("Gagal menghapus produk:", error.message);
+      alert(error.message);
+      return;
+    }
     if (user && product) {
-      await supabase.from("notifications").insert({
+      const { error: notifError } = await supabase.from("notifications").insert({
         user_id: user.id,
         title: "Produk Dihapus",
         message: `Produk ${product.name} telah dihapus`,
         type: "activity_added",
         link: "/products",
       });
+      if (notifError) console.error("Gagal membuat notifikasi hapus produk:", notifError.message);
     }
     fetchData();
   };
@@ -214,6 +236,11 @@ export default function ProductsPage() {
             <DialogTitle className="text-lg">{editProduct ? t("products.editProduct") : t("products.addProduct")}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
+            {formError && (
+              <div role="alert" className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+                {formError}
+              </div>
+            )}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label className="text-sm font-semibold">SKU</Label>
@@ -248,8 +275,8 @@ export default function ProductsPage() {
             </div>
           </div>
           <DialogFooter className="gap-2">
-            <Button variant="outline" onClick={() => setDialogOpen(false)} className="border-blue-200 text-blue-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800">{t("common.cancel")}</Button>
-            <Button variant="action" onClick={handleSave} disabled={!form.name}>{t("common.save")}</Button>
+            <Button variant="outline" onClick={() => { setDialogOpen(false); setFormError(null); }} className="border-blue-200 text-blue-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800">{t("common.cancel")}</Button>
+            <Button variant="action" onClick={handleSave} disabled={!form.name || saving}>{saving ? t("common.loading") : t("common.save")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Settings, Save, Loader2, Building, Globe, Mail, Image, ShieldAlert, Check } from "lucide-react";
+import { Save, Loader2, Building, Globe, Mail, ImageIcon, ShieldAlert, Check } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -53,6 +53,7 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const [supabase] = useState(() => createClient());
   const { t } = useLanguage();
   const { isAdmin, loading: permLoading } = usePermissions();
@@ -73,39 +74,33 @@ export default function SettingsPage() {
     }
   }, [supabase]);
 
-  useEffect(() => { fetchSettings(); }, [fetchSettings]);
+  useEffect(() => {
+    const run = async () => {
+      await fetchSettings();
+    };
+    void run();
+  }, [fetchSettings]);
 
   const handleSave = async () => {
     setSaving(true);
-    const { data: existing } = await supabase.from("settings").select("key");
-    const existingKeys = new Set((existing || []).map((s) => s.key));
+    setSaveError(null);
 
-    // Save company + general settings
-    for (const s of settingKeys) {
-      const val = values[s.key] || "";
-      if (existingKeys.has(s.key)) {
-        await supabase.from("settings").update({ value: val }).eq("key", s.key);
-      }
-    }
-
-    // Save email template settings
-    for (const s of emailTemplateKeys) {
-      const val = values[s.key] || "";
-      if (existingKeys.has(s.key)) {
-        await supabase.from("settings").update({ value: val }).eq("key", s.key);
-      }
-    }
-
-    // Insert new keys (company + email templates)
+    // Upsert sekali jalan (key unik) agar tidak ada penyimpanan parsial
     const allKeys = [...settingKeys, ...emailTemplateKeys];
-    const toInsert = allKeys
-      .filter((s) => !existingKeys.has(s.key))
-      .map((s) => ({ key: s.key, value: values[s.key] || "" }));
+    const payload = allKeys.map((s) => ({ key: s.key, value: values[s.key] || "" }));
 
-    if (toInsert.length > 0) {
-      await supabase.from("settings").insert(toInsert);
-    }
+    const { error } = await supabase
+      .from("settings")
+      .upsert(payload, { onConflict: "key" });
+
     setSaving(false);
+
+    if (error) {
+      console.error("Gagal menyimpan pengaturan:", error.message);
+      setSaveError(`Gagal menyimpan pengaturan: ${error.message}`);
+      return;
+    }
+
     setSavedSuccess(true);
     setTimeout(() => setSavedSuccess(false), 3000);
   };
@@ -152,9 +147,16 @@ export default function SettingsPage() {
       </div>
 
       {savedSuccess && (
-        <div className="rounded-xl bg-emerald-50 border border-emerald-200 px-4 py-3 text-sm text-emerald-700 flex items-center gap-2 animate-scale-in">
+        <div role="status" className="rounded-xl bg-emerald-50 border border-emerald-200 px-4 py-3 text-sm text-emerald-700 flex items-center gap-2 animate-scale-in">
           <Check className="h-4 w-4 text-emerald-600" />
-          <span>Pengaturan berhasil disimpan!</span>
+          <span>{t("settings.saveSuccess")}</span>
+        </div>
+      )}
+
+      {saveError && (
+        <div role="alert" className="rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700 flex items-center gap-2 animate-scale-in">
+          <ShieldAlert className="h-4 w-4 text-red-600" />
+          <span>{saveError}</span>
         </div>
       )}
 
@@ -190,11 +192,12 @@ export default function SettingsPage() {
               {/* Logo */}
               <div className="space-y-2 animate-slide-up" style={{ animationDelay: "0.05s" }}>
                 <Label className="text-sm font-medium flex items-center gap-2">
-                  <Image className="h-4 w-4" />
+                  <ImageIcon className="h-4 w-4" />
                   {t("settings.logo")}
                 </Label>
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                   {values.logo_url && (
+                    // eslint-disable-next-line @next/next/no-img-element -- URL logo eksternal dari pengaturan, tidak melalui optimizer Next
                     <img
                       src={values.logo_url}
                       alt="Logo"

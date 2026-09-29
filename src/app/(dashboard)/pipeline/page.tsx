@@ -87,10 +87,14 @@ export default function PipelinePage() {
   }, [supabase]);
 
   useEffect(() => {
-    fetchData();
+    const run = async () => {
+      await fetchData();
+    };
+    void run();
   }, [fetchData]);
 
   const [userId, setUserId] = useState<string | null>(null);
+  const [formError, setFormError] = useState("");
 
   useEffect(() => {
     const getUserId = async () => {
@@ -121,10 +125,11 @@ export default function PipelinePage() {
       // Moving back from won/lost to active stage
       updateData.status = "active";
     }
-    await supabase
+    const { error: dropError } = await supabase
       .from("deals")
       .update(updateData)
       .eq("id", dealId);
+    if (dropError) console.error("Gagal memperbarui tahap deal:", dropError.message);
     logAudit("update", "deals", dealId, { pipeline_stage: deal.pipeline_stage, status: deal.status }, { pipeline_stage: newStage, status: updateData.status || deal.status });
     fetchData();
   };
@@ -132,9 +137,10 @@ export default function PipelinePage() {
   const handleCreate = async () => {
     if (!form.customer_id || !form.name || form.value <= 0) return;
     if (profile?.role === "manager") return;
+    setFormError("");
     setSaving(true);
     const { data: { user } } = await supabase.auth.getUser();
-    const { data: newDeal } = await supabase
+    const { data: newDeal, error } = await supabase
       .from("deals")
       .insert({
         customer_id: form.customer_id,
@@ -145,19 +151,26 @@ export default function PipelinePage() {
       })
       .select()
       .single();
-    if (newDeal) {
-      logAudit("create", "deals", newDeal.id, null, newDeal as unknown as Record<string, unknown>);
-      // Fire-and-forget notification untuk deal baru
-      if (user) {
-        const custName = customers.find((c) => c.id === form.customer_id)?.name || "";
-        Promise.resolve(supabase.from("notifications").insert({
-          user_id: user.id,
-          title: "Deal Baru",
-          message: `Deal "${form.name}" untuk ${custName} berhasil dibuat`,
-          type: "activity_added",
-          link: "/pipeline",
-        })).catch(() => {});
-      }
+
+    if (error || !newDeal) {
+      console.error("Gagal membuat deal:", error?.message);
+      setFormError(error?.message || "Gagal membuat deal. Silakan coba lagi.");
+      setSaving(false);
+      return;
+    }
+
+    logAudit("create", "deals", newDeal.id, null, newDeal as unknown as Record<string, unknown>);
+    // Notifikasi ke diri sendiri (policy RLS notifications: user_id = auth.uid())
+    if (user) {
+      const custName = customers.find((c) => c.id === form.customer_id)?.name || "";
+      const { error: notifError } = await supabase.from("notifications").insert({
+        user_id: user.id,
+        title: "Deal Baru",
+        message: `Deal "${form.name}" untuk ${custName} berhasil dibuat`,
+        type: "activity_added",
+        link: "/pipeline",
+      });
+      if (notifError) console.error("Gagal membuat notifikasi deal baru:", notifError.message);
     }
     setDialogOpen(false);
     setForm({ customer_id: "", name: "", value: 0 });
@@ -179,11 +192,13 @@ export default function PipelinePage() {
   const handleUpdateDeal = async () => {
     if (!selectedDeal || !editForm.name || !editForm.customer_id || editForm.value <= 0) return;
     if (profile?.role === "manager") return;
+    // Sales hanya boleh mengedit deal miliknya sendiri (konsisten dengan handleDrop)
+    if (profile?.role === "sales" && selectedDeal.assigned_to !== userId) return;
     setUpdating(true);
     const oldData = { ...selectedDeal };
     const status = editForm.pipeline_stage === "won" ? "won" : editForm.pipeline_stage === "lost" ? "lost" : "active";
 
-    await supabase
+    const { error } = await supabase
       .from("deals")
       .update({
         name: editForm.name,
@@ -194,6 +209,13 @@ export default function PipelinePage() {
         updated_at: new Date().toISOString(),
       })
       .eq("id", selectedDeal.id);
+
+    if (error) {
+      console.error("Gagal memperbarui deal:", error.message);
+      alert(error.message);
+      setUpdating(false);
+      return;
+    }
 
     logAudit("update", "deals", selectedDeal.id, oldData as unknown as Record<string, unknown>, { ...editForm, status });
     setEditDialogOpen(false);
@@ -208,7 +230,13 @@ export default function PipelinePage() {
     setDeleting(true);
     const deal = deals.find((d) => d.id === deleteDealId);
     const now = new Date().toISOString();
-    await supabase.from("deals").update({ deleted_at: now }).eq("id", deleteDealId);
+    const { error } = await supabase.from("deals").update({ deleted_at: now }).eq("id", deleteDealId);
+    if (error) {
+      console.error("Gagal menghapus deal:", error.message);
+      alert(error.message);
+      setDeleting(false);
+      return;
+    }
     if (deal) {
       logAudit("delete", "deals", deleteDealId, deal as unknown as Record<string, unknown>, null);
     }
@@ -331,6 +359,11 @@ export default function PipelinePage() {
             <DialogTitle className="text-lg">{t("pipeline.addDeal")}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
+            {formError && (
+              <div role="alert" className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+                {formError}
+              </div>
+            )}
             <div className="space-y-2">
               <Label className="text-sm font-semibold">{t("pipeline.customer")} *</Label>
               <Select value={form.customer_id} onValueChange={(v) => setForm({ ...form, customer_id: v })}>
@@ -365,7 +398,7 @@ export default function PipelinePage() {
             </div>
           </div>
           <DialogFooter className="gap-2">
-            <Button variant="outline" onClick={() => setDialogOpen(false)} className="border-blue-200 text-blue-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800">{t("common.cancel")}</Button>
+            <Button variant="outline" onClick={() => { setDialogOpen(false); setFormError(""); }} className="border-blue-200 text-blue-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800">{t("common.cancel")}</Button>
             <Button variant="action" onClick={handleCreate} disabled={saving || !form.customer_id || !form.name || form.value <= 0}>
               {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {t("common.save")}

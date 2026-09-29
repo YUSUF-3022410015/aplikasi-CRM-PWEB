@@ -53,11 +53,15 @@ export function ToastProvider({ children }: { children: ReactNode }) {
           return (
             <div
               key={t.id}
+              role={t.type === "error" ? "alert" : "status"}
+              aria-live={t.type === "error" ? "assertive" : "polite"}
               className={`pointer-events-auto flex items-center gap-3 rounded-lg px-4 py-3 shadow-lg ${config.bg} ${config.text} animate-slide-up`}
             >
               <Icon className="h-5 w-5 shrink-0" />
               <span className="text-sm font-medium">{t.message}</span>
               <button
+                type="button"
+                aria-label="Close notification"
                 onClick={() => removeToast(t.id)}
                 className="ml-2 shrink-0 opacity-70 hover:opacity-100 transition-opacity"
               >

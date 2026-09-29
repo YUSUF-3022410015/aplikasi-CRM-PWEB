@@ -62,16 +62,17 @@ export async function deactivateUser(userId: string) {
 
     // Notifikasi ke semua user aktif
     const { data: users } = await supabaseAdmin.from("profiles").select("id").eq("is_active", true);
-    if (users && targetUser) {
-      for (const u of users) {
-        Promise.resolve(supabaseAdmin.from("notifications").insert({
+    if (users?.length && targetUser) {
+      const { error: notifError } = await supabaseAdmin.from("notifications").insert(
+        users.map((u) => ({
           user_id: u.id,
           title: "User Dinonaktifkan",
           message: `${targetUser.fullname} telah dinonaktifkan oleh administrator`,
           type: "activity_added",
           link: "/users",
-        })).catch(() => {});
-      }
+        }))
+      );
+      if (notifError) console.error("Gagal membuat notifikasi deaktivasi:", notifError.message);
     }
 
     return { success: true };

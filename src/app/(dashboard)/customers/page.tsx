@@ -32,7 +32,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Plus, Search, Edit, Trash2, Eye, Download, Upload } from "lucide-react";
+import { Plus, Search, Edit, Trash2, Download, Upload } from "lucide-react";
 import { exportCustomersToExcel } from "@/lib/excel";
 import { ImportCustomersDialog } from "@/components/import-customers-dialog";
 import { useLanguage } from "@/components/language-provider";
@@ -100,7 +100,10 @@ export default function CustomersPage() {
   }, [search, statusFilter, page, supabase]);
 
   useEffect(() => {
-    fetchCustomers();
+    const run = async () => {
+      await fetchCustomers();
+    };
+    void run();
   }, [fetchCustomers]);
 
   const handleDelete = async () => {
@@ -109,22 +112,41 @@ export default function CustomersPage() {
     const customer = customers.find(c => c.id === deleteId);
     const now = new Date().toISOString();
     // PRD §3.4: cascade soft delete — hide associated deals; hard delete activities & follow-ups
-    await supabase.from("deals").update({ deleted_at: now }).eq("customer_id", deleteId).is("deleted_at", null);
-    await supabase.from("activities").delete().eq("customer_id", deleteId);
-    await supabase.from("followups").delete().eq("customer_id", deleteId);
-    await supabase.from("customers").update({ deleted_at: now }).eq("id", deleteId);
+    // Urutan penting: tandai customer terakhir agar jika ada kegagalan di tengah,
+    // customer tidak menghilang sementara dependensinya masih ada.
+    const steps: { label: string; run: () => PromiseLike<{ error: { message?: string } | null }> }[] = [
+      { label: "deal", run: () => supabase.from("deals").update({ deleted_at: now }).eq("customer_id", deleteId).is("deleted_at", null) },
+      { label: "aktivitas", run: () => supabase.from("activities").delete().eq("customer_id", deleteId) },
+      { label: "follow-up", run: () => supabase.from("followups").delete().eq("customer_id", deleteId) },
+      { label: "customer", run: () => supabase.from("customers").update({ deleted_at: now }).eq("id", deleteId) },
+    ];
+
+    for (const step of steps) {
+      const { error } = await step.run();
+      if (error) {
+        const message = (error as { message?: string }).message || "kesalahan tidak diketahui";
+        console.error(`Gagal menghapus ${step.label}:`, message);
+        alert(`Gagal menghapus data (${step.label}): ${message}`);
+        setDeleting(false);
+        setDeleteId(null);
+        fetchCustomers();
+        return;
+      }
+    }
+
     if (customer) {
       logAudit("delete", "customers", deleteId, customer as unknown as Record<string, unknown>, null);
-      // Notifikasi hapus pelanggan
+      // Notifikasi hapus pelanggan (user_id = diri sendiri, sesuai policy RLS)
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        Promise.resolve(supabase.from("notifications").insert({
+        const { error: notifError } = await supabase.from("notifications").insert({
           user_id: user.id,
           title: "Pelanggan Dihapus",
           message: `Pelanggan ${customer.name} telah dihapus`,
           type: "activity_added",
           link: "/customers",
-        })).catch(() => {});
+        });
+        if (notifError) console.error("Gagal membuat notifikasi hapus pelanggan:", notifError.message);
       }
     }
     setDeleting(false);

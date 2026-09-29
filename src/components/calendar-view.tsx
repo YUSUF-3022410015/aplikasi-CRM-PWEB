@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { ChevronLeft, ChevronRight, CalendarCheck, Clock, AlertTriangle } from "lucide-react";
+import { ChevronLeft, ChevronRight, CalendarCheck, Clock } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { useLanguage } from "@/components/language-provider";
 
@@ -160,10 +160,19 @@ export function CalendarView({ followUps, onDateClick, onFollowUpClick }: Calend
             return (
               <div
                 key={day}
-                className={`border-b border-r min-h-[100px] p-1 cursor-pointer hover:bg-slate-100/50 transition-colors ${
+                role="button"
+                tabIndex={0}
+                aria-label={formatDate(dateKey)}
+                className={`border-b border-r min-h-[100px] p-1 cursor-pointer hover:bg-slate-100/50 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
                   isToday(day) ? "bg-blue-50" : ""
                 }`}
                 onClick={() => handleDateClick(day)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    handleDateClick(day);
+                  }
+                }}
               >
                 <div className="flex items-center justify-between mb-1">
                   <span
@@ -185,10 +194,20 @@ export function CalendarView({ followUps, onDateClick, onFollowUpClick }: Calend
                     return (
                       <div
                         key={fu.id}
-                        className={`text-[10px] px-1 py-0.5 rounded border truncate ${config.color}`}
+                        role="button"
+                        tabIndex={0}
+                        aria-label={`${fu.customer?.name || t("common.followUp")} - ${config.label}`}
+                        className={`text-[10px] px-1 py-0.5 rounded border truncate cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${config.color}`}
                         onClick={(e) => {
                           e.stopPropagation();
                           handleFollowUpClick(fu);
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleFollowUpClick(fu);
+                          }
                         }}
                       >
                         {fu.customer?.name || t("common.followUp")}
@@ -238,9 +257,10 @@ export function CalendarView({ followUps, onDateClick, onFollowUpClick }: Calend
               {selectedDateFollowUps.map((fu) => {
                 const config = statusConfig[fu.status] || statusConfig.pending;
                 return (
-                  <div
+                  <button
                     key={fu.id}
-                    className="p-3 border rounded-lg cursor-pointer hover:bg-slate-100/50"
+                    type="button"
+                    className="w-full text-left p-3 border rounded-lg cursor-pointer hover:bg-slate-100/50"
                     onClick={() => handleFollowUpClick(fu)}
                   >
                     <div className="flex items-center justify-between">
@@ -252,7 +272,7 @@ export function CalendarView({ followUps, onDateClick, onFollowUpClick }: Calend
                         {config.label}
                       </Badge>
                     </div>
-                  </div>
+                  </button>
                 );
               })}
             </div>

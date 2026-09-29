@@ -149,13 +149,22 @@ CREATE TABLE IF NOT EXISTS audit_logs (
 -- ============================================
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
+DECLARE
+  requested_role TEXT;
 BEGIN
+  -- Jangan percaya role dari metadata klien (bisa dipalsukan saat signup).
+  -- Hanya role yang dikenal yang diterima; selain itu jatuh ke 'sales'.
+  requested_role := NEW.raw_user_meta_data ->> 'role';
+  IF requested_role NOT IN ('admin', 'manager', 'sales') THEN
+    requested_role := 'sales';
+  END IF;
+
   INSERT INTO public.profiles (id, fullname, email, role)
   VALUES (
     NEW.id,
     COALESCE(NEW.raw_user_meta_data ->> 'fullname', ''),
     COALESCE(NEW.email, ''),
-    COALESCE(NEW.raw_user_meta_data ->> 'role', 'sales')
+    requested_role
   );
   RETURN NEW;
 END;
@@ -279,11 +288,30 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER STABLE;
 
--- Profiles: user bisa baca semua
+-- Profiles: hanya user yang sudah login yang bisa membaca profil
 DROP POLICY IF EXISTS "Profiles: read all" ON profiles;
-CREATE POLICY "Profiles: read all" ON profiles FOR SELECT USING (true);
+CREATE POLICY "Profiles: read all" ON profiles FOR SELECT USING (auth.uid() IS NOT NULL);
 DROP POLICY IF EXISTS "Profiles: update own" ON profiles;
 CREATE POLICY "Profiles: update own" ON profiles FOR UPDATE USING (auth.uid() = id);
+
+-- Cegah self-escalation: user biasa tidak boleh mengubah role/is_active/email
+-- lewat policy "update own". Service role (auth.uid() IS NULL) tidak dibatasi.
+CREATE OR REPLACE FUNCTION public.protect_profile_privileged_fields()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF auth.uid() IS NOT NULL AND public.get_user_role() <> 'admin' THEN
+    NEW.role := OLD.role;
+    NEW.is_active := OLD.is_active;
+    NEW.email := OLD.email;
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+DROP TRIGGER IF EXISTS protect_profile_privileged_fields ON profiles;
+CREATE TRIGGER protect_profile_privileged_fields
+  BEFORE UPDATE ON profiles
+  FOR EACH ROW EXECUTE FUNCTION public.protect_profile_privileged_fields();
 
 -- Customers: soft delete, role-based access
 DROP POLICY IF EXISTS "Customers: read" ON customers;
@@ -480,7 +508,12 @@ CREATE POLICY "Settings: update" ON settings FOR UPDATE USING (
 DROP POLICY IF EXISTS "Notifications: read own" ON notifications;
 CREATE POLICY "Notifications: read own" ON notifications FOR SELECT USING (auth.uid() = user_id);
 DROP POLICY IF EXISTS "Notifications: insert" ON notifications;
-CREATE POLICY "Notifications: insert" ON notifications FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
+CREATE POLICY "Notifications: insert" ON notifications FOR INSERT WITH CHECK (
+  auth.uid() IS NOT NULL AND (
+    auth.uid() = user_id
+    OR public.get_user_role() IN ('admin', 'manager')
+  )
+);
 DROP POLICY IF EXISTS "Notifications: update own" ON notifications;
 CREATE POLICY "Notifications: update own" ON notifications FOR UPDATE USING (auth.uid() = user_id);
 DROP POLICY IF EXISTS "Notifications: delete own" ON notifications;
@@ -492,8 +525,48 @@ CREATE POLICY "Audit Logs: admin read" ON audit_logs FOR SELECT USING (
   EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
 );
 DROP POLICY IF EXISTS "Audit Logs: insert" ON audit_logs;
-CREATE POLICY "Audit Logs: insert" ON audit_logs FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
+CREATE POLICY "Audit Logs: insert" ON audit_logs FOR INSERT WITH CHECK (
+  auth.uid() IS NOT NULL AND auth.uid() = user_id
+);
 -- TIDAK ADA policy delete atau update!
+
+-- ============================================
+-- Create quotation + items secara atomik
+-- Dipakai client agar tidak ada quotation yatim saat insert item gagal.
+-- SECURITY INVOKER: RLS tetap berlaku untuk user yang memanggil, jadi
+-- otorisasi (sales hanya customer sendiri, manager read-only) tetap utuh.
+-- ============================================
+CREATE OR REPLACE FUNCTION public.create_quotation_with_items(
+  p_customer_id UUID,
+  p_quotation_number TEXT,
+  p_subtotal NUMERIC,
+  p_tax NUMERIC,
+  p_discount NUMERIC,
+  p_total NUMERIC,
+  p_items JSONB
+) RETURNS UUID AS $$
+DECLARE
+  v_quotation_id UUID;
+  v_item JSONB;
+BEGIN
+  INSERT INTO public.quotations (customer_id, quotation_number, subtotal, tax, discount, total, status)
+  VALUES (p_customer_id, p_quotation_number, p_subtotal, p_tax, p_discount, p_total, 'draft')
+  RETURNING id INTO v_quotation_id;
+
+  FOR v_item IN SELECT * FROM jsonb_array_elements(p_items)
+  LOOP
+    INSERT INTO public.quotation_items (quotation_id, product_id, qty, price)
+    VALUES (
+      v_quotation_id,
+      (v_item ->> 'product_id')::UUID,
+      (v_item ->> 'qty')::NUMERIC,
+      (v_item ->> 'price')::NUMERIC
+    );
+  END LOOP;
+
+  RETURN v_quotation_id;
+END;
+$$ LANGUAGE plpgsql SECURITY INVOKER;
 
 -- ============================================
 -- Enable Realtime untuk tabel notifications

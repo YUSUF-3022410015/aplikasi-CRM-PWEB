@@ -46,32 +46,52 @@ export async function updateSession(request: NextRequest) {
 
   // For authenticated users on protected routes, check is_active and role
   if (user && !isPublicPath) {
-    const { data: profile } = await supabase
+    const { data: profile, error: profileError } = await supabase
       .from("profiles")
       .select("role, is_active")
       .eq("id", user.id)
       .single();
 
-    // Deactivated users get logged out
-    if (profile && profile.is_active === false) {
+    // Fail-closed: user tanpa profil yang valid tidak boleh lewat.
+    // Tanpa baris profil, pemeriksaan is_active/role tidak bisa dipercaya.
+    if (profileError || !profile) {
       await supabase.auth.signOut();
       const url = request.nextUrl.clone();
       url.pathname = "/login";
       return NextResponse.redirect(url);
     }
 
-    // Role-based route protection
-    if (profile?.role) {
-      const accessibleRoutes = getAccessibleRoutes(profile.role as Role);
-      const isAccessible = accessibleRoutes.some((route) =>
-        pathname === route || pathname.startsWith(route + "/")
-      );
+    // Deactivated users get logged out
+    if (profile.is_active === false) {
+      await supabase.auth.signOut();
+      const url = request.nextUrl.clone();
+      url.pathname = "/login";
+      return NextResponse.redirect(url);
+    }
 
-      if (!isAccessible) {
-        const url = request.nextUrl.clone();
-        url.pathname = "/dashboard";
-        return NextResponse.redirect(url);
-      }
+    // Role-based route protection (fail-closed untuk role tak dikenal)
+    const knownRoles: Role[] = ["admin", "manager", "sales"];
+    const role = profile.role as Role;
+
+    if (!knownRoles.includes(role)) {
+      // Role tak dikenal tidak boleh mengakses rute apa pun. Sign-out, bukan
+      // redirect ke /unauthorized — halaman itu juga terlindungi dan akan
+      // menyebabkan redirect loop.
+      await supabase.auth.signOut();
+      const url = request.nextUrl.clone();
+      url.pathname = "/login";
+      return NextResponse.redirect(url);
+    }
+
+    const accessibleRoutes = getAccessibleRoutes(role);
+    const isAccessible = accessibleRoutes.some((route) =>
+      pathname === route || pathname.startsWith(route + "/")
+    );
+
+    if (!isAccessible) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/dashboard";
+      return NextResponse.redirect(url);
     }
   }
 

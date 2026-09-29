@@ -22,6 +22,7 @@ export function AddActivityForm({ customerId, onSuccess }: { customerId: string;
   const [note, setNote] = useState("");
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [supabase] = useState(() => createClient());
   const router = useRouter();
 
@@ -40,36 +41,40 @@ export function AddActivityForm({ customerId, onSuccess }: { customerId: string;
     e.preventDefault();
     if (!note.trim()) return;
     setLoading(true);
+    setError(null);
 
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      setError("Sesi Anda berakhir. Silakan muat ulang halaman dan masuk kembali.");
+      setLoading(false);
+      return;
+    }
 
     const { error } = await supabase.from("activities").insert({
       customer_id: customerId,
-      user_id: user?.id || null,
+      user_id: user.id,
       type,
       note: note.trim(),
     });
 
     if (error) {
       console.error("Activity insert error:", error.message);
+      setError(error.message);
       setLoading(false);
       return;
     }
 
-    // Create notification (non-blocking)
-    if (user) {
-      const typeLabels: Record<string, string> = { call: "Panggilan", whatsapp: "WhatsApp", email: "Email", meeting: "Meeting", visit: "Kunjungan", demo: "Demo", proposal: "Proposal", closing: "Closing" };
-      try {
-        const { error: notifErr } = await supabase.from("notifications").insert({
-          user_id: user.id,
-          title: "Aktivitas Baru",
-          message: `${typeLabels[type] || type} telah dicatat`,
-          type: "activity_added",
-          link: `/customers/${customerId}`,
-        });
-        if (notifErr) console.error("Notif insert error:", notifErr.message);
-      } catch (e) { console.error("Notif catch:", e); }
-    }
+    // Create notification (user_id = diri sendiri, sesuai policy RLS)
+    const typeLabels: Record<string, string> = { call: "Panggilan", whatsapp: "WhatsApp", email: "Email", meeting: "Meeting", visit: "Kunjungan", demo: "Demo", proposal: "Proposal", closing: "Closing" };
+    const { error: notifError } = await supabase.from("notifications").insert({
+      user_id: user.id,
+      title: "Aktivitas Baru",
+      message: `${typeLabels[type] || type} telah dicatat`,
+      type: "activity_added",
+      link: `/customers/${customerId}`,
+    });
+    if (notifError) console.error("Notif insert error:", notifError.message);
 
     setNote("");
     setType("call");
@@ -95,6 +100,11 @@ export function AddActivityForm({ customerId, onSuccess }: { customerId: string;
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
+          {error && (
+            <div role="alert" className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+              {error}
+            </div>
+          )}
           <div className="flex gap-4">
             <Select value={type} onValueChange={setType}>
               <SelectTrigger className="w-[160px]">
@@ -120,7 +130,7 @@ export function AddActivityForm({ customerId, onSuccess }: { customerId: string;
               {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
               {t("common.save")}
             </Button>
-            <Button type="button" variant="outline" onClick={() => setOpen(false)} className="border-blue-200 text-blue-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800">
+            <Button type="button" variant="outline" onClick={() => { setOpen(false); setError(null); }} className="border-blue-200 text-blue-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800">
               {t("common.cancel")}
             </Button>
           </div>

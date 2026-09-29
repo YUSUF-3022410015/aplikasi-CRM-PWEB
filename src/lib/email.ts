@@ -38,12 +38,17 @@ export async function sendEmail(params: SendEmailParams): Promise<{ success: boo
   const key = config.apiKey;
   const isDummyKey = !key || key === "re_your_api_key_here" || key.includes("your_api_key");
 
-  // Development mode: log email instead of sending
+  // Development mode: log email instead of sending.
+  // PENTING: jangan laporkan sukses di produksi, karena email tidak benar-benar
+  // terkirim dan pemanggil akan mencatat aktivitas "email terkirim" secara palsu.
   if (!key || isDummyKey) {
+    if (process.env.NODE_ENV === "production") {
+      console.error("RESEND_API_KEY belum dikonfigurasi — email tidak dikirim.");
+      return { success: false, error: "Konfigurasi email belum lengkap (RESEND_API_KEY)" };
+    }
     console.log("=== EMAIL (DEV MODE) ===");
     console.log("To:", params.to);
     console.log("Subject:", params.subject);
-    console.log("Body:", params.html.substring(0, 200) + "...");
     console.log("=========================");
     return { success: true };
   }

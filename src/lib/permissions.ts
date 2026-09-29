@@ -78,11 +78,13 @@ export const permissions = {
 } as const;
 
 // Check if role has permission
-export function hasPermission(role: Role, module: keyof typeof permissions, action: string): boolean {
-  const modulePermissions = permissions[module];
+// `module` menerima string apa pun agar input tak dikenal bisa ditolak dengan false,
+// bukan gagal kompilasi (dipakai juga oleh pemanggil dinamis seperti usePermissions).
+export function hasPermission(role: Role, module: string, action: string): boolean {
+  const modulePermissions = (permissions as Record<string, Record<string, readonly Role[]>>)[module];
   if (!modulePermissions) return false;
 
-  const allowedRoles = modulePermissions[action as keyof typeof modulePermissions] as readonly Role[] | undefined;
+  const allowedRoles = modulePermissions[action];
   if (!allowedRoles) return false;
 
   return allowedRoles.includes(role);

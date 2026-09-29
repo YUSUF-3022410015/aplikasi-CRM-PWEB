@@ -28,7 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Plus, Eye, Trash2, FileText, Printer, Mail } from "lucide-react";
 import { formatCurrency, generateQuotationNumber } from "@/lib/utils";
 import { QuotationPrint, printQuotation } from "@/components/quotation-print";
@@ -36,25 +36,6 @@ import { sendQuotationEmailAction } from "@/app/actions/email";
 import { useLanguage } from "@/components/language-provider";
 import { usePermissions } from "@/hooks/use-permissions";
 import type { Quotation, Customer, Product } from "@/types/database";
-
-  const statusColors: Record<string, "default" | "secondary" | "success" | "destructive" | "warning"> = {
-    draft: "secondary",
-    sent: "warning",
-    approved: "success",
-    rejected: "destructive",
-    expired: "default",
-  };
-
-  const getStatusBadge = (s: string) => {
-    const map: Record<string, { label: string; variant: "default" | "secondary" | "success" | "destructive" | "warning" }> = {
-      draft: { label: "Draft", variant: "secondary" },
-      sent: { label: "Sent", variant: "warning" },
-      approved: { label: "Approved", variant: "success" },
-      rejected: { label: "Rejected", variant: "destructive" },
-      expired: { label: "Expired", variant: "default" },
-    };
-    return map[s] || map.draft;
-  };
 
 interface QuotationItemForm {
   product_id: string;
@@ -74,9 +55,19 @@ export default function QuotationsPage() {
   const [items, setItems] = useState<QuotationItemForm[]>([{ product_id: "", qty: 1, price: 0 }]);
   const [taxRate, setTaxRate] = useState(11);
   const [discount, setDiscount] = useState(0);
+  const [saving, setSaving] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
   const [supabase] = useState(() => createClient());
   const { t } = useLanguage();
   const { isAdmin, isManager } = usePermissions();
+
+  const statusColors: Record<string, "default" | "secondary" | "success" | "destructive" | "warning"> = {
+    draft: "secondary",
+    sent: "warning",
+    approved: "success",
+    rejected: "destructive",
+    expired: "default",
+  };
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -96,7 +87,12 @@ export default function QuotationsPage() {
     }
   }, [supabase]);
 
-  useEffect(() => { fetchData(); }, [fetchData]);
+  useEffect(() => {
+    const run = async () => {
+      await fetchData();
+    };
+    void run();
+  }, [fetchData]);
 
   const subtotal = items.reduce((sum, item) => sum + item.qty * item.price, 0);
   const tax = subtotal * (taxRate / 100);
@@ -117,47 +113,118 @@ export default function QuotationsPage() {
   };
 
   const handleSave = async () => {
-    if (!customerId || items.length === 0) return;
+    setFormError(null);
+
+    // Validasi input klien (bisa dimodifikasi) sebelum menyentuh database
+    if (!customerId) {
+      setFormError("Pilih customer terlebih dahulu.");
+      return;
+    }
+    if (items.length === 0) {
+      setFormError("Tambahkan minimal satu item.");
+      return;
+    }
+    if (items.some((it) => !it.product_id)) {
+      setFormError("Semua item harus memiliki produk.");
+      return;
+    }
+    if (items.some((it) => !Number.isFinite(it.qty) || it.qty <= 0)) {
+      setFormError("Qty setiap item harus lebih dari 0.");
+      return;
+    }
+    if (items.some((it) => !Number.isFinite(it.price) || it.price < 0)) {
+      setFormError("Harga item tidak boleh negatif.");
+      return;
+    }
+    if (!Number.isFinite(discount) || discount < 0) {
+      setFormError("Diskon tidak boleh negatif.");
+      return;
+    }
+    if (!Number.isFinite(taxRate) || taxRate < 0) {
+      setFormError("Tarif pajak tidak boleh negatif.");
+      return;
+    }
+
+    setSaving(true);
     const qNumber = generateQuotationNumber();
-    const { data: q } = await supabase
-      .from("quotations")
-      .insert({
-        customer_id: customerId,
-        quotation_number: qNumber,
-        subtotal,
-        tax,
-        discount,
-        total,
-        status: "draft",
-      })
-      .select()
-      .single();
 
-    if (q) {
-      const qItems = items.map((item) => ({
-        quotation_id: q.id,
-        product_id: item.product_id,
-        qty: item.qty,
-        price: item.price,
-      }));
-      await supabase.from("quotation_items").insert(qItems);
+    const qItems = items.map((item) => ({
+      product_id: item.product_id,
+      qty: item.qty,
+      price: item.price,
+    }));
 
-      // Create notification for new quotation
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const customerName = customers.find((c) => c.id === customerId)?.name || t("customers.title");
-        const { error: notifError } = await supabase.from("notifications").insert({
-          user_id: user.id,
-          title: t("quotations.newQuotationNotif"),
-          message: `Quotation ${qNumber} untuk ${customerName} telah dibuat`,
-          type: "quotation_sent",
-          link: "/quotations",
-        });
-        if (notifError) {
-          console.error("Failed to create notification:", notifError.message);
-        }
+    // Insert atomik: quotation + items dalam satu transaksi (fungsi DB).
+    // Tanpa ini, bila insert item gagal akan tertinggal quotation yatim.
+    const { data: rpcId, error: rpcError } = await supabase.rpc("create_quotation_with_items", {
+      p_customer_id: customerId,
+      p_quotation_number: qNumber,
+      p_subtotal: subtotal,
+      p_tax: tax,
+      p_discount: discount,
+      p_total: total,
+      p_items: qItems,
+    });
+
+    let qId: string | null = (rpcId as string | null) ?? null;
+
+    // Fallback bila fungsi DB belum dipasang: cara lama + kompensasi.
+    if (rpcError) {
+      const { data: q, error: qError } = await supabase
+        .from("quotations")
+        .insert({
+          customer_id: customerId,
+          quotation_number: qNumber,
+          subtotal,
+          tax,
+          discount,
+          total,
+          status: "draft",
+        })
+        .select()
+        .single();
+
+      if (qError || !q) {
+        setSaving(false);
+        setFormError(qError?.message || "Gagal membuat quotation.");
+        return;
+      }
+
+      qId = q.id;
+
+      const { error: itemsError } = await supabase.from("quotation_items").insert(
+        qItems.map((item) => ({ ...item, quotation_id: q.id }))
+      );
+
+      if (itemsError) {
+        await supabase.from("quotations").delete().eq("id", q.id);
+        setSaving(false);
+        setFormError(`Gagal menyimpan item quotation: ${itemsError.message}`);
+        return;
+      }
+    } else if (!qId) {
+      setSaving(false);
+      setFormError("Gagal membuat quotation.");
+      return;
+    }
+
+    // Create notification for new quotation
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      const customerName = customers.find((c) => c.id === customerId)?.name || t("customers.title");
+      const { error: notifError } = await supabase.from("notifications").insert({
+        user_id: user.id,
+        title: t("quotations.newQuotationNotif"),
+        message: `Quotation ${qNumber} untuk ${customerName} telah dibuat`,
+        type: "quotation_sent",
+        link: "/quotations",
+      });
+      if (notifError) {
+        console.error("Failed to create notification:", notifError.message);
       }
     }
+
+    setSaving(false);
     setDialogOpen(false);
     setCustomerId("");
     setItems([{ product_id: "", qty: 1, price: 0 }]);
@@ -167,18 +234,29 @@ export default function QuotationsPage() {
 
   const handleDelete = async (id: string) => {
     const q = quotations.find((q) => q.id === id);
-    await supabase.from("quotation_items").delete().eq("quotation_id", id);
-    await supabase.from("quotations").delete().eq("id", id);
+    const { error: itemsError } = await supabase.from("quotation_items").delete().eq("quotation_id", id);
+    if (itemsError) {
+      console.error("Gagal menghapus item quotation:", itemsError.message);
+      alert(itemsError.message);
+      return;
+    }
+    const { error } = await supabase.from("quotations").delete().eq("id", id);
+    if (error) {
+      console.error("Gagal menghapus quotation:", error.message);
+      alert(error.message);
+      return;
+    }
     // Notifikasi hapus quotation
     const { data: { user } } = await supabase.auth.getUser();
     if (user && q) {
-      Promise.resolve(supabase.from("notifications").insert({
+      const { error: notifError } = await supabase.from("notifications").insert({
         user_id: user.id,
         title: "Quotation Dihapus",
         message: `Quotation ${q.quotation_number} telah dihapus`,
         type: "activity_added",
         link: "/quotations",
-      })).catch(() => {});
+      });
+      if (notifError) console.error("Gagal membuat notifikasi hapus quotation:", notifError.message);
     }
     fetchData();
   };
@@ -203,7 +281,14 @@ export default function QuotationsPage() {
 
   const handleStatusChange = async (quotationId: string, newStatus: string) => {
     // Update quotation status
-    await supabase.from("quotations").update({ status: newStatus }).eq("id", quotationId);
+    const { error: updateError } = await supabase
+      .from("quotations")
+      .update({ status: newStatus })
+      .eq("id", quotationId);
+    if (updateError) {
+      alert(updateError.message);
+      return;
+    }
 
     // Get quotation details
     const { data: quotation } = await supabase
@@ -212,34 +297,29 @@ export default function QuotationsPage() {
       .eq("id", quotationId)
       .single();
 
-    if (quotation) {
+    // Notifikasi ke diri sendiri. Policy RLS notifications hanya mengizinkan
+    // insert untuk user_id = auth.uid() (atau admin/manager), sehingga
+    // broadcast ke semua user dari klien akan gagal diam-diam.
+    const { data: { user } } = await supabase.auth.getUser();
+    if (quotation && user) {
       const customerName = (quotation.customer as { name: string })?.name || "Unknown";
-
-      // Get all user IDs
-      const { data: users } = await supabase.from("profiles").select("id");
-
-      if (users && users.length > 0) {
-        const statusLabels: Record<string, string> = {
-          draft: "Draft",
-          sent: "Terkirim",
-          approved: "Disetujui",
-          rejected: "Ditolak",
-          expired: "Kadaluarsa",
-        };
-        const notifTitle = `Quotation ${statusLabels[newStatus] || newStatus}`;
-        const notifMessage = `Quotation ${quotation.quotation_number} untuk ${customerName} diubah ke "${statusLabels[newStatus] || newStatus}"`;
-
-        for (const u of users) {
-          Promise.resolve(supabase.from("notifications").insert({
-            user_id: u.id,
-            title: notifTitle,
-            message: notifMessage,
-            type: "activity_added",
-            link: "/quotations",
-            read: false,
-          })).catch(() => {});
-        }
-      }
+      const statusLabels: Record<string, string> = {
+        draft: "Draft",
+        sent: "Terkirim",
+        approved: "Disetujui",
+        rejected: "Ditolak",
+        expired: "Kadaluarsa",
+      };
+      const label = statusLabels[newStatus] || newStatus;
+      const { error: notifError } = await supabase.from("notifications").insert({
+        user_id: user.id,
+        title: `Quotation ${label}`,
+        message: `Quotation ${quotation.quotation_number} untuk ${customerName} diubah ke "${label}"`,
+        type: "activity_added",
+        link: "/quotations",
+        read: false,
+      });
+      if (notifError) console.error("Failed to create notification:", notifError.message);
     }
 
     // Update local state
@@ -321,6 +401,11 @@ export default function QuotationsPage() {
             <DialogTitle>{t("quotations.newQuotation")}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
+            {formError && (
+              <div role="alert" className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+                {formError}
+              </div>
+            )}
             <div className="space-y-2">
               <Label>{t("quotations.customer")}</Label>
               <Select value={customerId} onValueChange={setCustomerId}>
@@ -389,7 +474,7 @@ export default function QuotationsPage() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDialogOpen(false)} className="border-blue-200 text-blue-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800">{t("common.cancel")}</Button>
-            <Button variant="action" onClick={handleSave} disabled={!customerId}>{t("common.save")}</Button>
+            <Button variant="action" onClick={handleSave} disabled={!customerId || saving}>{t("common.save")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -462,7 +547,7 @@ export default function QuotationsPage() {
           )}
           <DialogFooter>
             <Button variant="outline" onClick={() => setDetailOpen(false)} className="border-blue-200 text-blue-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800">{t("common.close")}</Button>
-            {selectedQuotation?.id && (
+            {selectedQuotation?.id && !isManager && (
               <Button variant="outline" onClick={() => handleSendEmail(selectedQuotation.id)} className="border-blue-200 text-blue-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800">
                 <Mail className="mr-2 h-4 w-4" />
                 {t("quotations.sendEmail")}

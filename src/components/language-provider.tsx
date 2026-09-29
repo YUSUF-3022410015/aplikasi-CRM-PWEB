@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, useCallback } from "react";
+import { createContext, useContext, useCallback, useSyncExternalStore } from "react";
 import { type Locale, t as translateFn, tArray as translateArrayFn } from "@/lib/translations";
 
 interface LanguageContextType {
@@ -17,33 +17,45 @@ const LanguageContext = createContext<LanguageContextType>({
   tArray: () => [],
 });
 
-export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>("id");
-  const [mounted, setMounted] = useState(false);
+const LOCALE_EVENT = "locale-change";
 
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem("locale") as Locale | null;
-      if (stored === "id" || stored === "en") {
-        setLocaleState(stored);
-      }
-    } catch {}
-    setMounted(true);
-  }, []);
+// Baca locale dari localStorage sebagai external store. Dipakai
+// useSyncExternalStore supaya server & klien konsisten ("id" saat pertama),
+// lalu nilai tersimpan ikut terbaca tanpa setState di dalam effect.
+function subscribe(callback: () => void) {
+  window.addEventListener(LOCALE_EVENT, callback);
+  window.addEventListener("storage", callback);
+  return () => {
+    window.removeEventListener(LOCALE_EVENT, callback);
+    window.removeEventListener("storage", callback);
+  };
+}
+
+function getSnapshot(): Locale {
+  try {
+    const stored = localStorage.getItem("locale");
+    return stored === "en" ? "en" : "id";
+  } catch {
+    return "id";
+  }
+}
+
+function getServerSnapshot(): Locale {
+  return "id";
+}
+
+export function LanguageProvider({ children }: { children: React.ReactNode }) {
+  const locale = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   const setLocale = useCallback((newLocale: Locale) => {
-    setLocaleState(newLocale);
     try {
       localStorage.setItem("locale", newLocale);
     } catch {}
+    window.dispatchEvent(new Event(LOCALE_EVENT));
   }, []);
 
   const t = useCallback((key: string) => translateFn(key, locale), [locale]);
   const tArray = useCallback((key: string) => translateArrayFn(key, locale), [locale]);
-
-  if (!mounted) {
-    return <>{children}</>;
-  }
 
   return (
     <LanguageContext.Provider value={{ locale, setLocale, t, tArray }}>

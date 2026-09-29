@@ -5,9 +5,27 @@ import { createClient } from "@/lib/supabase/client";
 import { CalendarView } from "@/components/calendar-view";
 import { useLanguage } from "@/components/language-provider";
 
+interface FollowUpRaw {
+  id: string;
+  note: string;
+  due_date: string;
+  status: string;
+  customer_id: string;
+  customer?: { name: string; deleted_at?: string | null } | { name: string; deleted_at?: string | null }[] | null;
+}
+
+interface FollowUpRow {
+  id: string;
+  note: string;
+  due_date: string;
+  status: string;
+  customer_id: string;
+  customer?: { name: string } | null;
+}
+
 export default function CalendarPage() {
   const { t } = useLanguage();
-  const [followUps, setFollowUps] = useState<any[]>([]);
+  const [followUps, setFollowUps] = useState<FollowUpRow[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -22,7 +40,13 @@ export default function CalendarPage() {
           `)
           .order("due_date", { ascending: true });
 
-        setFollowUps(data || []);
+        const rows = (data || []) as unknown as FollowUpRaw[];
+        setFollowUps(
+          rows.map((f) => {
+            const c = Array.isArray(f.customer) ? f.customer[0] : f.customer;
+            return { ...f, customer: c ? { name: c.name } : null };
+          })
+        );
       } catch (error) {
         console.error("Failed to fetch calendar data:", error);
       } finally {
@@ -30,7 +54,10 @@ export default function CalendarPage() {
       }
     };
 
-    fetchData();
+    const run = async () => {
+      await fetchData();
+    };
+    void run();
   }, []);
 
   if (loading) {

@@ -55,7 +55,10 @@ export function NotificationBell({ userId }: { userId: string }) {
   }, [supabase, userId]);
 
   useEffect(() => {
-    fetchNotifications();
+    const init = async () => {
+      await fetchNotifications();
+    };
+    void init();
 
     // Realtime subscription - requires Realtime enabled on notifications table in Supabase dashboard
     const channel = supabase
@@ -64,14 +67,14 @@ export function NotificationBell({ userId }: { userId: string }) {
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "notifications", filter: `user_id=eq.${userId}` },
         () => {
-          fetchNotifications();
+          void fetchNotifications();
         }
       )
       .on(
         "postgres_changes",
         { event: "UPDATE", schema: "public", table: "notifications", filter: `user_id=eq.${userId}` },
         () => {
-          fetchNotifications();
+          void fetchNotifications();
         }
       )
       .subscribe((status) => {
@@ -81,7 +84,9 @@ export function NotificationBell({ userId }: { userId: string }) {
       });
 
     // Polling fallback - refresh every 3 seconds
-    const interval = setInterval(fetchNotifications, 3000);
+    const interval = setInterval(() => {
+      void fetchNotifications();
+    }, 3000);
 
     return () => {
       supabase.removeChannel(channel);
@@ -91,25 +96,27 @@ export function NotificationBell({ userId }: { userId: string }) {
 
   const handleOpenChange = (isOpen: boolean) => {
     setOpen(isOpen);
-    if (isOpen) fetchNotifications();
+    if (isOpen) void fetchNotifications();
   };
 
   const markAsRead = async (id: string) => {
-    await supabase.from("notifications").update({ read: true }).eq("id", id);
-    fetchNotifications();
+    const { error } = await supabase.from("notifications").update({ read: true }).eq("id", id);
+    if (error) console.error("Gagal menandai notifikasi:", error.message);
+    await fetchNotifications();
   };
 
   const markAllAsRead = async () => {
-    await supabase
+    const { error } = await supabase
       .from("notifications")
       .update({ read: true })
       .eq("user_id", userId)
       .eq("read", false);
-    fetchNotifications();
+    if (error) console.error("Gagal menandai semua notifikasi:", error.message);
+    await fetchNotifications();
   };
 
   const handleNotificationClick = (notification: NotificationItem) => {
-    markAsRead(notification.id);
+    void markAsRead(notification.id);
     if (notification.link) router.push(notification.link);
     setOpen(false);
   };

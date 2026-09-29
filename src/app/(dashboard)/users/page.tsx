@@ -37,7 +37,6 @@ import { deactivateUser } from "@/app/actions/delete-user";
 import { usePermissions } from "@/hooks/use-permissions";
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -82,13 +81,6 @@ export default function UsersPage() {
   const [resetSuccess, setResetSuccess] = useState(false);
   const [supabase] = useState(() => createClient());
   const { isAdmin } = usePermissions();
-  // isManager always false here — page is guarded by !isAdmin check above
-  const isManager = false;
-
-  // PRD §3.3: Hanya Admin yang bisa kelola user
-  const canManageUser = (targetRole: string) => {
-    return isAdmin;
-  };
 
   const fetchUsers = useCallback(async () => {
     setLoading(true);
@@ -106,7 +98,12 @@ export default function UsersPage() {
     }
   }, [supabase]);
 
-  useEffect(() => { fetchUsers(); }, [fetchUsers]);
+  useEffect(() => {
+    const run = async () => {
+      await fetchUsers();
+    };
+    void run();
+  }, [fetchUsers]);
 
   const handleInvite = async () => {
     if (!email || !fullname || !password) return;
@@ -124,7 +121,7 @@ export default function UsersPage() {
     setPassword("");
     setRole("sales");
     setInviteLoading(false);
-    fetchUsers();
+    await fetchUsers();
   };
 
   const handleEditRole = async () => {
@@ -140,7 +137,7 @@ export default function UsersPage() {
     setEditUser(null);
     setEditRole("");
     setEditLoading(false);
-    fetchUsers();
+    await fetchUsers();
   };
 
   const handleDeactivateUser = async () => {
@@ -237,7 +234,7 @@ export default function UsersPage() {
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
-                      {canManageUser(u.role) && (
+                      {isAdmin && (
                         <>
                           <Button
                             variant="ghost"
@@ -268,8 +265,6 @@ export default function UsersPage() {
                             size="icon"
                             className="bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700"
                             onClick={() => setDeactivateUserId(u.id)}
-                            disabled={isManager && u.role === "admin"}
-                            title={isManager && u.role === "admin" ? "Manager tidak dapat menonaktifkan Admin" : ""}
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -319,9 +314,6 @@ export default function UsersPage() {
                   <SelectItem value="sales">{t("auth.sales")}</SelectItem>
                 </SelectContent>
               </Select>
-              {isManager && (
-                <p className="text-xs text-slate-500 mt-1">Manager tidak dapat membuat akun Admin</p>
-              )}
             </div>
           </div>
           <DialogFooter className="gap-2">
@@ -349,16 +341,12 @@ export default function UsersPage() {
               <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">{t("nav.users")}</p>
               <p className="font-semibold mt-1">{editUser?.fullname}</p>
               <p className="text-sm text-slate-500">{editUser?.email}</p>
-              {isManager && editUser?.role === "admin" && (
-                <p className="text-xs text-red-600 mt-2 font-medium">Manager tidak dapat mengubah role Admin</p>
-              )}
             </div>
             <div className="space-y-2">
               <Label className="text-sm font-semibold">{t("auth.role")}</Label>
               <Select
                 value={editRole}
                 onValueChange={setEditRole}
-                disabled={isManager && editUser?.role === "admin"}
               >
                 <SelectTrigger className="bg-slate-100/50 focus:bg-white"><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -373,7 +361,7 @@ export default function UsersPage() {
             <Button variant="outline" onClick={() => setEditUser(null)} className="border-blue-200 text-blue-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800">{t("common.cancel")}</Button>
             <Button
               onClick={handleEditRole}
-              disabled={editLoading || !editRole || (isManager && editUser?.role === "admin")}
+              disabled={editLoading || !editRole}
             >
               {editLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {t("common.save")}

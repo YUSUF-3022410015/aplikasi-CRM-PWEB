@@ -12,6 +12,14 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Sisa folder build. Di D: (FAT32) folder "types" di dalamnya rusak dan
+    // tidak bisa dihapus sampai chkdsk /F dijalankan, jadi diabaikan dulu.
+    ".next-build/**",
+    // File tooling CommonJS (bukan kode aplikasi). Memakai require() itu wajar,
+    // jadi tidak perlu ikut aturan lint TypeScript/ESM aplikasi.
+    ".opencode/**",
+    "jest.config.js",
+    "jest.setup.ts",
   ]),
 ]);
 

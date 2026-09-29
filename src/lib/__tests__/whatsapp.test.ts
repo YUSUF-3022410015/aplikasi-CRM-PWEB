@@ -16,7 +16,7 @@ describe("WhatsApp utilities", () => {
 
     it("removes non-numeric characters", () => {
       expect(formatPhoneForWhatsApp("0812-345-6789")).toBe("628123456789");
-      expect(formatPhoneForWhatsApp("+62 812 345 6789")).toBe("62628123456789");
+      expect(formatPhoneForWhatsApp("+62 812 345 6789")).toBe("628123456789");
     });
   });
 

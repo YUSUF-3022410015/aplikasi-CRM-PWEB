@@ -17,7 +17,7 @@ import { Phone, MessageSquare, Mail, MapPin, Monitor, Presentation, FileText, Ch
 import { formatDateTime } from "@/lib/utils";
 import { useLanguage } from "@/components/language-provider";
 
-interface Activity {
+interface ActivityRow {
   id: string;
   customer_id: string;
   type: string;
@@ -27,8 +27,14 @@ interface Activity {
   user?: { fullname: string } | null;
 }
 
+// Bentuk mentah dari Supabase: relasi bisa berupa objek tunggal atau array.
+interface ActivityRaw extends Omit<ActivityRow, "customer" | "user"> {
+  customer?: { name: string; deleted_at?: string | null } | { name: string; deleted_at?: string | null }[] | null;
+  user?: { fullname: string } | { fullname: string }[] | null;
+}
+
 export default function ActivitiesPage() {
-  const [activities, setActivities] = useState<Activity[]>([]);
+  const [activities, setActivities] = useState<ActivityRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [supabase] = useState(() => createClient());
   const { t } = useLanguage();
@@ -47,13 +53,28 @@ export default function ActivitiesPage() {
   const fetchActivities = useCallback(async () => {
     setLoading(true);
     try {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("activities")
         .select("*, customer:customers(name, deleted_at), user:profiles(fullname)")
         .order("created_at", { ascending: false })
         .limit(50);
+      if (error) throw error;
       // Filter out activities for soft-deleted customers
-      const filtered = (data || []).filter((a: any) => !a.customer || !a.customer.deleted_at);
+      const rows = (data || []) as unknown as ActivityRaw[];
+      const filtered: ActivityRow[] = rows
+        .filter((a) => {
+          const c = Array.isArray(a.customer) ? a.customer[0] : a.customer;
+          return !c || !c.deleted_at;
+        })
+        .map((a) => {
+          const c = Array.isArray(a.customer) ? a.customer[0] : a.customer;
+          const u = Array.isArray(a.user) ? a.user[0] : a.user;
+          return {
+            ...a,
+            customer: c ? { name: c.name } : null,
+            user: u ? { fullname: u.fullname } : null,
+          };
+        });
       setActivities(filtered);
     } catch (error) {
       console.error("Failed to fetch activities:", error);
@@ -63,7 +84,10 @@ export default function ActivitiesPage() {
   }, [supabase]);
 
   useEffect(() => {
-    fetchActivities();
+    const run = async () => {
+      await fetchActivities();
+    };
+    void run();
   }, [fetchActivities]);
 
   return (
@@ -112,7 +136,7 @@ export default function ActivitiesPage() {
                         </TableCell>
                         <TableCell className="font-medium">
                           {a.customer?.name ? (
-                            <Link href={`/customers/${(a as any).customer_id}`} className="hover:text-blue-600 transition-colors">
+                            <Link href={`/customers/${a.customer_id}`} className="hover:text-blue-600 transition-colors">
                               {a.customer.name}
                             </Link>
                           ) : "-"}
