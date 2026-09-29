@@ -64,7 +64,9 @@ export function CustomerForm({ customer, mode }: CustomerFormProps) {
   type CustomerFormData = z.infer<typeof customerSchema>;
 
   useEffect(() => {
-    supabase.from("profiles").select("id, fullname").order("fullname").then(({ data }) => {
+    // Pakai view active_users_public (hanya id & fullname) bukan profiles
+    // langsung, supaya sales tidak perlu akses ke email/role user lain.
+    supabase.from("active_users_public").select("id, fullname").order("fullname").then(({ data }) => {
       setSalesUsers(data || []);
     });
   }, [supabase]);

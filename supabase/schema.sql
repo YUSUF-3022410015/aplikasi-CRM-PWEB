@@ -288,9 +288,19 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER STABLE;
 
--- Profiles: hanya user yang sudah login yang bisa membaca profil
+-- Profiles: user hanya bisa baca profil sendiri; admin & manager bisa baca semua
 DROP POLICY IF EXISTS "Profiles: read all" ON profiles;
-CREATE POLICY "Profiles: read all" ON profiles FOR SELECT USING (auth.uid() IS NOT NULL);
+DROP POLICY IF EXISTS "Profiles: read own" ON profiles;
+DROP POLICY IF EXISTS "Profiles: admin manager read all" ON profiles;
+CREATE POLICY "Profiles: read own" ON profiles
+  FOR SELECT TO authenticated USING (auth.uid() = id);
+CREATE POLICY "Profiles: admin manager read all" ON profiles
+  FOR SELECT TO authenticated USING (get_user_role() IN ('admin', 'manager'));
+
+-- View publik untuk dropdown "assigned sales" (hanya id & fullname)
+CREATE OR REPLACE VIEW public.active_users_public AS
+  SELECT id, fullname FROM public.profiles WHERE is_active = true;
+GRANT SELECT ON public.active_users_public TO authenticated;
 DROP POLICY IF EXISTS "Profiles: update own" ON profiles;
 CREATE POLICY "Profiles: update own" ON profiles FOR UPDATE USING (auth.uid() = id);
 
