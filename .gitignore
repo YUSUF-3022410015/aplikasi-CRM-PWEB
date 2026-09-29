@@ -46,3 +46,6 @@ next-env.d.ts
 # python cache
 __pycache__/
 *.pyc
+
+# backup file
+*.bak
